@@ -1,2 +1,1 @@
-# sfdc-lwc-lightning-datatable
-Salesforce Lighitng Data table
+# Salesforce Lightning Data table (LWC Version) 
