@@ -20,11 +20,10 @@ Design Attribute
 
 | Label           | Type       | Value                        | Example             |
 |-----------------|------------|------------------------------|---------------------|
-| Enter Icon Name | String     | provide slds icon name  |  `standard:account` |
+| Enter Icon Name  | String     | provide slds icon name  |  `standard:account` |
 | Enter Title      | String     | provide table title |  LWC Table |
-| Enter Object API Name | String     | provide object custom or standard API name |  Account |
-| Enter Columns JSON | String     | provide json of columns: `fieldName` - api name, `label` - col label,`type` - text,number,date
-Note : for related field it should be concat with . i.e : Account.Name for contact |  ```javascript [   { 
+| Enter Object API Name | String         | provide object custom or standard API name       |  Account |
+| Enter Columns JSON    | String         | provide json of columns: `fieldName` - api name, `label` - col label,`type` - text,number,date > Note : for related field it should be concat with . i.e : Account.Name for contact | ```javascript                   [   { 
         "fieldName": "FirstName",
         "label": "First Name",
         "type": "text"
@@ -46,5 +45,5 @@ Note : for related field it should be concat with . i.e : Account.Name for conta
         "label": "Account Name",
         "type": "text"
     }
-] ````|
-| Enter Icon Name | String     | Enter tabel header icon name |  `standard:account` |
+]
+``` |
