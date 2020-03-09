@@ -30,7 +30,7 @@ Enter WHERE clause | String | provide aditional filters | Example `LastName like
 ## Columns JSON Example
 ``` yaml 
     [{ 
-    "fieldName": "FirstName",
+       "fieldName": "FirstName",
         "label": "First Name",
         "type": "text"
     }, {
@@ -45,8 +45,7 @@ Enter WHERE clause | String | provide aditional filters | Example `LastName like
         "fieldName": "Phone",
         "label": "Phone",
         "type": "phone"
-    },
-	 {
+    },{
         "fieldName": "Account.Name",
         "label": "Account Name",
         "type": "text"
