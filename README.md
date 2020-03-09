@@ -28,7 +28,8 @@ Enter Related field API Name| String | Enter related field api name | Example Ac
 Enter WHERE clause | String | provide aditional filters | Example `LastName like '%s' AND Account.Name like '%t'`
 
 ## Columns JSON Example
-``` javascript [{ 
+``` yaml 
+    [{ 
     "fieldName": "FirstName",
         "label": "First Name",
         "type": "text"
