@@ -4,7 +4,6 @@ import { deleteRecord } from "lightning/uiRecordApi";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getRecords from "@salesforce/apex/RelatedList.getRecords";
 import countRecords from "@salesforce/apex/RelatedList.countRecords";
-// import deleteRecord from "@salesforce/apex/RelatedList.deleteRecord";
 
 let cols;
 const actions = [
