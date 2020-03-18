@@ -1,6 +1,6 @@
 /*
 * Author : Sarvesh
-* Description : The component to show records of custom/standard as a table.
+* Description : The component to show records of custom/standard of Object as a table.
 * Production Ready : Yes
 */
 import { LightningElement, wire, track, api } from "lwc";
