@@ -1,3 +1,8 @@
+/*
+* Author : Sarvesh
+* Description : The component to show records of custom/standard as a table.
+* Production Ready : Yes
+*/
 import { LightningElement, wire, track, api } from "lwc";
 import { NavigationMixin } from "lightning/navigation";
 import { deleteRecord } from "lightning/uiRecordApi";
