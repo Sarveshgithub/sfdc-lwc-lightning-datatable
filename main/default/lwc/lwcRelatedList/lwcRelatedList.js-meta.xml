@@ -8,10 +8,10 @@
     <!-- Configuring the design attributes -->
       <targetConfigs>
         <targetConfig targets="lightning__RecordPage">
-           <property name="iconName" type="String"  label="Enter Icon Name" default="standard:account"/>
-            <property name="title" type="String"  label="Enter Title" default="LWC Table"/>
-            <property name="objectName" type="String"  label="Enter Object API Name"/>
-            <property name="columns" type="String" label="Enter Columns JSON"/>
+           <property name="iconName" type="String" required="true" label="Enter Icon Name" default="standard:account"/>
+            <property name="title" type="String" required="true" label="Enter Title" default="LWC Table"/>
+            <property name="objectName" type="String" required="true" label="Enter Object API Name"/>
+            <property name="columns" type="String" required="true" label="Enter Columns JSON"/>
             <property name="relatedFieldAPI" type="String" default="" label="Enter Related field API Name"/>
             <property name="whereClause" type="String" default="" label="Enter WHERE clause"/>
         </targetConfig>

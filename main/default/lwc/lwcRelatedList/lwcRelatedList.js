@@ -1,8 +1,8 @@
 /*
-* Author : Sarvesh
-* Description : The component to show records of custom/standard of Object as a table.
-* Production Ready : Yes
-*/
+ * Author : Sarvesh
+ * Description : The component to show records of custom/standard of Object as a table.
+ * Production Ready : Yes
+ */
 import { LightningElement, wire, track, api } from "lwc";
 import { NavigationMixin } from "lightning/navigation";
 import { deleteRecord } from "lightning/uiRecordApi";
@@ -14,7 +14,7 @@ let cols;
 const actions = [
   { label: "Show details", name: "show_details" },
   { label: "Edit", name: "edit" },
-  { label: "Delete", name: "delete" }
+  { label: "Delete", name: "delete" },
 ];
 export default class LightningDatatable extends NavigationMixin(
   LightningElement
@@ -33,38 +33,52 @@ export default class LightningDatatable extends NavigationMixin(
   @track soql;
   @track offSet = 0;
   @track totalRows = 0;
+  @track error;
 
   // Do init funtion
   connectedCallback() {
-    cols = JSON.parse(this.columns);
+    if (this.columns != null && this.columns != undefined) {
+      cols = JSON.parse(this.columns);
+    }
     cols.push({
       type: "action",
-      typeAttributes: { rowActions: actions }
+      typeAttributes: { rowActions: actions },
     });
     this.columns = cols;
     this.buildSOQL();
-    countRecords({ objectName: this.objectName }).then(result => {
+    countRecords({ objectName: this.objectName }).then((result) => {
       this.totalRows = result;
     });
     this.fetchRecords();
   }
 
   fetchRecords() {
-    getRecords({ soql: this.soql }).then(data => {
-      if (data) {
-        data.map(e => {
-          for (let key in e) {
-            if (typeof e[key] === "object") {
-              for (let onLevel in e[key]) {
-                e[key + "." + onLevel] = e[key][onLevel];
+    getRecords({ soql: this.soql })
+      .then((data) => {
+        if (data) {
+          data.map((e) => {
+            for (let key in e) {
+              if (typeof e[key] === "object") {
+                for (let onLevel in e[key]) {
+                  e[key + "." + onLevel] = e[key][onLevel];
+                }
               }
             }
+          });
+          this.data = data;
+        }
+      })
+      .catch((error) => {
+        if (error) {
+          this.error = "Unknown error";
+          if (Array.isArray(error.body)) {
+            this.error = error.body.map((e) => e.message).join(", ");
+          } else if (typeof error.body.message === "string") {
+            this.error = error.body.message;
           }
-        });
-        this.data = data;
-      } else if (error) {
-      }
-    });
+          console.log("error", this.error);
+        }
+      });
   }
 
   newRecord() {
@@ -72,8 +86,8 @@ export default class LightningDatatable extends NavigationMixin(
       type: "standard__objectPage",
       attributes: {
         objectApiName: this.objectName,
-        actionName: "new"
-      }
+        actionName: "new",
+      },
     });
   }
 
@@ -125,7 +139,11 @@ export default class LightningDatatable extends NavigationMixin(
   }
 
   get isDisableNext() {
-    return this.offSet + this.limit >= this.totalRows ? true : this.totalRows <= this.limit ? false : false;
+    return this.offSet + this.limit >= this.totalRows
+      ? true
+      : this.totalRows <= this.limit
+      ? false
+      : false;
   }
 
   /*********************************************************************
@@ -143,7 +161,7 @@ export default class LightningDatatable extends NavigationMixin(
             .concat(this.data.slice(index + 1));
           this.showToast("Success", "Record deleted", "success");
         })
-        .catch(error => {
+        .catch((error) => {
           this.showToast("Error deleting record", error.body.message, "error");
         });
     }
@@ -167,8 +185,8 @@ export default class LightningDatatable extends NavigationMixin(
       attributes: {
         recordId: row["Id"],
         objectApiName: this.objectName,
-        actionName: "view"
-      }
+        actionName: "view",
+      },
     });
   }
 
@@ -178,8 +196,8 @@ export default class LightningDatatable extends NavigationMixin(
       attributes: {
         recordId: row["Id"],
         objectApiName: this.objectName,
-        actionName: "edit"
-      }
+        actionName: "edit",
+      },
     });
   }
 
@@ -189,7 +207,6 @@ export default class LightningDatatable extends NavigationMixin(
     soql += this.appendWhere();
     soql += this.appendLimit();
     soql += this.appendOffset();
-    console.log("soql:::", soql);
     this.soql = soql;
   }
 
@@ -197,7 +214,7 @@ export default class LightningDatatable extends NavigationMixin(
     let soql = "SELECT Id,",
       col = [];
     if (cols) {
-      cols.map(val => {
+      cols.map((val) => {
         if (val.hasOwnProperty("fieldName")) {
           col.push(val["fieldName"]);
         }
@@ -230,7 +247,7 @@ export default class LightningDatatable extends NavigationMixin(
       new ShowToastEvent({
         title: title,
         message: message,
-        variant: variant
+        variant: variant,
       })
     );
   }
