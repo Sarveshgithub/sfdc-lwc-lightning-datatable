@@ -51,3 +51,4 @@ Enter WHERE clause | String | provide aditional filters | Example `LastName like
         "type": "text"
     }]
 ```
+If you like this then, please [donate](https://paypal.me/codemarshal?locale.x=en_GB)
