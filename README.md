@@ -51,9 +51,10 @@ Enter WHERE clause | String | provide aditional filters | Example `LastName like
         "type": "text"
     }]
 ```
-If you like this then, please [donate](https://paypal.me/codemarshal?locale.x=en_GB)
-
-<a href="https://githubsfdeploy.herokuapp.com">
+<a href="https://githubsfdeploy.herokuapp.com/app/githubdeploy/Sarveshgithub/sfdc-lwc-lightning-datatable">
   <img alt="Deploy to Salesforce"
        src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
 </a>
+
+If you like this then, please [donate](https://paypal.me/codemarshal?locale.x=en_GB)
+
