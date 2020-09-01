@@ -46,7 +46,7 @@ export default class LightningDatatable extends NavigationMixin(
     });
     this.columns = cols;
     this.buildSOQL();
-    countRecords({ objectName: this.objectName }).then((result) => {
+    countRecords({ countSOQL: this.buildCountSOQL() }).then((result) => {
       this.totalRows = result;
     });
     this.fetchRecords();

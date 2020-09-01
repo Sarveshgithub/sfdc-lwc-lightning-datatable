@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
-    <apiVersion>48.0</apiVersion>
+    <apiVersion>49.0</apiVersion>
     <isExposed>true</isExposed>
     <targets>
         <target>lightning__RecordPage</target>
@@ -14,6 +14,7 @@
             <property name="columns" type="String" required="true" label="Enter Columns JSON"/>
             <property name="relatedFieldAPI" type="String" default="" label="Enter Related field API Name"/>
             <property name="whereClause" type="String" default="" label="Enter WHERE clause"/>
+            <property name="limit" type="String" default="10" label="Enter number of records to display on screen"/>
         </targetConfig>
       </targetConfigs>
 </LightningComponentBundle>

@@ -4,10 +4,10 @@ public with sharing class RelatedList {
 		return Database.query(soql);
 	}
 
-	@AuraEnabled(cacheable = true) public static Integer countRecords(String objectName) {
-		if(String.isNotEmpty(objectName)) {
-			return database.countQuery('SELECT count() FROM ' + objectName);
+	@AuraEnabled(cacheable=true) public static Integer countRecords(String countSOQL) {
+		if (String.isNotEmpty(countSOQL)) {
+			return database.countQuery(countSOQL);
 		}
 		return 0;
-	}
+  	}	
 }

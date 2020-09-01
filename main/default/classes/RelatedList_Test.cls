@@ -17,7 +17,7 @@ public with sharing class RelatedList_Test {
         User testUser = [Select id from user where id = :UserInfo.getUserId()];
         Test.startTest();
         System.runAs(testUser){
-            RelatedList.countRecords('Contact');
+            RelatedList.countRecords('Select count() FROM Contact LIMIT 1');
             RelatedList.countRecords(null);
         }
         Test.stopTest();
