@@ -60,5 +60,5 @@ Click Button to deploy source in Developer/Sandbox
 </a>
 
 
-If you like this then, please [donate](https://paypal.me/codemarshal?locale.x=en_GB)
+If you like this then, please [donate](https://paypal.me/codemarshal?locale.x=en_GB) to support
 
