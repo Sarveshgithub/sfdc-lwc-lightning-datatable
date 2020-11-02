@@ -1,31 +1,31 @@
 <template>
-  <!-- Main content -->
-  <lightning-card variant="Narrow" title={title} icon-name={iconName}>
-    <lightning-button label="New" title="Non-primary action" onclick={newRecord} class="slds-m-left_x-small"
-      slot="actions"></lightning-button>
-    <!-- Error block -->
-    <template if:true={error}>
-      <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
-        <span class="slds-assistive-text">error</span>
-        <p>{error}</p>
+    <!-- Main content -->
+    <lightning-card variant="Narrow" title={title} icon-name={iconName}>
+      <lightning-button label="New" title="Non-primary action" onclick={newRecord} class="slds-m-left_x-small"
+        slot="actions"></lightning-button>
+      <!-- Error block -->
+      <template if:true={error}>
+        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
+          <span class="slds-assistive-text">error</span>
+          <p>{error}</p>
+        </div>
+      </template>
+      <!-- Data table  -->
+      <template if:true={data}>
+        <lightning-datatable key-field="id" data={data} columns={columns} onrowaction={handleRowAction}
+          hide-checkbox-column>
+        </lightning-datatable>
+      </template>
+      <!-- Pagination -->
+      <div slot="footer" style="text-align: right;">
+        <lightning-button variant="brand" disabled={isDisablePrev} label="First" title="Primary action"
+          onclick={firstPage} class="slds-m-left_xx-small"></lightning-button>
+        <lightning-button variant="brand" disabled={isDisablePrev} label="Previous" title="Primary action"
+          onclick={previous} class="slds-m-left_xx-small"></lightning-button>
+        <lightning-button variant="brand" disabled={isDisableNext} label="Next" title="Primary action" onclick={next}
+          class="slds-m-left_xx-small"></lightning-button>
+        <lightning-button variant="brand" disabled={isDisableNext} label="Last" title="Primary action"
+          onclick={lastPage} class="slds-m-left_xx-small slds-m-right_xx-small"></lightning-button>
       </div>
-    </template>
-    <!-- Data table  -->
-    <template if:true={data}>
-      <lightning-datatable key-field="id" data={data} columns={columns} onrowaction={handleRowAction}
-        hide-checkbox-column>
-      </lightning-datatable>
-    </template>
-    <!-- Pagination -->
-    <div slot="footer" style="text-align: right;">
-      <lightning-button variant="brand" disabled={isDisablePrev} label="First" title="Primary action"
-        onclick={firstPage} class="slds-m-left_xx-small"></lightning-button>
-      <lightning-button variant="brand" disabled={isDisablePrev} label="Previous" title="Primary action"
-        onclick={previous} class="slds-m-left_xx-small"></lightning-button>
-      <lightning-button variant="brand" disabled={isDisableNext} label="Next" title="Primary action" onclick={next}
-        class="slds-m-left_xx-small"></lightning-button>
-      <lightning-button variant="brand" disabled={isDisableNext} label="Last" title="Primary action"
-        onclick={lastPage} class="slds-m-left_xx-small slds-m-right_xx-small"></lightning-button>
-    </div>
-  </lightning-card>
+    </lightning-card>
 </template>
