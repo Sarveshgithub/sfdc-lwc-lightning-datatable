@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
-    <apiVersion>49.0</apiVersion>
-    <isExposed>true</isExposed>
-    <targets>
-        <target>lightning__RecordPage</target>
-    </targets>
-    <!-- Configuring the design attributes -->
-      <targetConfigs>
-        <targetConfig targets="lightning__RecordPage">
-           <property name="iconName" type="String" required="true" label="Enter Icon Name" default="standard:account"/>
-            <property name="title" type="String" required="true" label="Enter Title" default="LWC Table"/>
-            <property name="objectName" type="String" required="true" label="Enter Object API Name"/>
-            <property name="columns" type="String" required="true" label="Enter Columns JSON"/>
-            <property name="relatedFieldAPI" type="String" default="" label="Enter Related field API Name"/>
-            <property name="whereClause" type="String" default="" label="Enter WHERE clause"/>
-            <property name="limit" type="String" default="10" label="Enter number of records to display on screen"/>
-        </targetConfig>
-      </targetConfigs>
+  <apiVersion>48.0</apiVersion>
+  <isExposed>true</isExposed>
+  <targets>
+    <target>lightning__RecordPage</target>
+    <target>lightning__AppPage</target>
+    <target>lightning__HomePage</target>
+  </targets>
+  <!-- Configuring the design attributes -->
+  <targetConfigs>
+    <targetConfig targets="lightning__RecordPage, lightning__HomePage, lightning__AppPage">
+      <property name="iconName" type="String" required="true" label="Enter Icon Name" default="standard:account" />
+      <property name="title" type="String" required="true" label="Enter Title" default="LWC Table" />
+      <property name="objectName" type="String" required="true" label="Enter Object API Name" />
+      <property name="columns" type="String" required="true" label="Enter Columns JSON" />
+      <property name="relatedFieldAPI" type="String" default="" label="Enter Related field API Name" />
+      <property name="whereClause" type="String" default="" label="Enter WHERE clause" />
+    </targetConfig>
+  </targetConfigs>
 </LightningComponentBundle>
