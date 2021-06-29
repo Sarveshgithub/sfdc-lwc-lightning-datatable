@@ -59,6 +59,3 @@ Click Button to deploy source in Developer/Sandbox
        src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
 </a>
 
-
-If you like this then, please [donate](https://paypal.me/codemarshal?locale.x=en_GB) to support
-
