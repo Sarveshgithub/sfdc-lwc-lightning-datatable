@@ -53,10 +53,16 @@ export default class LightningDatatable extends NavigationMixin(
   }
 
   fetchRecords() {
-    getRecords({ soql: this.soql })
+    getRecords({ soql: this.soql, SObjectName: this.objectName })
       .then((data) => {
         if (data) {
-          data.map((e) => {
+          if( !this.iconName)  {
+            this.iconName = data.iconName;
+          }
+
+          let records = data.records;
+
+          records.map((e) => {
             for (let key in e) {
               if (typeof e[key] === "object") {
                 for (let onLevel in e[key]) {
@@ -65,7 +71,7 @@ export default class LightningDatatable extends NavigationMixin(
               }
             }
           });
-          this.data = data;
+          this.data = records;
         }
       })
       .catch((error) => {

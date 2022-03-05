@@ -16,6 +16,10 @@ The data table has following features.
 - Row action, like : show detail, edit record, delete record
 
 ## Steps to Customization through Design Attribute
+
+**Icon name :** <br/>
+Only specify the icon name if you wish to override the default icon of the object.
+<br/><br/>
 Design Attribute
 
 | Label           | Type       | Value                        | Example             |
