@@ -14,8 +14,13 @@ public with sharing class RelatedList {
     
     
   @AuraEnabled
-  public static ListResults getRecords(String soql, String SObjectName) {
-    return new ListResults(Database.query(soql), getIconName(SObjectName));
+  public static ListResults getRecords(String soql, String SObjectName, String iconName) {
+      //autoretrieve of the icon name based on sobject name if no icon is specified
+      if(String.isBlank(iconName) ) {
+          iconName = IconUtils.getIconName(SObjectName);
+      }  
+      
+      return new ListResults(Database.query(soql), iconName);
   }
 
   @AuraEnabled(cacheable=true)
@@ -30,30 +35,4 @@ public with sharing class RelatedList {
     return 0;
   }
     
-  public static String getIconName(String sObjectName){
-        String u;
-        List<Schema.DescribeTabSetResult> tabSetDesc = Schema.describeTabs();
-        List<Schema.DescribeTabResult> tabDesc = new List<Schema.DescribeTabResult>();
-        List<Schema.DescribeIconResult> iconDesc = new List<Schema.DescribeIconResult>();
-
-        for(Schema.DescribeTabSetResult tsr : tabSetDesc) { tabDesc.addAll(tsr.getTabs()); }
-
-        for(Schema.DescribeTabResult tr : tabDesc) {
-            if( sObjectName == tr.getSobjectName() ) {
-                if( tr.isCustom() == true ) {
-                    iconDesc.addAll(tr.getIcons());
-                } else {
-                    u = 'standard:' + sObjectName.toLowerCase();
-                }
-            }
-        }
-        for (Schema.DescribeIconResult ir : iconDesc) {
-            if (ir.getContentType() == 'image/svg+xml'){
-                u = 'custom:' + ir.getUrl().substringBetween('custom/','.svg').substringBefore('_');
-                break;
-            }
-        }
-        
-        return u;
-    }
 }

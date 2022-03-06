@@ -6,7 +6,7 @@ public with sharing class RelatedList_Test {
         User testUser = [Select id from user where id = :UserInfo.getUserId()];
         RelatedList.ListResults results = null;
         System.runAs(testUser){
-            results = RelatedList.getRecords('Select id from contact limit 10', 'Contact');
+            results = RelatedList.getRecords('Select id from contact limit 10', 'Contact', '');
         }
         
         //checking if the SObject icon name is well retrieved

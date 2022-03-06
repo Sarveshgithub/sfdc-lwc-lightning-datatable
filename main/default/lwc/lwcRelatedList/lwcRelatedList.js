@@ -53,7 +53,7 @@ export default class LightningDatatable extends NavigationMixin(
   }
 
   fetchRecords() {
-    getRecords({ soql: this.soql, SObjectName: this.objectName })
+    getRecords({ soql: this.soql, SObjectName: this.objectName, iconName: this.iconName })
       .then((data) => {
         if (data) {
           if( !this.iconName)  {
