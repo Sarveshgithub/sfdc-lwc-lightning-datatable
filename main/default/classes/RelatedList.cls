@@ -1,7 +1,26 @@
 public with sharing class RelatedList {
+  
+  public class ListResults {
+      @AuraEnabled
+      public List<SObject> records;
+      @AuraEnabled
+      public String iconName;
+  	
+      public ListResults(List<SObject> records, String iconName) {
+          this.records = records;
+          this.iconName = iconName;
+      } 
+  }  
+    
+    
   @AuraEnabled
-  public static List<SObject> getRecords(String soql) {
-    return Database.query(soql);
+  public static ListResults getRecords(String soql, String SObjectName, String iconName) {
+      //autoretrieve of the icon name based on sobject name if no icon is specified
+      if(String.isBlank(iconName) ) {
+          iconName = IconUtils.getIconName(SObjectName);
+      }  
+      
+      return new ListResults(Database.query(soql), iconName);
   }
 
   @AuraEnabled(cacheable=true)
@@ -15,4 +34,5 @@ public with sharing class RelatedList {
     }
     return 0;
   }
+    
 }
