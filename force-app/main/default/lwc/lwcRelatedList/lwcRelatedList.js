@@ -9,6 +9,7 @@ import { deleteRecord } from "lightning/uiRecordApi";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getRecords from "@salesforce/apex/RelatedList.getRecords";
 import countRecords from "@salesforce/apex/RelatedList.countRecords";
+
 let cols;
 const actions = [
   { label: "Show details", name: "show_details" },
