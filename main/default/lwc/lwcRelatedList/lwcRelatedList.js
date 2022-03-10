@@ -28,6 +28,7 @@ export default class LightningDatatable extends NavigationMixin(
   @api relatedFieldAPI;
   @api whereClause;
   @api limit = 10;
+  @api isCounterDisplayed;
   // Private Property
   @track data;
   @track soql;
@@ -46,7 +47,7 @@ export default class LightningDatatable extends NavigationMixin(
     });
     this.columns = cols;
     this.buildSOQL();
-    countRecords({ objectName: this.objectName }).then((result) => {
+    countRecords({ objectName: this.objectName, whereClause: this.appendWhere() }).then((result) => {
       this.totalRows = result;
     });
     this.fetchRecords();
@@ -257,5 +258,9 @@ export default class LightningDatatable extends NavigationMixin(
         variant: variant
       })
     );
+  }
+
+  get titleFormatted() {
+    return (this.isCounterDisplayed) ? this.title + ` (${this.totalRows})` : this.title;
   }
 }
