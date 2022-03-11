@@ -16,6 +16,7 @@
       <property name="columns" type="String" required="true" label="Enter Columns JSON" />
       <property name="relatedFieldAPI" type="String" default="" label="Enter Related field API Name" />
       <property name="whereClause" type="String" default="" label="Enter WHERE clause" />
+      <property name="isCounterDisplayed" type="Boolean" label="Show the number of record" />
     </targetConfig>
   </targetConfigs>
 </LightningComponentBundle>

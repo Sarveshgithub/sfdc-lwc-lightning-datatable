@@ -30,6 +30,7 @@ Design Attribute
 | Enter Columns JSON | String | { `fieldName`:api name,`label`:col label,`type`:text,number,date }. **Note** : for related field it should be concat with . i.e : Account.Name for contact | See below **Column JSON Example**
 Enter Related field API Name| String | Enter related field api name | Example AccountId for contact when component is on account layout.
 Enter WHERE clause | String | provide aditional filters | Example `LastName like '%s' AND Account.Name like '%t'`
+| Show the number of record  | Boolean | append the number of records in the title  |  checked(true) OR not checked(false) |
 
 ## Columns JSON Example
 ``` yaml 

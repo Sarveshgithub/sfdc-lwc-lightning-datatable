@@ -24,11 +24,14 @@ public with sharing class RelatedList {
   }
 
   @AuraEnabled(cacheable=true)
-  public static Integer countRecords(String objectName) {
+  public static Integer countRecords(String objectName, String whereClause) {
+    String formattedWhere = (String.isBlank(whereClause)) ? '' : ' '+whereClause; 
+
     if (String.isNotEmpty(objectName)) {
       return database.countQuery(
         'SELECT count() FROM ' +
         objectName +
+        formattedWhere +
         ' WITH SECURITY_ENFORCED'
       );
     }
