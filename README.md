@@ -1,3 +1,5 @@
+[![Master](https://github.com/Sarveshgithub/sfdc-lwc-lightning-datatable/actions/workflows/master_push.yml/badge.svg?branch=master)](https://github.com/Sarveshgithub/sfdc-lwc-lightning-datatable/actions/workflows/master_push.yml)
+
 # Salesforce Lightning Data table (LWC Version) 
 
 ![Image description](https://github.com/Sarveshgithub/sfdc-lwc-lightning-datatable/blob/master/lwc-datatable.PNG?raw=true)
