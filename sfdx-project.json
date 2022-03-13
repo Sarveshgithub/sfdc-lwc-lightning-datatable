@@ -5,7 +5,7 @@
       "default": true
     }
   ],
-  "name": "test",
+  "name": "sfdc-lwc-lightning-datatable",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "52.0"
