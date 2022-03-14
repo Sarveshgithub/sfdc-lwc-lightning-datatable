@@ -29,12 +29,15 @@ export default class LightningDatatable extends NavigationMixin(
   @api whereClause;
   @api limit = 10;
   @api isCounterDisplayed;
+  @api actionButtonsList; //buttons for the list
+  @api showCheckboxes;
   // Private Property
   @track data;
   @track soql;
   @track offSet = 0;
   @track totalRows = 0;
   @track error;
+  @track selectedRows;
 
   // Do init funtion
   connectedCallback() {
@@ -262,5 +265,32 @@ export default class LightningDatatable extends NavigationMixin(
 
   get titleFormatted() {
     return (this.isCounterDisplayed) ? this.title + ` (${this.totalRows})` : this.title;
+  }
+
+  callApexFromButton(event) {
+    //add logic to call apex method based on button label (event.target.label)
+  }
+
+  fireEventFromButton(event) {
+    event.preventDefault();
+    console.log('fireEventFromButton');
+
+    const buttonEvent = new CustomEvent(
+      'action'+event.target.dataset.index, 
+      { }
+    );
+
+    // Dispatches the event.
+    this.dispatchEvent(buttonEvent);
+  }
+
+  handleRowSelection(event){
+    this.selectedRows = event.detail.selectedRows;
+    console.log('this.selectedRows ', JSON.stringify(this.selectedRows) );
+  }
+
+  get actionButtonsListNotEmpty() {
+    console.log('this.actionButtonsList ', this.actionButtonsList);
+    return this.actionButtonsList && this.actionButtonsList.length > 0;
   }
 }
