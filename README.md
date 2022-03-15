@@ -6,6 +6,8 @@
 
 ## About
 
+To deploy the component see [Deploy](#deploy)
+
 This is generic lighting data table , which is build in lwc.
 The customization are done by design attributes.
 
@@ -16,7 +18,7 @@ The data table has following features.
 - Pagination as First,Previous,Next,Last buttons.
 - New record creation action
 - Row action, like : show detail, edit record, delete record
-- configurable buttons (for developers, see "Buttons configuration")
+- configurable buttons (for developers, see [Buttons configuration](#buttons-configuration-for-developers-accessible-in-the-component-and-from-parent-component) )
 
 ## Steps to Customization through Design Attribute
 
@@ -27,13 +29,13 @@ Design Attribute
 
 | Label           | Required | Type       | Value                        | Example             |
 |-----------------|------------|------------|------------------------------|---------------------|
-| Enter Icon Name | false      | String     | provide slds icon name  |  `standard:account` |
-| Enter Title     | true      | String     | provide table title |  LWC Table               |
-| Enter Object API Name | true     | String| provide object custom or standard API name|  Account |
-| Enter Columns JSON | true  | String | { `fieldName`:api name,`label`:col label,`type`:text,number,date }. **Note** : for related field it should be concat with . i.e : Account.Name for contact | See below **Column JSON Example**
-Enter Related field API Name | false | String | Enter related field api name | Example AccountId for contact when component is on account layout.
-Enter WHERE clause | false | String | provide aditional filters | Example `LastName like '%s' AND Account.Name like '%t'`
-| Show the number of record | false | Boolean | append the number of records in the title  |  checked(true) OR not checked(false) |
+| Enter Icon Name | :x:      | String     | provide slds icon name  |  `standard:account` |
+| Enter Title     | :heavy_check_mark:      | String     | provide table title |  LWC Table               |
+| Enter Object API Name | :heavy_check_mark:   | String| provide object custom or standard API name|  Account |
+| Enter Columns JSON | :heavy_check_mark:  | String | { `fieldName`:api name,`label`:col label,`type`:text,number,date }. **Note** : for related field it should be concat with . i.e : Account.Name for contact | See below **Column JSON Example**
+Enter Related field API Name | :x: | String | Enter related field api name | Example AccountId for contact when component is on account layout.
+Enter WHERE clause | :x: | String | provide aditional filters | Example `LastName like '%s' AND Account.Name like '%t'`
+| Show the number of record | :x: | Boolean | append the number of records in the title  |  checked(true) OR not checked(false) |
 
 ## Columns JSON Example
 ``` yaml 
@@ -62,14 +64,16 @@ Enter WHERE clause | false | String | provide aditional filters | Example `LastN
 ## Buttons configuration (for developers, accessible in the component and from parent component)
 
 ### Call apex or javascript method
-callApexFromButton must be true
+For a button that is going to call callApexFromButton, the properties must be :
+- callApexFromButton: true
 
 ### Fire event to parent component
-- callApex must be false
-- needSelectedRows can be true if you need to send selected rows to parent component
+For a button that is going to fire an event, the properties must be :
+- callApex: false
+- needSelectedRows : can be true if you need to send selected rows to parent component
 
 ### Example 
-JSON :
+Javascript array (actionButtonsList property) :
 ```
 [  
    { label : "delete all", variant: "destructive", needSelectedRows: true, callApex: true },
@@ -96,11 +100,13 @@ helloWorld(event) {
 }
 ```
 
-The first button "delete all" is not going to send event to parent it will call the javascript method callApexFromButton you must 
+- The first button "delete all" is not going to send event to parent it will call the javascript method callApexFromButton you must 
 implement the desired javascript/apex call based on the button label.
+- The button "action button" fires the event action2
+- The button "another action button" fires the event action3
 
-The button "action button" fires the event action2
-The button "another action button" fires the event action3
+The results should be :
+![Capture buttons](https://user-images.githubusercontent.com/39730173/158386203-bca7099f-0070-48d2-8ec9-6936a68dd754.PNG)
 
 ## Deploy
 Click Button to deploy source in Developer/Sandbox
