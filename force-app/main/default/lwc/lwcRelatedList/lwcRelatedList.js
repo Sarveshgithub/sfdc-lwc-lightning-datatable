@@ -268,29 +268,39 @@ export default class LightningDatatable extends NavigationMixin(
   }
 
   callApexFromButton(event) {
-    //add logic to call apex method based on button label (event.target.label)
+    //call desired apex method based on buttonLabel value
+    //if button has needSelectedRows set to true, have selected rows using this.selectedRows
+    const buttonLabel = event.target.dataset.name;
+    console.log('callApexFromButton, button clicked has label : '+buttonLabel);
   }
 
   fireEventFromButton(event) {
     event.preventDefault();
     console.log('fireEventFromButton');
+    const buttonPos = Number(event.target.dataset.index) + 1;
+    const button = this.actionButtonsList[buttonPos-1];
+    let buttonEvent = null;
 
-    const buttonEvent = new CustomEvent(
-      'action'+event.target.dataset.index, 
-      { }
-    );
+    console.log('action'+buttonPos);
+
+    if(button.needSelectedRows && button.needSelectedRows === true) {
+      buttonEvent = new CustomEvent(
+        'action'+buttonPos, 
+        { detail  : JSON.stringify(this.selectedRows) }
+      );
+    } else {
+      buttonEvent = new CustomEvent('action'+buttonPos);
+    }
 
     // Dispatches the event.
     this.dispatchEvent(buttonEvent);
   }
 
   handleRowSelection(event){
-    this.selectedRows = event.detail.selectedRows;
-    console.log('this.selectedRows ', JSON.stringify(this.selectedRows) );
+    this.selectedRows = JSON.parse(JSON.stringify(event.detail.selectedRows) );
   }
 
   get actionButtonsListNotEmpty() {
-    console.log('this.actionButtonsList ', this.actionButtonsList);
     return this.actionButtonsList && this.actionButtonsList.length > 0;
   }
 }

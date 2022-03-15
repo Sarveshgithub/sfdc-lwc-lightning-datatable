@@ -16,6 +16,7 @@
                             title={actionButton.label}
                             variant={actionButton.variant} 
                             onclick={callApexFromButton}
+                            data-name={actionButton.label}
                             class="slds-m-left_x-small"
                             slot="actions"
                             >
@@ -61,7 +62,8 @@
         key-field="id" 
         data={data} 
         columns={columns} 
-        onrowaction={handleRowSelection}>
+        onrowaction={handleRowAction}
+        onrowselection={handleRowSelection}  
       >
       </lightning-datatable>
 
