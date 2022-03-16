@@ -65,16 +65,16 @@ Enter WHERE clause | :x: | String | provide aditional filters | Example `LastNam
 
 ### Call apex or javascript method
 For a button that is going to call callApexFromButton, the properties must be :
-- callApexFromButton: true
+- `callApexFromButton: true`
 
 ### Fire event to parent component
 For a button that is going to fire an event, the properties must be :
-- callApex: false
-- needSelectedRows : can be true if you need to send selected rows to parent component
+- `callApex: false`
+- `needSelectedRows : can be true if you need to send selected rows to parent component`
 
 ### Example 
 Javascript array (actionButtonsList property) :
-```
+```yml
 [  
    { label : "delete all", variant: "destructive", needSelectedRows: true, callApex: true },
    { label : "action button", variant : "brand", needSelectedRows: false, callApex: false },
@@ -82,8 +82,8 @@ Javascript array (actionButtonsList property) :
 ];
 ```
 Parent component (**you don't need parent component, you can define default buttons using actionButtonsList**) :
-```
-//in template
+```html
+<!-- in template -->
 <c-lwc-related-list object-name="Contact"
         columns={columns}
         related-field-api="AccountId"
@@ -91,8 +91,9 @@ Parent component (**you don't need parent component, you can define default butt
         action-buttons-list={actions}
         show-checkboxes=true
         onaction2={helloWorld}
-        onaction3={helloWorld}
-
+        onaction3={helloWorld}/>
+```
+```JS
 //in js controller
 helloWorld(event) {
     console.log('hello world');
@@ -100,7 +101,7 @@ helloWorld(event) {
 }
 ```
 
-- The first button "delete all" is not going to send event to parent it will call the javascript method callApexFromButton you must 
+- The first button "delete all" is not going to send event to parent it will call the javascript method `callApexFromButton` you must 
 implement the desired javascript/apex call based on the button label.
 - The button "action button" fires the event action2
 - The button "another action button" fires the event action3
