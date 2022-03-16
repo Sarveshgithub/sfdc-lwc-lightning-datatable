@@ -29,12 +29,15 @@ export default class LightningDatatable extends NavigationMixin(
   @api whereClause;
   @api limit = 10;
   @api isCounterDisplayed;
+  @api actionButtonsList; //buttons for the list
+  @api showCheckboxes;
   // Private Property
   @track data;
   @track soql;
   @track offSet = 0;
   @track totalRows = 0;
   @track error;
+  @track selectedRows;
 
   // Do init funtion
   connectedCallback() {
@@ -262,5 +265,42 @@ export default class LightningDatatable extends NavigationMixin(
 
   get titleFormatted() {
     return (this.isCounterDisplayed) ? this.title + ` (${this.totalRows})` : this.title;
+  }
+
+  callApexFromButton(event) {
+    //call desired apex method based on buttonLabel value
+    //if button has needSelectedRows set to true, have selected rows using this.selectedRows
+    const buttonLabel = event.target.dataset.name;
+    console.log('callApexFromButton, button clicked has label : '+buttonLabel);
+  }
+
+  fireEventFromButton(event) {
+    event.preventDefault();
+    console.log('fireEventFromButton');
+    const buttonPos = Number(event.target.dataset.index) + 1;
+    const button = this.actionButtonsList[buttonPos-1];
+    let buttonEvent = null;
+
+    console.log('action'+buttonPos);
+
+    if(button.needSelectedRows && button.needSelectedRows === true) {
+      buttonEvent = new CustomEvent(
+        'action'+buttonPos, 
+        { detail  : JSON.stringify(this.selectedRows) }
+      );
+    } else {
+      buttonEvent = new CustomEvent('action'+buttonPos);
+    }
+
+    // Dispatches the event.
+    this.dispatchEvent(buttonEvent);
+  }
+
+  handleRowSelection(event){
+    this.selectedRows = JSON.parse(JSON.stringify(event.detail.selectedRows) );
+  }
+
+  get actionButtonsListNotEmpty() {
+    return this.actionButtonsList && this.actionButtonsList.length > 0;
   }
 }
