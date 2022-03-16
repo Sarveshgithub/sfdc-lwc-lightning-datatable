@@ -1,8 +1,42 @@
 <template>
   <!-- Main content -->
   <lightning-card variant="Narrow" title={titleFormatted} icon-name={iconName}>
-    <lightning-button label="New" title="Non-primary action" onclick={newRecord} class="slds-m-left_x-small"
+    <!--default button create -->
+    <template if:false={actionButtonsListNotEmpty}>
+      <lightning-button label="New" title="Non-primary action" onclick={newRecord} class="slds-m-left_x-small"
       slot="actions"></lightning-button>
+    </template>
+
+    <!-- custom buttons for list -->
+    <template if:true={actionButtonsListNotEmpty}>
+      <template for:each={actionButtonsList} for:item="actionButton" for:index="index">
+          <lightning-button if:true={actionButton.callApex}
+                            key={actionButton.label} 
+                            label={actionButton.label} 
+                            title={actionButton.label}
+                            variant={actionButton.variant} 
+                            onclick={callApexFromButton}
+                            data-name={actionButton.label}
+                            class="slds-m-left_x-small"
+                            slot="actions"
+                            >
+          </lightning-button>
+
+          <lightning-button if:false={actionButton.callApex}
+                            data-index={index}
+                            key={actionButton.label} 
+                            label={actionButton.label} 
+                            title={actionButton.label}
+                            variant={actionButton.variant} 
+                            onclick={fireEventFromButton}
+                            class="slds-m-left_x-small"
+                            slot="actions"
+                            >
+          </lightning-button>
+
+      </template>
+    </template>
+    
     <!-- Error block -->
     <template if:true={error}>
       <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
@@ -12,9 +46,27 @@
     </template>
     <!-- Data table  -->
     <template if:true={data}>
-      <lightning-datatable key-field="id" data={data} columns={columns} onrowaction={handleRowAction}
+      <!-- DATATALBE WITHOUT CHECKBOXES -->
+      <lightning-datatable 
+        if:false={showCheckboxes}
+        key-field="id" 
+        data={data} 
+        columns={columns} 
+        onrowaction={handleRowAction}
         hide-checkbox-column>
       </lightning-datatable>
+
+      <!-- DATATABLE WITH CHECKBOXES -->
+      <lightning-datatable 
+        if:true={showCheckboxes}
+        key-field="id" 
+        data={data} 
+        columns={columns} 
+        onrowaction={handleRowAction}
+        onrowselection={handleRowSelection}  
+      >
+      </lightning-datatable>
+
     </template>
     <!-- Pagination -->
     <div slot="footer" style="text-align: right;">
