@@ -6,8 +6,8 @@
       <lightning-button label="New" title="Non-primary action" onclick={newRecord} class="slds-m-left_x-small"
       slot="actions"></lightning-button>
     </template>
-
-    <!-- custom buttons for list -->
+    
+    <!-- custom buttons for list --> 
     <template if:true={actionButtonsListNotEmpty}>
       <template for:each={actionButtonsList} for:item="actionButton" for:index="index">
           <lightning-button if:true={actionButton.callApex}
