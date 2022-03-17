@@ -2,7 +2,7 @@
 
 # Salesforce Lightning Data table (LWC Version) 
 
-![Image description](https://user-images.githubusercontent.com/39730173/158386203-bca7099f-0070-48d2-8ec9-6936a68dd754.PNG)
+![datatable](https://user-images.githubusercontent.com/39730173/158892595-3e7c91a3-9259-4e13-914b-191504ca8a05.PNG)
 
 ## About
 
@@ -18,7 +18,7 @@ The data table has following features.
 - Pagination as First,Previous,Next,Last buttons.
 - New record creation action
 - Row action, like : show detail, edit record, delete record
-- configurable buttons (for developers, see [Buttons configuration](#buttons-configuration-for-developers-accessible-in-the-component-and-from-parent-component) )
+- configurable buttons (for developers, see [Buttons configuration](#buttons-configuration) )
 
 ## Steps to Customization through Design Attribute
 
