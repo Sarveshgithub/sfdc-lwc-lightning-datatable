@@ -1,39 +1,19 @@
 <template>
   <!-- Main content -->
   <lightning-card variant="Narrow" title={titleFormatted} icon-name={iconName}>
-    <!--default button create -->
-    <template if:false={actionButtonsListNotEmpty}>
-      <lightning-button label="New" title="Non-primary action" onclick={newRecord} class="slds-m-left_x-small"
-      slot="actions"></lightning-button>
-    </template>
-    
-    <!-- custom buttons for list --> 
+    <!-- custom action buttons for list, by default new is displayed --> 
     <template if:true={actionButtonsListNotEmpty}>
       <template for:each={actionButtonsList} for:item="actionButton" for:index="index">
-          <lightning-button if:true={actionButton.callApex}
-                            key={actionButton.label} 
+          <lightning-button key={actionButton.label} 
                             label={actionButton.label} 
                             title={actionButton.label}
                             variant={actionButton.variant} 
-                            onclick={callApexFromButton}
-                            data-name={actionButton.label}
+                            onclick={callButtonAction}
+                            data-name={actionButton.uniqueName}
                             class="slds-m-left_x-small"
                             slot="actions"
                             >
           </lightning-button>
-
-          <lightning-button if:false={actionButton.callApex}
-                            data-index={index}
-                            key={actionButton.label} 
-                            label={actionButton.label} 
-                            title={actionButton.label}
-                            variant={actionButton.variant} 
-                            onclick={fireEventFromButton}
-                            class="slds-m-left_x-small"
-                            slot="actions"
-                            >
-          </lightning-button>
-
       </template>
     </template>
     
