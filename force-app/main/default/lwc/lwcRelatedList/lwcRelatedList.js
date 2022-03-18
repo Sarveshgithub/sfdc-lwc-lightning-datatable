@@ -16,6 +16,13 @@ const actions = [
   { label: "Edit", name: "edit" },
   { label: "Delete", name: "delete" }
 ];
+
+const buttonsOfList = {
+    'new' : { label : "New", variant: "neutral", needSelectedRows: false }, 
+    'delete-everything' : {  label : "delete all", variant: "destructive", needSelectedRows: false },
+    'delete-selected' : { label : "delete selected", variant : "brand", needSelectedRows: true }
+};
+
 export default class LightningDatatable extends NavigationMixin(
   LightningElement
 ) {
@@ -29,6 +36,7 @@ export default class LightningDatatable extends NavigationMixin(
   @api whereClause;
   @api limit = 10;
   @api isCounterDisplayed;
+  @api actionButtonsToDisplay;
   @api actionButtonsList; //buttons for the list
   @api showCheckboxes;
   // Private Property
@@ -44,6 +52,40 @@ export default class LightningDatatable extends NavigationMixin(
     if (this.columns != null && this.columns != undefined) {
       cols = JSON.parse(this.columns);
     }
+
+    //defining custom list buttons based on actionButtonsToDisplay(string seperated design property)
+    if(this.actionButtonsToDisplay && this.actionButtonsToDisplay != undefined ) {
+      let arrayOfButtonsKeys = this.actionButtonsToDisplay.replace(/\s/g, '').split(',');
+      let actionsButtons = [];
+
+      if(arrayOfButtonsKeys && arrayOfButtonsKeys.length > 0) {
+        arrayOfButtonsKeys.forEach(buttonKey => {
+          //checking if button key is empty or button not defined
+          if(buttonKey && buttonsOfList[buttonKey]) {
+            let button = buttonsOfList[buttonKey];
+            button.uniqueName = buttonKey;
+
+            actionsButtons.push(button );
+
+            //if one button needs selected rows then we show checkboxes
+            if(buttonsOfList[buttonKey].needSelectedRows ) {
+              this.showCheckboxes = true;
+            }
+          }
+        });
+
+        if(actionsButtons.length > 0) {
+          this.actionButtonsList = actionsButtons;
+        } else {
+          this.setDefaultListButtons();
+        }
+      } else {
+        this.setDefaultListButtons();
+      }
+    } else {
+      this.setDefaultListButtons();
+    }
+
     cols.push({
       type: "action",
       typeAttributes: { rowActions: actions }
@@ -54,6 +96,11 @@ export default class LightningDatatable extends NavigationMixin(
       this.totalRows = result;
     });
     this.fetchRecords();
+  }
+
+  setDefaultListButtons() {
+    this.actionButtonsList = [];
+    this.actionButtonsList.push(buttonsOfList['new']);
   }
 
   fetchRecords() {
@@ -267,35 +314,20 @@ export default class LightningDatatable extends NavigationMixin(
     return (this.isCounterDisplayed) ? this.title + ` (${this.totalRows})` : this.title;
   }
 
-  callApexFromButton(event) {
-    //call desired apex method based on buttonLabel value
+  callButtonAction(event) {
+    //call desired javacript method or apex call, or throw an event based on the button key(new, delete-selected...)
     //if button has needSelectedRows set to true, have selected rows using this.selectedRows
     const buttonLabel = event.target.dataset.name;
-    console.log('callApexFromButton, button clicked has label : '+buttonLabel);
-  }
 
-  fireEventFromButton(event) {
-    event.preventDefault();
-    console.log('fireEventFromButton');
-    const buttonPos = Number(event.target.dataset.index) + 1;
-    const button = this.actionButtonsList[buttonPos-1];
-    let buttonEvent = null;
-
-    console.log('action'+buttonPos);
-
-    if(button.needSelectedRows && button.needSelectedRows === true) {
-      buttonEvent = new CustomEvent(
-        'action'+buttonPos, 
-        { detail  : JSON.stringify(this.selectedRows) }
-      );
-    } else {
-      buttonEvent = new CustomEvent('action'+buttonPos);
+    if(buttonLabel === 'new') {
+      this.newRecord();
+    } else if(buttonLabel === 'delete-selected') {
+        const eventDeleteSelected = new CustomEvent('deleteselected', {detail : JSON.stringify(this.selectedRows) });
+        this.dispatchEvent(eventDeleteSelected);
     }
-
-    // Dispatches the event.
-    this.dispatchEvent(buttonEvent);
+    console.log('callButtonAction, button clicked has label : '+buttonLabel);
   }
-
+  
   handleRowSelection(event){
     this.selectedRows = JSON.parse(JSON.stringify(event.detail.selectedRows) );
   }
