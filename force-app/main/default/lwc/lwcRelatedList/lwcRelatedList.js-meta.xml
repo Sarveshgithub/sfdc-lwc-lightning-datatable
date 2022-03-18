@@ -17,6 +17,7 @@
       <property name="relatedFieldAPI" type="String" default="" label="Enter Related field API Name" />
       <property name="whereClause" type="String" default="" label="Enter WHERE clause" />
       <property name="isCounterDisplayed" type="Boolean" label="Show the number of record" />
+      <property name="actionButtonsToDisplay" type="String" label="Buttons to display" />
     </targetConfig>
   </targetConfigs>
 </LightningComponentBundle>
