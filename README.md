@@ -18,7 +18,7 @@ The data table has following features.
 - Pagination as First,Previous,Next,Last buttons.
 - New record creation action
 - Row action, like : show detail, edit record, delete record
-- configurable buttons (for developers, see [Buttons configuration](#buttons-configuration) )
+- Configurable actions buttons (for developers, see [Buttons configuration](#buttons-configuration) )
 
 ## Steps to Customization through Design Attribute
 
@@ -32,11 +32,11 @@ Design Attribute
 | Enter Icon Name | :x:      | String     | provide slds icon name  |  `standard:account` |
 | Enter Title     | :heavy_check_mark:      | String     | provide table title |  LWC Table               |
 | Enter Object API Name | :heavy_check_mark:   | String| provide object custom or standard API name|  Account |
-| Enter Columns JSON | :heavy_check_mark:  | String | { `fieldName`:api name,`label`:col label,`type`:text,number,date }. **Note** : for related field it should be concat with . i.e : Account.Name for contact | See below **Column JSON Example**
+| Enter Columns JSON | :heavy_check_mark:  | String | { `fieldName`:api name,`label`:col label,`type`:text,number,date }. **Note** : for related field it should be concat with . i.e : Account.Name for contact | See below [**Column JSON Example**](#columns-json-example)
 Enter Related field API Name | :x: | String | Enter related field api name | Example AccountId for contact when component is on account layout.
 Enter WHERE clause | :x: | String | provide aditional filters | Example `LastName like '%s' AND Account.Name like '%t'`
 | Show the number of record | :x: | Boolean | append the number of records in the title  |  checked(true) OR not checked(false) |
-| Buttons to display | :x: | String | buttons that we want to display  | new,delete-selected |
+| Buttons to display | :x: | String | buttons that we want to display  | See below [**Buttons configuration**](#buttons-configuration) |
 
 ## Columns JSON Example
 ``` yaml 
@@ -65,7 +65,7 @@ Enter WHERE clause | :x: | String | provide aditional filters | Example `LastNam
 ## Buttons configuration
 
 ### Buttons definition(javascript controller) :
-```
+```js
 const buttonsOfList = {
     'new' : { label : "New", variant: "neutral", needSelectedRows: false }, 
     'delete-everything' : {  label : "delete all", variant: "destructive", needSelectedRows: false },
@@ -79,7 +79,7 @@ The "New" button is displayed by default, modify the method setDefaultListButton
 ### Button logic definition (fire an event, call a method in the javascript controller)
 You can implement your own logic for your new buttons based on button key (new, delete-selected...).
 
-```
+```JS
 callButtonAction(event) {
     //call desired javacript method or apex call, or throw an event based on the button key(new, delete-selected...)
     //if button has needSelectedRows set to true, have selected rows using this.selectedRows
