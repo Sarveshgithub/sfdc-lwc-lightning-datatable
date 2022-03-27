@@ -2,21 +2,21 @@
   <!-- Main content -->
   <lightning-card variant="Narrow" title={titleFormatted} icon-name={iconName}>
     <!-- custom action buttons for list, by default new is displayed --> 
-    <template if:true={actionButtonsListNotEmpty}>
-      <template for:each={actionButtonsList} for:item="actionButton" for:index="index">
+    <template if:true={actionButtons}>
+      <template for:each={actionButtons} for:item="actionButton" for:index="index">
           <lightning-button key={actionButton.label} 
                             label={actionButton.label} 
                             title={actionButton.label}
                             variant={actionButton.variant} 
-                            onclick={callButtonAction}
-                            data-name={actionButton.uniqueName}
+                            onclick={handleButtonAction}
+                            data-name={actionButton.name}
                             class="slds-m-left_x-small"
                             slot="actions"
                             >
           </lightning-button>
       </template>
     </template>
-    
+
     <!-- Error block -->
     <template if:true={error}>
       <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
@@ -26,19 +26,10 @@
     </template>
     <!-- Data table  -->
     <template if:true={data}>
-      <!-- DATATALBE WITHOUT CHECKBOXES -->
-      <lightning-datatable 
-        if:false={showCheckboxes}
-        key-field="id" 
-        data={data} 
-        columns={columns} 
-        onrowaction={handleRowAction}
-        hide-checkbox-column>
-      </lightning-datatable>
 
       <!-- DATATABLE WITH CHECKBOXES -->
       <lightning-datatable 
-        if:true={showCheckboxes}
+        hide-checkbox-column={showCheckboxes}
         key-field="id" 
         data={data} 
         columns={columns} 

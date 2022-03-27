@@ -18,6 +18,7 @@ The data table has following features.
 - Pagination as First,Previous,Next,Last buttons.
 - New record creation action
 - Row action, like : show detail, edit record, delete record
+- Hide/Unhide checkbox column
 - Configurable actions buttons (for developers, see [Buttons configuration](#buttons-configuration) )
 
 ## Steps to Customization through Design Attribute
@@ -27,16 +28,17 @@ Only specify the icon name if you wish to override the default icon of the objec
 <br/><br/>
 Design Attribute
 
-| Label           | Required | Type       | Value                        | Example             |
-|-----------------|------------|------------|------------------------------|---------------------|
-| Enter Icon Name | :x:      | String     | provide slds icon name  |  `standard:account` |
-| Enter Title     | :heavy_check_mark:      | String     | provide table title |  LWC Table               |
-| Enter Object API Name | :heavy_check_mark:   | String| provide object custom or standard API name|  Account |
-| Enter Columns JSON | :heavy_check_mark:  | String | { `fieldName`:api name,`label`:col label,`type`:text,number,date }. **Note** : for related field it should be concat with . i.e : Account.Name for contact | See below [**Column JSON Example**](#columns-json-example)
-Enter Related field API Name | :x: | String | Enter related field api name | Example AccountId for contact when component is on account layout.
-Enter WHERE clause | :x: | String | provide aditional filters | Example `LastName like '%s' AND Account.Name like '%t'`
-| Show the number of record | :x: | Boolean | append the number of records in the title  |  checked(true) OR not checked(false) |
-| Buttons to display | :x: | String | buttons that we want to display  | See below [**Buttons configuration**](#buttons-configuration) |
+| Label                        |  Required          | Type   | Value                                                    | Example             |
+|------------------------------|--------------------|--------|----------------------------------------------------------|---------------------|
+| Enter Icon Name              | :x:                | String | provide slds icon name                                   |  `standard:account` |
+| Enter Title                  | :heavy_check_mark: | String | provide table title                                      |  LWC Table    |
+| Enter Object API Name        | :heavy_check_mark: | String | provide object custom or standard API name               |  Account |
+| Enter Columns JSON           | :heavy_check_mark: | String | { `fieldName`:api name,`label`:col label,`type`:text,number,date }. **Note** : for related field it should be concat with . i.e : Account.Name for contact | See below [**Column JSON Example**](#columns-json-example) |
+| Enter Related field API Name | :x:                | String | Enter related field api name | Example AccountId for contact when component is on account layout. |
+| Hide/Unhide checkbox column  | :x:                | Boolean | true/false               |  Hide/Unhide Checkbox |
+| Enter WHERE clause           | :x:                | String | provide aditional filters | Example `LastName like '%s' AND Account.Name like '%t'` |
+| Show the number of record    | :x:                | Boolean| append the number of records in the title  |  checked(true) OR not checked(false) |
+| Buttons to display           | :x:                | String | buttons that we want to display  | See below [**Buttons configuration**](#buttons-configuration) |
 
 ## Columns JSON Example
 ``` yaml 
@@ -64,55 +66,39 @@ Enter WHERE clause | :x: | String | provide aditional filters | Example `LastNam
 ```
 ## Buttons configuration
 
-### Buttons definition(javascript controller) :
-```js
-const buttonsOfList = {
-    'new' : { label : "New", variant: "neutral", needSelectedRows: false }, 
-    'delete-everything' : {  label : "delete all", variant: "destructive", needSelectedRows: false },
-    'delete-selected' : { label : "delete selected", variant : "brand", needSelectedRows: true }
-};
+### Buttons JSON :
+```yml
+[{
+        "name": "New",
+        "label": "New",
+        "variant": "neutral"
+    }
+]
 ```
 ### Default displayed buttons
-The "New" button is displayed by default, modify the method setDefaultListButtons to change default buttons.
+The "New" button is displayed by default
 
 
 ### Button logic definition (fire an event, call a method in the javascript controller)
-You can implement your own logic for your new buttons based on button key (new, delete-selected...).
+You can implement your own logic for your new buttons based on button JSON (new, delete-selected...).
 
 ```JS
-callButtonAction(event) {
+  handleButtonAction(event) {
     //call desired javacript method or apex call, or throw an event based on the button key(new, delete-selected...)
     //if button has needSelectedRows set to true, have selected rows using this.selectedRows
     const buttonLabel = event.target.dataset.name;
-
-    if(buttonLabel === 'new') {
+    switch (buttonLabel) {
+      case "New":
         this.newRecord();
-    } else if(buttonLabel === 'delete-selected') {
-        new customEvent('deleteselected', {detail : this.rows});
+        break;
+      /* TODO
+      case "delete-selected":
+        const eventDeleteSelected = new CustomEvent('deleteselected', { detail: JSON.stringify(this.selectedRows) });
+        this.dispatchEvent(eventDeleteSelected);
+        break;*/
+      default:
     }
-    console.log('callButtonAction, button clicked has label : '+buttonLabel);
-}
-```
-
-**From Parent component (for developers) :**
-```
-//in template
-<c-lwc-related-list object-name="Contact"
-        columns={columns}
-        title="contacts-from-parent-component"
-        related-field-api="AccountId"
-        is-counter-displayed=true
-        action-buttons-to-display='new,delete-selected'
-        ondeleteselected={helloWorld} >
-
-</c-lwc-related-list>
-```
-```
-//in js controller
-helloWorld(event) {
-    console.log('hello world');
-    console.log('event rows ', event.detail);
-}
+  }
 ```
 
 ## Deploy

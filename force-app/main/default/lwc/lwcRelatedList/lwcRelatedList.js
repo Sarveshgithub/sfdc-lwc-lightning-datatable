@@ -17,12 +17,6 @@ const actions = [
   { label: "Delete", name: "delete" }
 ];
 
-const buttonsOfList = {
-    'new' : { label : "New", variant: "neutral", needSelectedRows: false }, 
-    'delete-everything' : {  label : "delete all", variant: "destructive", needSelectedRows: false },
-    'delete-selected' : { label : "delete selected", variant : "brand", needSelectedRows: true }
-};
-
 export default class LightningDatatable extends NavigationMixin(
   LightningElement
 ) {
@@ -36,8 +30,7 @@ export default class LightningDatatable extends NavigationMixin(
   @api whereClause;
   @api limit = 10;
   @api isCounterDisplayed;
-  @api actionButtonsToDisplay;
-  @api actionButtonsList; //buttons for the list
+  @api actionButtons; //buttons for the list
   @api showCheckboxes;
   // Private Property
   @track data;
@@ -49,43 +42,12 @@ export default class LightningDatatable extends NavigationMixin(
 
   // Do init funtion
   connectedCallback() {
-    if (this.columns != null && this.columns != undefined) {
+    if (this.columns && this.columns != undefined) {
       cols = JSON.parse(this.columns);
     }
-
-    //defining custom list buttons based on actionButtonsToDisplay(string seperated design property)
-    if(this.actionButtonsToDisplay && this.actionButtonsToDisplay != undefined ) {
-      let arrayOfButtonsKeys = this.actionButtonsToDisplay.replace(/\s/g, '').split(',');
-      let actionsButtons = [];
-
-      if(arrayOfButtonsKeys && arrayOfButtonsKeys.length > 0) {
-        arrayOfButtonsKeys.forEach(buttonKey => {
-          //checking if button key is empty or button not defined
-          if(buttonKey && buttonsOfList[buttonKey]) {
-            let button = buttonsOfList[buttonKey];
-            button.uniqueName = buttonKey;
-
-            actionsButtons.push(button );
-
-            //if one button needs selected rows then we show checkboxes
-            if(buttonsOfList[buttonKey].needSelectedRows ) {
-              this.showCheckboxes = true;
-            }
-          }
-        });
-
-        if(actionsButtons.length > 0) {
-          this.actionButtonsList = actionsButtons;
-        } else {
-          this.setDefaultListButtons();
-        }
-      } else {
-        this.setDefaultListButtons();
-      }
-    } else {
-      this.setDefaultListButtons();
+    if (this.actionButtons && this.actionButtons != undefined) {
+      this.actionButtons = JSON.parse(this.actionButtons)
     }
-
     cols.push({
       type: "action",
       typeAttributes: { rowActions: actions }
@@ -98,21 +60,14 @@ export default class LightningDatatable extends NavigationMixin(
     this.fetchRecords();
   }
 
-  setDefaultListButtons() {
-    this.actionButtonsList = [];
-    this.actionButtonsList.push(buttonsOfList['new']);
-  }
-
   fetchRecords() {
     getRecords({ soql: this.soql, SObjectName: this.objectName, iconName: this.iconName })
       .then((data) => {
         if (data) {
-          if( !this.iconName)  {
+          if (!this.iconName) {
             this.iconName = data.iconName;
           }
-
           let records = data.records;
-
           records.map((e) => {
             for (let key in e) {
               if (typeof e[key] === "object") {
@@ -138,16 +93,6 @@ export default class LightningDatatable extends NavigationMixin(
       });
   }
 
-  newRecord() {
-    this[NavigationMixin.Navigate]({
-      type: "standard__objectPage",
-      attributes: {
-        objectApiName: this.objectName,
-        actionName: "new"
-      }
-    });
-  }
-
   handleRowAction(event) {
     const actionName = event.detail.action.name;
     const row = event.detail.row;
@@ -161,6 +106,23 @@ export default class LightningDatatable extends NavigationMixin(
       case "show_details":
         this.showRowDetails(row);
         break;
+      default:
+    }
+  }
+
+  handleButtonAction(event) {
+    //call desired javacript method or apex call, or throw an event based on the button key(new, delete-selected...)
+    //if button has needSelectedRows set to true, have selected rows using this.selectedRows
+    const buttonLabel = event.target.dataset.name;
+    switch (buttonLabel) {
+      case "New":
+        this.newRecord();
+        break;
+      /*
+      case "delete-selected":
+        const eventDeleteSelected = new CustomEvent('deleteselected', { detail: JSON.stringify(this.selectedRows) });
+        this.dispatchEvent(eventDeleteSelected);
+        break;*/
       default:
     }
   }
@@ -199,17 +161,26 @@ export default class LightningDatatable extends NavigationMixin(
     return this.offSet + this.limit >= this.totalRows || this.totalRows === 0
       ? true
       : this.totalRows <= this.limit
-      ? false
-      : false;
+        ? false
+        : false;
   }
 
   /*********************************************************************
    * All Helper Method's
    *********************************************************************/
+  newRecord() {
+    this[NavigationMixin.Navigate]({
+      type: "standard__objectPage",
+      attributes: {
+        objectApiName: this.objectName,
+        actionName: "new"
+      }
+    });
+  }
+
   deleteRow(row) {
     let id = row["Id"],
       index = this.findRowIndexById(id);
-    console.log(index);
     if (index !== -1) {
       deleteRecord(id)
         .then(() => {
@@ -314,25 +285,7 @@ export default class LightningDatatable extends NavigationMixin(
     return (this.isCounterDisplayed) ? this.title + ` (${this.totalRows})` : this.title;
   }
 
-  callButtonAction(event) {
-    //call desired javacript method or apex call, or throw an event based on the button key(new, delete-selected...)
-    //if button has needSelectedRows set to true, have selected rows using this.selectedRows
-    const buttonLabel = event.target.dataset.name;
-
-    if(buttonLabel === 'new') {
-      this.newRecord();
-    } else if(buttonLabel === 'delete-selected') {
-        const eventDeleteSelected = new CustomEvent('deleteselected', {detail : JSON.stringify(this.selectedRows) });
-        this.dispatchEvent(eventDeleteSelected);
-    }
-    console.log('callButtonAction, button clicked has label : '+buttonLabel);
-  }
-  
-  handleRowSelection(event){
-    this.selectedRows = JSON.parse(JSON.stringify(event.detail.selectedRows) );
-  }
-
-  get actionButtonsListNotEmpty() {
-    return this.actionButtonsList && this.actionButtonsList.length > 0;
+  handleRowSelection(event) {
+    this.selectedRows = JSON.parse(JSON.stringify(event.detail.selectedRows));
   }
 }

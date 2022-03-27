@@ -14,10 +14,11 @@
       <property name="title" type="String" required="true" label="Enter Title" default="LWC Table" />
       <property name="objectName" type="String" required="true" label="Enter Object API Name" />
       <property name="columns" type="String" required="true" label="Enter Columns JSON" />
-      <property name="relatedFieldAPI" type="String" default="" label="Enter Related field API Name" />
-      <property name="whereClause" type="String" default="" label="Enter WHERE clause" />
+      <property name="relatedFieldAPI" type="String" label="Enter Related field API Name" />
+      <property name="showCheckboxes" type="Boolean" default="true" label="Hide/Unhide checkbox column" />
+      <property name="whereClause" type="String" label="Enter WHERE clause" />
       <property name="isCounterDisplayed" type="Boolean" label="Show the number of record" />
-      <property name="actionButtonsToDisplay" type="String" label="Buttons to display" />
+      <property name="actionButtons" type="String" default='[{"name": "New","label": "New","variant": "neutral"}]' label="Enter Action Buttons JSON" />
     </targetConfig>
   </targetConfigs>
 </LightningComponentBundle>
