@@ -18,9 +18,9 @@ const actions = [
 ];
 
 const buttonsOfList = {
-    'new' : { label : "New", variant: "neutral", needSelectedRows: false }, 
-    'delete-everything' : {  label : "delete all", variant: "destructive", needSelectedRows: false },
-    'delete-selected' : { label : "delete selected", variant : "brand", needSelectedRows: true }
+  'new': { label: "New", variant: "neutral", needSelectedRows: false },
+  'delete-everything': { label: "delete all", variant: "destructive", needSelectedRows: false },
+  'delete-selected': { label: "delete selected", variant: "brand", needSelectedRows: true }
 };
 
 export default class LightningDatatable extends NavigationMixin(
@@ -54,27 +54,27 @@ export default class LightningDatatable extends NavigationMixin(
     }
 
     //defining custom list buttons based on actionButtonsToDisplay(string seperated design property)
-    if(this.actionButtonsToDisplay && this.actionButtonsToDisplay != undefined ) {
+    if (this.actionButtonsToDisplay && this.actionButtonsToDisplay != undefined) {
       let arrayOfButtonsKeys = this.actionButtonsToDisplay.replace(/\s/g, '').split(',');
       let actionsButtons = [];
 
-      if(arrayOfButtonsKeys && arrayOfButtonsKeys.length > 0) {
+      if (arrayOfButtonsKeys && arrayOfButtonsKeys.length > 0) {
         arrayOfButtonsKeys.forEach(buttonKey => {
           //checking if button key is empty or button not defined
-          if(buttonKey && buttonsOfList[buttonKey]) {
+          if (buttonKey && buttonsOfList[buttonKey]) {
             let button = buttonsOfList[buttonKey];
             button.uniqueName = buttonKey;
 
-            actionsButtons.push(button );
+            actionsButtons.push(button);
 
             //if one button needs selected rows then we show checkboxes
-            if(buttonsOfList[buttonKey].needSelectedRows ) {
+            if (buttonsOfList[buttonKey].needSelectedRows) {
               this.showCheckboxes = true;
             }
           }
         });
 
-        if(actionsButtons.length > 0) {
+        if (actionsButtons.length > 0) {
           this.actionButtonsList = actionsButtons;
         } else {
           this.setDefaultListButtons();
@@ -107,7 +107,7 @@ export default class LightningDatatable extends NavigationMixin(
     getRecords({ soql: this.soql, SObjectName: this.objectName, iconName: this.iconName })
       .then((data) => {
         if (data) {
-          if( !this.iconName)  {
+          if (!this.iconName) {
             this.iconName = data.iconName;
           }
 
@@ -199,8 +199,8 @@ export default class LightningDatatable extends NavigationMixin(
     return this.offSet + this.limit >= this.totalRows || this.totalRows === 0
       ? true
       : this.totalRows <= this.limit
-      ? false
-      : false;
+        ? false
+        : false;
   }
 
   /*********************************************************************
@@ -319,17 +319,17 @@ export default class LightningDatatable extends NavigationMixin(
     //if button has needSelectedRows set to true, have selected rows using this.selectedRows
     const buttonLabel = event.target.dataset.name;
 
-    if(buttonLabel === 'new') {
+    if (buttonLabel === 'new') {
       this.newRecord();
-    } else if(buttonLabel === 'delete-selected') {
-        const eventDeleteSelected = new CustomEvent('deleteselected', {detail : JSON.stringify(this.selectedRows) });
-        this.dispatchEvent(eventDeleteSelected);
+    } else if (buttonLabel === 'delete-selected') {
+      const eventDeleteSelected = new CustomEvent('deleteselected', { detail: JSON.stringify(this.selectedRows) });
+      this.dispatchEvent(eventDeleteSelected);
     }
-    console.log('callButtonAction, button clicked has label : '+buttonLabel);
+    console.log('callButtonAction, button clicked has label : ' + buttonLabel);
   }
-  
-  handleRowSelection(event){
-    this.selectedRows = JSON.parse(JSON.stringify(event.detail.selectedRows) );
+
+  handleRowSelection(event) {
+    this.selectedRows = JSON.parse(JSON.stringify(event.detail.selectedRows));
   }
 
   get actionButtonsListNotEmpty() {
