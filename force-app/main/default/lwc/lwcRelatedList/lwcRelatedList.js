@@ -9,6 +9,8 @@ import { deleteRecord } from "lightning/uiRecordApi";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getRecords from "@salesforce/apex/RelatedList.getRecords";
 import countRecords from "@salesforce/apex/RelatedList.countRecords";
+import { refreshApex } from '@salesforce/apex';
+import { updateRecord } from 'lightning/uiRecordApi';
 
 let cols;
 const actions = [
@@ -39,6 +41,7 @@ export default class LightningDatatable extends NavigationMixin(
   @track totalRows = 0;
   @track error;
   @track selectedRows;
+  draftValues = [];
 
   // Do init funtion
   connectedCallback() {
@@ -78,6 +81,7 @@ export default class LightningDatatable extends NavigationMixin(
             }
           });
           this.data = records;
+          console.log('data::', this.data)
         }
       })
       .catch((error) => {
@@ -91,6 +95,36 @@ export default class LightningDatatable extends NavigationMixin(
           console.log("error", this.error);
         }
       });
+  }
+
+  handleSave(event) {
+    console.log('recor');
+    const test = event.detail.draftValues
+    console.log('test::::', test)
+    // const recordInputs = event.detail.draftValues.slice().map(draft => {
+    //   const fields = Object.assign({}, draft);
+    //   return { fields };
+    // });
+
+    // console.log('recordInputs::::', recordInputs)
+
+    // const promises = recordInputs.map(recordInput => updateRecord(recordInput));
+    // Promise.all(promises).then(contacts => {
+    //   this.dispatchEvent(
+    //     new ShowToastEvent({
+    //       title: 'Success',
+    //       message: 'Contacts updated',
+    //       variant: 'success'
+    //     })
+    //   );
+    //   // Clear all draft values
+    //   this.draftValues = [];
+
+    //   // Display fresh data in the datatable
+    //   return refreshApex(this.data);
+    // }).catch(error => {
+    //   // Handle error
+    // });
   }
 
   handleRowAction(event) {
