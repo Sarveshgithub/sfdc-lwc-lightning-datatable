@@ -55,6 +55,9 @@ export default class LightningDatatable extends NavigationMixin(
       type: "action",
       typeAttributes: { rowActions: actions }
     });
+    cols.map(val => {
+      val.editable = true
+    })
     this.columns = cols;
     this.buildSOQL();
     countRecords({ objectName: this.objectName, whereClause: this.appendWhere() }).then((result) => {
@@ -98,33 +101,28 @@ export default class LightningDatatable extends NavigationMixin(
   }
 
   handleSave(event) {
-    console.log('recor');
-    const test = event.detail.draftValues
-    console.log('test::::', test)
-    // const recordInputs = event.detail.draftValues.slice().map(draft => {
-    //   const fields = Object.assign({}, draft);
-    //   return { fields };
-    // });
-
-    // console.log('recordInputs::::', recordInputs)
-
-    // const promises = recordInputs.map(recordInput => updateRecord(recordInput));
-    // Promise.all(promises).then(contacts => {
-    //   this.dispatchEvent(
-    //     new ShowToastEvent({
-    //       title: 'Success',
-    //       message: 'Contacts updated',
-    //       variant: 'success'
-    //     })
-    //   );
-    //   // Clear all draft values
-    //   this.draftValues = [];
-
-    //   // Display fresh data in the datatable
-    //   return refreshApex(this.data);
-    // }).catch(error => {
-    //   // Handle error
-    // });
+    const recordInputs = event.detail.draftValues.slice().map(draft => {
+      const fields = Object.assign({}, draft);
+      return { fields };
+    });
+    console.log('recordInputs::::', recordInputs)
+    const promises = recordInputs.map(recordInput => updateRecord(recordInput));
+    Promise.all(promises).then(contacts => {
+      this.dispatchEvent(
+        new ShowToastEvent({
+          title: 'Success',
+          message: 'Record Updated',
+          variant: 'success'
+        })
+      );
+      // Clear all draft values
+      this.draftValues = [];
+      // Display fresh data in the datatable
+      this.showRowDetails({ Id: this.recordId })
+    }).catch(error => {
+      // Handle error
+      console.log('error', error)
+    });
   }
 
   handleRowAction(event) {
