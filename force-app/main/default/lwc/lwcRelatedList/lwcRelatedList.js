@@ -9,6 +9,7 @@ import { deleteRecord } from "lightning/uiRecordApi";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getRecords from "@salesforce/apex/RelatedList.getRecords";
 import countRecords from "@salesforce/apex/RelatedList.countRecords";
+import { updateRecord } from 'lightning/uiRecordApi';
 
 let cols;
 const actions = [
@@ -39,6 +40,7 @@ export default class LightningDatatable extends NavigationMixin(
   @track totalRows = 0;
   @track error;
   @track selectedRows;
+  draftValues = [];
 
   // Do init funtion
   connectedCallback() {
@@ -52,6 +54,9 @@ export default class LightningDatatable extends NavigationMixin(
       type: "action",
       typeAttributes: { rowActions: actions }
     });
+    cols.map(val => {
+      val.editable = true
+    })
     this.columns = cols;
     this.buildSOQL();
     countRecords({ objectName: this.objectName, whereClause: this.appendWhere() }).then((result) => {
@@ -78,19 +83,43 @@ export default class LightningDatatable extends NavigationMixin(
             }
           });
           this.data = records;
+          console.log('data::', this.data)
         }
       })
       .catch((error) => {
         if (error) {
-          this.error = "Unknown error";
-          if (Array.isArray(error.body)) {
-            this.error = error.body.map((e) => e.message).join(", ");
-          } else if (typeof error.body.message === "string") {
-            this.error = error.body.message;
-          }
-          console.log("error", this.error);
+          this.formatError(error)
         }
       });
+  }
+
+  handleSave(event) {
+    const recordInputs = event.detail.draftValues.slice().map(draft => {
+      const fields = Object.assign({}, draft);
+      return { fields };
+    });
+    const promises = recordInputs.map(recordInput => updateRecord(recordInput));
+    Promise.all(promises).then(contacts => {
+      this.showToast("Success", "Record Updated", "success");
+      this.draftValues = [];
+      this.showRowDetails({ Id: this.recordId })
+    }).catch(error => {
+      if (error) {
+        this.formatError(error)
+      }
+    });
+  }
+
+  formatError(error) {
+    if (error) {
+      this.error = "Unknown error";
+      if (Array.isArray(error.body)) {
+        this.error = error.body.map((e) => e.message).join(", ");
+      } else if (typeof error.body.message === "string") {
+        this.error = error.body.message;
+      }
+      console.log("error", this.error);
+    }
   }
 
   handleRowAction(event) {

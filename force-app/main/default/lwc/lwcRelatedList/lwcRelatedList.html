@@ -30,11 +30,13 @@
       <!-- DATATABLE WITH CHECKBOXES -->
       <lightning-datatable 
         hide-checkbox-column={showCheckboxes}
-        key-field="id" 
+        key-field="Id" 
         data={data} 
         columns={columns} 
         onrowaction={handleRowAction}
-        onrowselection={handleRowSelection}  
+        onrowselection={handleRowSelection}
+        onsave={handleSave}
+        draft-values={draftValues} 
       >
       </lightning-datatable>
 
