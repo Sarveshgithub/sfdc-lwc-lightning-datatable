@@ -9,7 +9,6 @@ import { deleteRecord } from "lightning/uiRecordApi";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getRecords from "@salesforce/apex/RelatedList.getRecords";
 import countRecords from "@salesforce/apex/RelatedList.countRecords";
-import { refreshApex } from '@salesforce/apex';
 import { updateRecord } from 'lightning/uiRecordApi';
 
 let cols;
@@ -89,13 +88,7 @@ export default class LightningDatatable extends NavigationMixin(
       })
       .catch((error) => {
         if (error) {
-          this.error = "Unknown error";
-          if (Array.isArray(error.body)) {
-            this.error = error.body.map((e) => e.message).join(", ");
-          } else if (typeof error.body.message === "string") {
-            this.error = error.body.message;
-          }
-          console.log("error", this.error);
+          this.formatError(error)
         }
       });
   }
@@ -105,24 +98,28 @@ export default class LightningDatatable extends NavigationMixin(
       const fields = Object.assign({}, draft);
       return { fields };
     });
-    console.log('recordInputs::::', recordInputs)
     const promises = recordInputs.map(recordInput => updateRecord(recordInput));
     Promise.all(promises).then(contacts => {
-      this.dispatchEvent(
-        new ShowToastEvent({
-          title: 'Success',
-          message: 'Record Updated',
-          variant: 'success'
-        })
-      );
-      // Clear all draft values
+      this.showToast("Success", "Record Updated", "success");
       this.draftValues = [];
-      // Display fresh data in the datatable
       this.showRowDetails({ Id: this.recordId })
     }).catch(error => {
-      // Handle error
-      console.log('error', error)
+      if (error) {
+        this.formatError(error)
+      }
     });
+  }
+
+  formatError(error) {
+    if (error) {
+      this.error = "Unknown error";
+      if (Array.isArray(error.body)) {
+        this.error = error.body.map((e) => e.message).join(", ");
+      } else if (typeof error.body.message === "string") {
+        this.error = error.body.message;
+      }
+      console.log("error", this.error);
+    }
   }
 
   handleRowAction(event) {
