@@ -33,7 +33,7 @@ Design Attribute
 | Enter Icon Name              | :x:                | String | provide slds icon name                                   |  `standard:account` |
 | Enter Title                  | :heavy_check_mark: | String | provide table title                                      |  LWC Table    |
 | Enter Object API Name        | :heavy_check_mark: | String | provide object custom or standard API name               |  Account |
-| Enter Columns JSON           | :heavy_check_mark: | String | { `fieldName`:api name,`label`:col label,`type`:text,number,date }. **Note** : for related field it should be concat with . i.e : Account.Name for contact | See below [**Column JSON Example**](#columns-json-example) |
+| Enter Columns JSON           | :heavy_check_mark: | String | { `fieldName`:api name,`label`:col label,`type`:text,number,date, `editable`:true}. **Note** : for related field it should be concat with . i.e : Account.Name for contact, Inline Edit not support cross reference Field| See below [**Column JSON Example**](#columns-json-example) |
 | Enter Related field API Name | :x:                | String | Enter related field api name | Example AccountId for contact when component is on account layout. |
 | Hide/Unhide checkbox column  | :x:                | Boolean | true/false               |  Hide/Unhide Checkbox |
 | Enter WHERE clause           | :x:                | String | provide aditional filters | Example `LastName like '%s' AND Account.Name like '%t'` |
@@ -45,7 +45,8 @@ Design Attribute
     [{ 
        "fieldName": "FirstName",
         "label": "First Name",
-        "type": "text"
+        "type": "text",
+        "editable": "true"
     }, {
         "fieldName": "LastName",
         "label": "Last Name",
