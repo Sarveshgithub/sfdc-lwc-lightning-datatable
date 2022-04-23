@@ -29,10 +29,12 @@ export default class LightningDatatable extends NavigationMixin(
   @api columns;
   @api relatedFieldAPI;
   @api whereClause;
-  @api limit = 10;
+  @api limit;
   @api isCounterDisplayed;
   @api actionButtons; //buttons for the list
   @api showCheckboxes;
+  @api showViewAll;
+  @api hasPagination;
   // Private Property
   @track data;
   @track soql;
@@ -40,6 +42,8 @@ export default class LightningDatatable extends NavigationMixin(
   @track totalRows = 0;
   @track error;
   @track selectedRows;
+  @track initialLimit;
+  @track showCollapse = false;
   draftValues = [];
 
   // Do init funtion
@@ -50,6 +54,9 @@ export default class LightningDatatable extends NavigationMixin(
     if (this.actionButtons && this.actionButtons != undefined) {
       this.actionButtons = JSON.parse(this.actionButtons)
     }
+
+    this.initialLimit = this.limit;
+
     cols.push({
       type: "action",
       typeAttributes: { rowActions: actions }
@@ -263,8 +270,12 @@ export default class LightningDatatable extends NavigationMixin(
     let soql = this.appendField();
     soql += this.appendWhere();
     soql += " WITH SECURITY_ENFORCED ";
-    soql += this.appendLimit();
-    soql += this.appendOffset();
+    
+    if(this.limit && this.limit > 0) {
+      soql += this.appendLimit();
+      soql += this.appendOffset();
+    }
+
     this.soql = soql;
   }
 
@@ -316,5 +327,25 @@ export default class LightningDatatable extends NavigationMixin(
 
   handleRowSelection(event) {
     this.selectedRows = JSON.parse(JSON.stringify(event.detail.selectedRows));
+  }
+
+  get hasToShowViewAll() {
+    return this.limit < this.totalRows && this.limit > 0 && this.showViewAll;
+  }
+
+  showAllRecords() {
+    this.limit = 0;
+    this.buildSOQL();
+    this.fetchRecords();
+    this.showViewAll = false;
+    this.showCollapse = true;
+  }
+
+  showInitialRecordsWithLimit() {
+    this.limit = this.initialLimit;
+    this.showViewAll = true;
+    this.showCollapse = false;
+    this.buildSOQL();
+    this.fetchRecords();
   }
 }
