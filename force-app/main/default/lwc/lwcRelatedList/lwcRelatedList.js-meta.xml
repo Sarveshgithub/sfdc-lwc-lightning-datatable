@@ -17,7 +17,10 @@
       <property name="relatedFieldAPI" type="String" label="Enter Related field API Name" />
       <property name="showCheckboxes" type="Boolean" default="true" label="Hide/Unhide checkbox column" />
       <property name="whereClause" type="String" label="Enter WHERE clause" />
+      <property name="limit" type="Integer" label="Enter limit" />
       <property name="isCounterDisplayed" type="Boolean" label="Show the number of record" />
+      <property name="showViewAll" type="Boolean" label="Show the view all / collapse buttons" />
+      <property name="hasPagination" type="Boolean" label="Enable/Disable pagination" default="false" />
       <property name="actionButtons" type="String" default='[{"name": "New","label": "New","variant": "neutral"}]' label="Enter Action Buttons JSON" />
     </targetConfig>
   </targetConfigs>
