@@ -37,7 +37,10 @@ Design Attribute
 | Enter Related field API Name | :x:                | String | Enter related field api name | Example AccountId for contact when component is on account layout. |
 | Hide/Unhide checkbox column  | :x:                | Boolean | true/false               |  Hide/Unhide Checkbox |
 | Enter WHERE clause           | :x:                | String | provide aditional filters | Example `LastName like '%s' AND Account.Name like '%t'` |
+| Enter limit | :x: | Integer | limit the displayed number of records for the list  |  an integer |
 | Show the number of record    | :x:                | Boolean| append the number of records in the title  |  checked(true) OR not checked(false) |
+| Show the view all / collapse buttons | :x: | Boolean| display buttons to expand/collapse records  |  checked(true) OR not checked(false) |
+| Enable/Disable pagination | :x: | Boolean| enable or disable pagination for the list  |  checked(true) OR not checked(false) |
 | Buttons to display           | :x:                | String | buttons that we want to display  | See below [**Buttons configuration**](#buttons-configuration) |
 
 ## Columns JSON Example
