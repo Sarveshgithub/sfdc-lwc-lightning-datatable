@@ -194,7 +194,6 @@ export default class LightningDatatable extends NavigationMixin(
   }
 
   get isDisableNext() {
-    console.log(this.offSet, this.limit, this.totalRows)
     return this.offSet + (this.hasPagination ? this.limit > 10 ? this.limit : 10 : this.limit) >= this.totalRows || this.totalRows === 0
       ? true
       : this.totalRows <= this.limit
