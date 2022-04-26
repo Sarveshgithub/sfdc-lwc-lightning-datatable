@@ -194,7 +194,7 @@ export default class LightningDatatable extends NavigationMixin(
   }
 
   get isDisableNext() {
-    return this.offSet + this.limit >= this.totalRows || this.totalRows === 0
+    return this.offSet + (this.hasPagination ? this.limit > 10 ? this.limit : 10 : this.limit) >= this.totalRows || this.totalRows === 0
       ? true
       : this.totalRows <= this.limit
         ? false
@@ -270,8 +270,7 @@ export default class LightningDatatable extends NavigationMixin(
     let soql = this.appendField();
     soql += this.appendWhere();
     soql += " WITH SECURITY_ENFORCED ";
-    
-    if(this.limit && this.limit > 0) {
+    if (this.limit && this.limit > 0) {
       soql += this.appendLimit();
       soql += this.appendOffset();
     }
