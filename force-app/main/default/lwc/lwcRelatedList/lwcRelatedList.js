@@ -10,6 +10,7 @@ import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getRecords from "@salesforce/apex/RelatedList.getRecords";
 import countRecords from "@salesforce/apex/RelatedList.countRecords";
 import { updateRecord } from 'lightning/uiRecordApi';
+import { getObjectInfo } from 'lightning/uiObjectInfoApi';
 
 let cols;
 const actions = [
@@ -45,6 +46,12 @@ export default class LightningDatatable extends NavigationMixin(
   @track initialLimit;
   @track showCollapse = false;
   draftValues = [];
+  @track objectInfo;
+  @wire(getObjectInfo, { objectApiName: 'Account' }) objectInfo;
+
+  get showInfo() {
+    console.log('account:::', this.objectInfo)
+  }
 
   // Do init funtion
   connectedCallback() {
