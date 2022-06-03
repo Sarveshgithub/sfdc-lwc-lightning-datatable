@@ -44,6 +44,8 @@ export default class LightningDatatable extends NavigationMixin(
   @track selectedRows;
   @track initialLimit;
   @track showCollapse = false;
+  @track sortBy;
+  @track sortDirection;
   draftValues = [];
 
   // Do init funtion
@@ -270,6 +272,8 @@ export default class LightningDatatable extends NavigationMixin(
     let soql = this.appendField();
     soql += this.appendWhere();
     soql += " WITH SECURITY_ENFORCED ";
+    if (this.sortBy && this.sortDirection)
+      soql += ` ORDER BY ${this.sortBy} ${this.sortDirection} `;
     if (this.limit && this.limit > 0) {
       soql += this.appendLimit();
       soql += this.appendOffset();
@@ -344,6 +348,12 @@ export default class LightningDatatable extends NavigationMixin(
     this.limit = this.initialLimit;
     this.showViewAll = true;
     this.showCollapse = false;
+    this.buildSOQL();
+    this.fetchRecords();
+  }
+  handleSort(event) {
+    this.sortBy = event.detail.fieldName;
+    this.sortDirection = event.detail.sortDirection;
     this.buildSOQL();
     this.fetchRecords();
   }
