@@ -20,6 +20,7 @@ The data table has following features.
 - Row action, like : show detail, edit record, delete record
 - Hide/Unhide checkbox column
 - Configurable actions buttons (for developers, see [Buttons configuration](#buttons-configuration) )
+- Sorting by field.
 
 ## Steps to Customization through Design Attribute
 
@@ -49,23 +50,28 @@ Design Attribute
        "fieldName": "FirstName",
         "label": "First Name",
         "type": "text",
-        "editable": "true"
+        "editable": "true",
+        "sortable": "true"
     }, {
         "fieldName": "LastName",
         "label": "Last Name",
-        "type": "text"
+        "type": "text",
+        "sortable": "true"
     }, {
         "fieldName": "Email",
         "label": "Email",
-        "type": "email"
+        "type": "email",
+        "sortable": "true"
     }, {
         "fieldName": "Phone",
         "label": "Phone",
-        "type": "phone"
+        "type": "phone",
+        "sortable": "true"
     },{
         "fieldName": "Account.Name",
         "label": "Account Name",
-        "type": "text"
+        "type": "text",
+        "sortable": "true"
     }]
 ```
 ## Buttons configuration
