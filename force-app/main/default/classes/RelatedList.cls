@@ -14,7 +14,7 @@ public with sharing class RelatedList {
   @AuraEnabled
   public static string buildFieldJSON() {
     try {
-      String fields = 'FirstName,LastName,AccountId,Id';
+      String fields = 'FirstName,LastName,AccountId,Id,Opportunity__c,Opportunity__r.name';
       fields = fields.toLowercase();
       SObjectType accountType = Schema.getGlobalDescribe().get('Contact');
       Map<String, Schema.SObjectField> mfields = accountType.getDescribe()
@@ -26,22 +26,26 @@ public with sharing class RelatedList {
         //   .getDescribe();
         if (fieldName.contains('.')) {
           List<String> relatedFields = fieldName.split('.');
-          Integer count = 0;
-          if (relatedFields[0].endsWith('__r')) {
-            relatedFields[0] = s1.removeEnd('__r') + '__c';
-          }
-          String relatedTo = mfields.get(relatedFields[0])
-            .getDescribe()
-            .getReferenceTo();
-          while (relatedFields.size() > count) {
+          while(relatedFields.size() > 1){
+            // if(relatedFields[1].endsWith('__r')){
+            //   relatedFields.remove(0);
+            //   continue;
+            // }
+            if (relatedFields[0].endsWith('__r')) {
+              relatedFields[0] = relatedFields[0].removeEnd('__r') + '__c';
+            }
+            if (relatedFields[1].endsWith('__r')) {
+              relatedFields[1] = relatedFields[1].removeEnd('__r') + '__c';
+            }
+            String relatedTo = mfields.get(relatedFields[0]).getDescribe().getReferenceTo();
+            Map<String, Schema.SObjectField> objectChild = Schema.getGlobalDescribe().get(relatedTo).getDescribe().fields.getMap();
+            System.debug('child Label::::'+ objectChild.get(relatedFields[1]).getDescribe().getLabel());
+            System.debug('child Type::::'+ objectChild.get(relatedFields[1]).getDescribe().getType());
+            relatedFields.remove(0);
           }
         }
-        system.debug(
-          'fieldName->>' + mfields.get(fieldName).getDescribe().getLabel()
-        ); // This will give you the api name of the field name.
-        system.debug(
-          'type->>' + mfields.get(fieldName).getDescribe().getType()
-        );
+        system.debug('fieldName->>' + mfields.get(fieldName).getDescribe().getLabel()); // This will give you the api name of the field name.
+        system.debug('type->>' + mfields.get(fieldName).getDescribe().getType());
       }
       return null;
     } catch (Exception e) {
