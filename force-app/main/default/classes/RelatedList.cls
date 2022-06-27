@@ -29,7 +29,9 @@ public with sharing class RelatedList {
 			this.sortable = sortable;
 		}
 	}
-
+	/**
+	 * Purpose : This method is used for building the Column JSON for data table
+	 */
 	@AuraEnabled
 	public static string buildFieldJSON() {
 		try {
@@ -58,7 +60,7 @@ public with sharing class RelatedList {
 			throw new AuraHandledException(e.getMessage());
 		}
 	}
-	
+
 	@AuraEnabled
 	public static ListResults getRecords(String soql, String SObjectName, String iconName) {
 		//autoretrieve of the icon name based on sobject name if no icon is specified
