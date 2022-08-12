@@ -1,15 +1,4 @@
 public with sharing class RelatedList {
-	public class ListResults {
-		@AuraEnabled
-		public List<SObject> records;
-		@AuraEnabled
-		public String iconName;
-		public ListResults(List<SObject> records, String iconName) {
-			this.records = records;
-			this.iconName = iconName;
-		}
-	}
-
 	public class ColumnJson {
 		@AuraEnabled
 		public String fieldName;
@@ -29,13 +18,26 @@ public with sharing class RelatedList {
 			this.sortable = sortable;
 		}
 	}
+
+	public class ListResults {
+		@AuraEnabled
+		public List<SObject> records;
+		@AuraEnabled
+		public List<ColumnJson> cols;
+		public ListResults(List<SObject> records, List<ColumnJson> cols) {
+			this.records = records;
+			this.cols = cols;
+		}
+	}
+
 	/**
 	 * Purpose : This method is used for building the Column JSON for data table
 	 */
 	@AuraEnabled
-	public static string buildFieldJSON() {
+	public static ListResults buildFieldJSON(String fields, String soql, String objectName) {
 		try {
-			String fields = 'FirstName,LastName,AccountId,Id,Opportunity__c';
+			soql = 'SELECT FirstName,LastName,AccountId,Id,Opportunity__c,createdDate FROM Contact';
+			fields = 'FirstName,LastName,AccountId,Id,Opportunity__c,createdDate';
 			//,Opportunity__r.name
 			fields = fields.toLowercase();
 			SObjectType accountType = Schema.getGlobalDescribe().get('Contact');
@@ -54,22 +56,31 @@ public with sharing class RelatedList {
 					)
 				);
 			}
-			System.debug('data::::' + lstOfColumns);
-			return null;
+			System.debug('cols::::' + lstOfColumns);
+			return new ListResults(getRecords(soql), lstOfColumns);
 		} catch (Exception e) {
 			throw new AuraHandledException(e.getMessage());
 		}
 	}
 
 	@AuraEnabled
-	public static ListResults getRecords(String soql, String SObjectName, String iconName) {
-		//autoretrieve of the icon name based on sobject name if no icon is specified
-		if (String.isBlank(iconName)) {
-			iconName = IconUtils.getIconName(SObjectName);
+	public static List<SObject> getRecords(String soql) {
+		try {
+			return Database.query(soql);
+		} catch (Exception e) {
+			throw new AuraHandledException(e.getMessage());
 		}
-
-		return new ListResults(Database.query(soql), iconName);
 	}
+
+	// @AuraEnabled
+	// public static ListResults getRecords(String soql, String SObjectName, String iconName) {
+	// 	//autoretrieve of the icon name based on sobject name if no icon is specified
+	// 	if (String.isBlank(iconName)) {
+	// 		iconName = IconUtils.getIconName(SObjectName);
+	// 	}
+
+	// 	return new ListResults(Database.query(soql), iconName);
+	// }
 
 	@AuraEnabled(cacheable=true)
 	public static Integer countRecords(String objectName, String whereClause) {
