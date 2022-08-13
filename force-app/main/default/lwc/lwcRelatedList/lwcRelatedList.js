@@ -1,23 +1,22 @@
+/* eslint-disable @lwc/lwc/no-api-reassignments */
 /*
  * Author : Sarvesh
  * Description : The component to show records of custom/standard of Object as a table.
  * Production Ready : Yes
  */
-import { LightningElement, wire, track, api } from "lwc";
+import { LightningElement, track, api } from "lwc";
 import { NavigationMixin } from "lightning/navigation";
 import { deleteRecord } from "lightning/uiRecordApi";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
-import getRecords from "@salesforce/apex/RelatedList.getRecords";
+// import getRecords from "@salesforce/apex/RelatedList.getRecords";
 import countRecords from "@salesforce/apex/RelatedList.countRecords";
 import buildFieldJSON from "@salesforce/apex/RelatedList.buildFieldJSON";
 import { updateRecord } from "lightning/uiRecordApi";
-
-let cols;
-const actions = [
-	{ label: "Show details", name: "show_details" },
-	{ label: "Edit", name: "edit" },
-	{ label: "Delete", name: "delete" }
-];
+// const actions = [
+// 	{ label: "Show details", name: "show_details" },
+// 	{ label: "Edit", name: "edit" },
+// 	{ label: "Delete", name: "delete" }
+// ];
 
 export default class LightningDatatable extends NavigationMixin(LightningElement) {
 	// Public Property
@@ -25,7 +24,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	@api iconName;
 	@api title;
 	@api objectName;
-	@api columns;
+	@api fields;
 	@api relatedFieldAPI;
 	@api whereClause;
 	@api limit;
@@ -45,35 +44,22 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	@track showCollapse = false;
 	@track sortBy;
 	@track sortDirection;
+	@track columns;
 	draftValues = [];
 
 	// Do init funtion
 	connectedCallback() {
-		// if (this.columns && this.columns != undefined) {
-		// 	cols = JSON.parse(this.columns);
-		// }
-		// if (this.actionButtons && this.actionButtons != undefined) {
-		// 	this.actionButtons = JSON.parse(this.actionButtons);
-		// }
-
-		// this.initialLimit = this.limit;
-
-		// cols.push({
-		// 	type: "action",
-		// 	typeAttributes: { rowActions: actions }
-		// });
-		// cols.map((val) => {
-		// 	val.editable = true;
-		// });
-		// this.columns = cols;
-		// this.buildSOQL();
-		// countRecords({ objectName: this.objectName, whereClause: this.appendWhere() }).then((result) => {
-		// 	this.totalRows = result;
-		// });
-		// this.fetchRecords();
-		let soql = "SELECT FirstName,LastName,AccountId,Id,Opportunity__c FROM Contact";
-		let fields = "FirstName,LastName,AccountId,Id,Opportunity__c";
-		buildFieldJSON({ soql: soql, fields: fields, objectName: "Contact" })
+		if (this.actionButtons && this.actionButtons !== undefined) {
+			this.actionButtons = JSON.parse(this.actionButtons);
+		}
+		this.initialLimit = this.limit;
+		this.buildSOQL();
+		countRecords({ objectName: this.objectName, whereClause: this.appendWhere() }).then((result) => {
+			this.totalRows = result;
+		});
+		this.fields = "FirstName,LastName,AccountId,Id,Opportunity__c";
+		this.objectName = "Contact";
+		buildFieldJSON({ soql: this.soql, fields: this.fields, objectName: this.objectNames })
 			.then((data) => {
 				if (data) {
 					this.data = data.records;
@@ -88,33 +74,33 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 			});
 	}
 
-	fetchRecords() {
-		getRecords({ soql: this.soql, SObjectName: this.objectName, iconName: this.iconName })
-			.then((data) => {
-				if (data) {
-					if (!this.iconName) {
-						this.iconName = data.iconName;
-					}
-					let records = data.records;
-					records.map((e) => {
-						for (let key in e) {
-							if (typeof e[key] === "object") {
-								for (let onLevel in e[key]) {
-									e[key + "." + onLevel] = e[key][onLevel];
-								}
-							}
-						}
-					});
-					this.data = records;
-					console.log("data::", this.data);
-				}
-			})
-			.catch((error) => {
-				if (error) {
-					this.formatError(error);
-				}
-			});
-	}
+	// fetchRecords() {
+	// 	getRecords({ soql: this.soql })
+	// 		.then((data) => {
+	// 			if (data) {
+	// 				if (!this.iconName) {
+	// 					this.iconName = data.iconName;
+	// 				}
+	// 				let records = data.records;
+	// 				records.forEach((e) => {
+	// 					for (let key in e) {
+	// 						if (typeof e[key] === "object") {
+	// 							for (let onLevel in e[key]) {
+	// 								e[key + "." + onLevel] = e[key][onLevel];
+	// 							}
+	// 						}
+	// 					}
+	// 				});
+	// 				this.data = records;
+	// 				console.log("data::", this.data);
+	// 			}
+	// 		})
+	// 		.catch((error) => {
+	// 			if (error) {
+	// 				this.formatError(error);
+	// 			}
+	// 		});
+	// }
 
 	handleSave(event) {
 		const recordInputs = event.detail.draftValues.slice().map((draft) => {
@@ -123,7 +109,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 		});
 		const promises = recordInputs.map((recordInput) => updateRecord(recordInput));
 		Promise.all(promises)
-			.then((contacts) => {
+			.then(() => {
 				this.showToast("Success", "Record Updated", "success");
 				this.draftValues = [];
 				this.showRowDetails({ Id: this.recordId });
@@ -182,33 +168,33 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	}
 
 	//Next button to get the next data
-	next(event) {
+	next() {
 		this.offSet = this.offSet + this.limit;
 		this.buildSOQL();
 		this.fetchRecords();
 	}
 
 	//Previous button to get the previous data
-	previous(event) {
+	previous() {
 		this.offSet = this.offSet - this.limit;
 		this.buildSOQL();
 		this.fetchRecords();
 	}
 
-	firstPage(event) {
+	firstPage() {
 		this.offSet = 0;
 		this.buildSOQL();
 		this.fetchRecords();
 	}
 
-	lastPage(event) {
+	lastPage() {
 		this.offSet = Math.floor(this.totalRows / this.limit) * this.limit;
 		this.buildSOQL();
 		this.fetchRecords();
 	}
 
 	get isDisablePrev() {
-		return this.offSet == 0 || this.totalRows === 0 ? true : false;
+		return this.offSet === 0 || this.totalRows === 0 ? true : false;
 	}
 
 	get isDisableNext() {
@@ -234,7 +220,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	}
 
 	deleteRow(row) {
-		let id = row["Id"],
+		let id = row.Id,
 			index = this.findRowIndexById(id);
 		if (index !== -1) {
 			deleteRecord(id)
@@ -264,7 +250,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 		this[NavigationMixin.Navigate]({
 			type: "standard__recordPage",
 			attributes: {
-				recordId: row["Id"],
+				recordId: row.Id,
 				objectApiName: this.objectName,
 				actionName: "view"
 			}
@@ -275,7 +261,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 		this[NavigationMixin.Navigate]({
 			type: "standard__recordPage",
 			attributes: {
-				recordId: row["Id"],
+				recordId: row.Id,
 				objectApiName: this.objectName,
 				actionName: "edit"
 			}
@@ -297,16 +283,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	}
 
 	appendField() {
-		let soql = "SELECT Id,",
-			col = [];
-		if (cols) {
-			cols.map((val) => {
-				if (val.hasOwnProperty("fieldName")) {
-					col.push(val["fieldName"]);
-				}
-			});
-			soql = soql + `${col.join(",")} FROM ${this.objectName}`;
-		}
+		let soql = `SELECT Id, ${this.fields} FROM ${this.objectName}`;
 		return soql;
 	}
 
