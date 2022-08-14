@@ -1,6 +1,6 @@
 [![Master](https://github.com/Sarveshgithub/sfdc-lwc-lightning-datatable/actions/workflows/master_push.yml/badge.svg?branch=master)](https://github.com/Sarveshgithub/sfdc-lwc-lightning-datatable/actions/workflows/master_push.yml)
 
-# Salesforce Lightning Data table (LWC Version) 
+# Salesforce Lightning Data table (LWC Version)
 
 ![datatable](https://user-images.githubusercontent.com/39730173/158892595-3e7c91a3-9259-4e13-914b-191504ca8a05.PNG)
 
@@ -13,14 +13,15 @@ The customization are done by design attributes.
 
 Main features
 The data table has following features.
-- Show records for both custom and standard object.
-- Add cols as per the fields exist in object in JSON format.
-- Pagination as First,Previous,Next,Last buttons.
-- New record creation action
-- Row action, like : show detail, edit record, delete record
-- Hide/Unhide checkbox column
-- Configurable actions buttons (for developers, see [Buttons configuration](#buttons-configuration) )
-- Sorting by field.
+
+-   Show records for both custom and standard object.
+-   Add cols as per the fields exist in object in JSON format.
+-   Pagination as First,Previous,Next,Last buttons.
+-   New record creation action
+-   Row action, like : show detail, edit record, delete record
+-   Hide/Unhide checkbox column
+-   Configurable actions buttons (for developers, see [Buttons configuration](#buttons-configuration) )
+-   Sorting by field.
 
 ## Steps to Customization through Design Attribute
 
@@ -29,67 +30,35 @@ Only specify the icon name if you wish to override the default icon of the objec
 <br/><br/>
 Design Attribute
 
-| Label                        |  Required          | Type   | Value                                                    | Example             |
-|------------------------------|--------------------|--------|----------------------------------------------------------|---------------------|
-| Enter Icon Name              | :x:                | String | provide slds icon name                                   |  `standard:account` |
-| Enter Title                  | :heavy_check_mark: | String | provide table title                                      |  LWC Table    |
-| Enter Object API Name        | :heavy_check_mark: | String | provide object custom or standard API name               |  Account |
-| Enter Columns JSON           | :heavy_check_mark: | String | { `fieldName`:api name,`label`:col label,`type`:text,number,date, `editable`:true}. **Note** : for related field it should be concat with . i.e : Account.Name for contact, Inline Edit not support cross reference Field| See below [**Column JSON Example**](#columns-json-example) |
-| Enter Related field API Name | :x:                | String | Enter related field api name | Example AccountId for contact when component is on account layout. |
-| Hide/Unhide checkbox column  | :x:                | Boolean | true/false               |  Hide/Unhide Checkbox |
-| Enter WHERE clause           | :x:                | String | provide aditional filters | Example `LastName like '%s' AND Account.Name like '%t'` |
-| Enter limit | :x: | Integer | limit the displayed number of records for the list  |  an integer |
-| Show the number of record    | :x:                | Boolean| append the number of records in the title  |  checked(true) OR not checked(false) |
-| Show the view all / collapse buttons | :x: | Boolean| display buttons to expand/collapse records  |  checked(true) OR not checked(false) |
-| Enable/Disable pagination | :x: | Boolean| enable or disable pagination for the list  |  checked(true) OR not checked(false) |
-| Buttons to display           | :x:                | String | buttons that we want to display  | See below [**Buttons configuration**](#buttons-configuration) |
+| Label                                    | Required           | Type    | Value                                                                                                                                 | Example                                                            |
+| ---------------------------------------- | ------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Enter Icon Name                          | :x:                | String  | provide slds icon name                                                                                                                | `standard:account`                                                 |
+| Enter Title                              | :heavy_check_mark: | String  | provide table title                                                                                                                   | LWC Table                                                          |
+| Enter Object API Name                    | :heavy_check_mark: | String  | provide object custom or standard API name                                                                                            | Account                                                            |
+| Enter Columns API Name by comma seprated | :heavy_check_mark: | String  | **Note** : for related field it should be concat with . i.e : Account.Name for contact, Inline Edit not support cross reference Field | FirstName,LastName,Email,Phone                                     |
+| Enter Related field API Name             | :x:                | String  | Enter related field api name                                                                                                          | Example AccountId for contact when component is on account layout. |
+| Hide/Unhide checkbox column              | :x:                | Boolean | true/false                                                                                                                            | Hide/Unhide Checkbox                                               |
+| Enter WHERE clause                       | :x:                | String  | provide aditional filters                                                                                                             | Example `LastName like '%s' AND Account.Name like '%t'`            |
+| Enter limit                              | :x:                | Integer | limit the displayed number of records for the list                                                                                    | an integer                                                         |
+| Show the number of record                | :x:                | Boolean | append the number of records in the title                                                                                             | checked(true) OR not checked(false)                                |
+| Show the view all / collapse buttons     | :x:                | Boolean | display buttons to expand/collapse records                                                                                            | checked(true) OR not checked(false)                                |
+| Enable/Disable pagination                | :x:                | Boolean | enable or disable pagination for the list                                                                                             | checked(true) OR not checked(false)                                |
+| Buttons to display                       | :x:                | String  | buttons that we want to display                                                                                                       | See below [**Buttons configuration**](#buttons-configuration)      |
 
-## Columns JSON Example
-``` yaml 
-    [{ 
-       "fieldName": "FirstName",
-        "label": "First Name",
-        "type": "text",
-        "editable": "true",
-        "sortable": "true"
-    }, {
-        "fieldName": "LastName",
-        "label": "Last Name",
-        "type": "text",
-        "sortable": "true"
-    }, {
-        "fieldName": "Email",
-        "label": "Email",
-        "type": "email",
-        "sortable": "true"
-    }, {
-        "fieldName": "Phone",
-        "label": "Phone",
-        "type": "phone",
-        "sortable": "true"
-    },{
-        "fieldName": "Account.Name",
-        "label": "Account Name",
-        "type": "text",
-        "sortable": "true"
-    }]
-```
 ## Buttons configuration
 
 ### Buttons JSON :
+
 ```yml
-[{
-        "name": "New",
-        "label": "New",
-        "variant": "neutral"
-    }
-]
+[{ "name": "New", "label": "New", "variant": "neutral" }]
 ```
+
 ### Default displayed buttons
+
 The "New" button is displayed by default
 
-
 ### Button logic definition (fire an event, call a method in the javascript controller)
+
 You can implement your own logic for your new buttons based on button JSON (new, delete-selected...).
 
 ```JS
@@ -112,10 +81,10 @@ You can implement your own logic for your new buttons based on button JSON (new,
 ```
 
 ## Deploy
+
 Click Button to deploy source in Developer/Sandbox
 
 <a href="https://githubsfdeploy.herokuapp.com/app/githubdeploy/Sarveshgithub/sfdc-lwc-lightning-datatable">
   <img alt="Deploy to Salesforce"
        src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
 </a>
-
