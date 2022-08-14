@@ -1,77 +1,90 @@
 <template>
-  <!-- Main content -->
-  <lightning-card variant="Narrow" title={titleFormatted} icon-name={iconName}>
-    <!-- custom action buttons for list, by default new is displayed --> 
-    <template if:true={actionButtons}>
-      <template for:each={actionButtons} for:item="actionButton" for:index="index">
-          <lightning-button key={actionButton.label} 
-                            label={actionButton.label} 
-                            title={actionButton.label}
-                            variant={actionButton.variant} 
-                            onclick={handleButtonAction}
-                            data-name={actionButton.name}
-                            class="slds-m-left_x-small"
-                            slot="actions"
-                            >
-          </lightning-button>
-      </template>
-    </template>
+	<!-- Error block -->
+	<template if:true={error}>
+		<div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
+			<span class="slds-assistive-text">error</span>
+			<p>{error}</p>
+		</div>
+	</template>
+	<!-- Main content -->
+	<lightning-card variant="Narrow" title={titleFormatted} icon-name={iconName}>
+		<!-- custom action buttons for list, by default new is displayed -->
+		<template if:true={actionButtons}>
+			<template for:each={actionButtons} for:item="actionButton" for:index="index">
+				<lightning-button
+					key={actionButton.label}
+					label={actionButton.label}
+					title={actionButton.label}
+					variant={actionButton.variant}
+					onclick={handleButtonAction}
+					data-name={actionButton.name}
+					class="slds-m-left_x-small"
+					slot="actions"
+				>
+				</lightning-button>
+			</template>
+		</template>
+		<!-- Data table  -->
+		<template if:true={data}>
+			<!-- DATATABLE WITH CHECKBOXES -->
+			<lightning-datatable
+				hide-checkbox-column={showCheckboxes}
+				key-field="Id"
+				data={data}
+				columns={columns}
+				onrowaction={handleRowAction}
+				onrowselection={handleRowSelection}
+				onsave={handleSave}
+				draft-values={draftValues}
+				onsort={handleSort}
+				sorted-by={sortBy}
+			>
+			</lightning-datatable>
+		</template>
 
-    <!-- Error block -->
-    <template if:true={error}>
-      <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
-        <span class="slds-assistive-text">error</span>
-        <p>{error}</p>
-      </div>
-    </template>
-    <!-- Data table  -->
-    <template if:true={data}>
+		<!-- Pagination -->
+		<div slot="footer" style="text-align: right" if:true={hasPagination}>
+			<lightning-button
+				variant="brand"
+				disabled={isDisablePrev}
+				label="First"
+				title="Primary action"
+				onclick={firstPage}
+				class="slds-m-left_xx-small"
+			></lightning-button>
+			<lightning-button
+				variant="brand"
+				disabled={isDisablePrev}
+				label="Previous"
+				title="Primary action"
+				onclick={previous}
+				class="slds-m-left_xx-small"
+			></lightning-button>
+			<lightning-button
+				variant="brand"
+				disabled={isDisableNext}
+				label="Next"
+				title="Primary action"
+				onclick={next}
+				class="slds-m-left_xx-small"
+			></lightning-button>
+			<lightning-button
+				variant="brand"
+				disabled={isDisableNext}
+				label="Last"
+				title="Primary action"
+				onclick={lastPage}
+				class="slds-m-left_xx-small slds-m-right_xx-small"
+			></lightning-button>
+		</div>
 
-      <!-- DATATABLE WITH CHECKBOXES -->
-      <lightning-datatable 
-        hide-checkbox-column={showCheckboxes}
-        key-field="Id" 
-        data={data} 
-        columns={columns} 
-        onrowaction={handleRowAction}
-        onrowselection={handleRowSelection}
-        onsave={handleSave}
-        draft-values={draftValues} 
-        onsort={handleSort}
-        sorted-by={sortBy}
-      >
-      </lightning-datatable>
-
-    </template>
-
-    
-    <!-- Pagination -->
-    <div slot="footer" style="text-align: right;" if:true={hasPagination}>
-      <lightning-button variant="brand" disabled={isDisablePrev} label="First" title="Primary action"
-        onclick={firstPage} class="slds-m-left_xx-small"></lightning-button>
-      <lightning-button variant="brand" disabled={isDisablePrev} label="Previous" title="Primary action"
-        onclick={previous} class="slds-m-left_xx-small"></lightning-button>
-      <lightning-button variant="brand" disabled={isDisableNext} label="Next" title="Primary action" onclick={next}
-        class="slds-m-left_xx-small"></lightning-button>
-      <lightning-button variant="brand" disabled={isDisableNext} label="Last" title="Primary action"
-        onclick={lastPage} class="slds-m-left_xx-small slds-m-right_xx-small"></lightning-button>
-    </div>
-
-    <footer class="slds-card__footer" if:true={hasToShowViewAll}>
-      <lightning-button variant="base" 
-                        label="View all" 
-                        title="View all"
-                        onclick={showAllRecords}>
-      </lightning-button>
-    </footer>
-    <footer class="slds-card__footer" if:true={showCollapse}>
-      <lightning-button variant="base" 
-                        label="Collapse" 
-                        title="Collapse"
-                        onclick={showInitialRecordsWithLimit}>
-      </lightning-button>
-    </footer>
-  </lightning-card>
-
-  
+		<footer class="slds-card__footer" if:true={hasToShowViewAll}>
+			<lightning-button variant="base" label="View all" title="View all" onclick={showAllRecords}>
+			</lightning-button>
+		</footer>
+		<footer class="slds-card__footer" if:true={showCollapse}>
+			<lightning-button variant="base" label="Collapse" title="Collapse" onclick={showInitialRecordsWithLimit}>
+			</lightning-button>
+		</footer>
+	</lightning-card>
 </template>

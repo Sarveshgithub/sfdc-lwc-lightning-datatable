@@ -9,5 +9,9 @@
       "files": "*.{cmp,page,component}",
       "options": { "parser": "html" }
     }
-  ]
+  ],
+"useTabs": true,
+"tabWidth": 4,
+"printWidth": 120
+
 }
