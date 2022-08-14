@@ -8,15 +8,15 @@ import { LightningElement, track, api } from "lwc";
 import { NavigationMixin } from "lightning/navigation";
 import { deleteRecord } from "lightning/uiRecordApi";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
-// import getRecords from "@salesforce/apex/RelatedList.getRecords";
-import countRecords from "@salesforce/apex/RelatedList.countRecords";
+import getRecords from "@salesforce/apex/RelatedList.getRecords";
 import buildFieldJSON from "@salesforce/apex/RelatedList.buildFieldJSON";
 import { updateRecord } from "lightning/uiRecordApi";
-// const actions = [
-// 	{ label: "Show details", name: "show_details" },
-// 	{ label: "Edit", name: "edit" },
-// 	{ label: "Delete", name: "delete" }
-// ];
+// import { configLocal } from "./lwcRelatedListHelper";
+const actions = [
+	{ label: "Show details", name: "show_details" },
+	{ label: "Edit", name: "edit" },
+	{ label: "Delete", name: "delete" }
+];
 
 export default class LightningDatatable extends NavigationMixin(LightningElement) {
 	// Public Property
@@ -49,22 +49,33 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 
 	// Do init funtion
 	connectedCallback() {
+		//This function can used for local development config
+		//configLocal(this);
 		if (this.actionButtons && this.actionButtons !== undefined) {
 			this.actionButtons = JSON.parse(this.actionButtons);
 		}
 		this.initialLimit = this.limit;
 		this.buildSOQL();
-		countRecords({ objectName: this.objectName, whereClause: this.appendWhere() }).then((result) => {
-			this.totalRows = result;
-		});
-		this.fields = "FirstName,LastName,AccountId,Id,Opportunity__c";
-		this.objectName = "Contact";
-		buildFieldJSON({ soql: this.soql, fields: this.fields, objectName: this.objectNames })
+		this.init();
+	}
+
+	init() {
+		buildFieldJSON({
+			soql: this.soql,
+			fields: this.fields,
+			objectName: this.objectName,
+			whereClause: this.appendWhere()
+		})
 			.then((data) => {
 				if (data) {
 					this.data = data.records;
+					this.iconName = this.iconName ? this.iconName : data.iconName;
+					data.cols.push({
+						type: "action",
+						typeAttributes: { rowActions: actions }
+					});
 					this.columns = data.cols;
-					console.log("rdata::", data);
+					this.totalRows = data.count;
 				}
 			})
 			.catch((error) => {
@@ -74,33 +85,31 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 			});
 	}
 
-	// fetchRecords() {
-	// 	getRecords({ soql: this.soql })
-	// 		.then((data) => {
-	// 			if (data) {
-	// 				if (!this.iconName) {
-	// 					this.iconName = data.iconName;
-	// 				}
-	// 				let records = data.records;
-	// 				records.forEach((e) => {
-	// 					for (let key in e) {
-	// 						if (typeof e[key] === "object") {
-	// 							for (let onLevel in e[key]) {
-	// 								e[key + "." + onLevel] = e[key][onLevel];
-	// 							}
-	// 						}
-	// 					}
-	// 				});
-	// 				this.data = records;
-	// 				console.log("data::", this.data);
-	// 			}
-	// 		})
-	// 		.catch((error) => {
-	// 			if (error) {
-	// 				this.formatError(error);
-	// 			}
-	// 		});
-	// }
+	fetchRecords() {
+		getRecords({ soql: this.soql })
+			.then((data) => {
+				if (data) {
+					let records = data;
+					records.forEach((e) => {
+						for (let key in e) {
+							if (typeof e[key] === "object") {
+								for (let onLevel in e[key]) {
+									if (Object.prototype.hasOwnProperty.call(e[key], onLevel)) {
+										e[key + "." + onLevel] = e[key][onLevel];
+									}
+								}
+							}
+						}
+					});
+					this.data = records;
+				}
+			})
+			.catch((error) => {
+				if (error) {
+					this.formatError(error);
+				}
+			});
+	}
 
 	handleSave(event) {
 		const recordInputs = event.detail.draftValues.slice().map((draft) => {
@@ -129,7 +138,6 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 			} else if (typeof error.body.message === "string") {
 				this.error = error.body.message;
 			}
-			console.log("error", this.error);
 		}
 	}
 
@@ -270,7 +278,8 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 
 	//Generic function to build soql
 	buildSOQL() {
-		let soql = this.appendField();
+		let soql;
+		if (this.fields) soql = this.appendField();
 		soql += this.appendWhere();
 		soql += " WITH SECURITY_ENFORCED ";
 		if (this.sortBy && this.sortDirection) soql += ` ORDER BY ${this.sortBy} ${this.sortDirection} `;
