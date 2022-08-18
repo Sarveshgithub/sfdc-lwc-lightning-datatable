@@ -11,7 +11,7 @@ import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getRecords from "@salesforce/apex/RelatedList.getRecords";
 import buildFieldJSON from "@salesforce/apex/RelatedList.buildFieldJSON";
 import { updateRecord } from "lightning/uiRecordApi";
-// import { configLocal } from "./lwcRelatedListHelper";
+import { configLocal } from "./lwcRelatedListHelper";
 const actions = [
 	{ label: "Show details", name: "show_details" },
 	{ label: "Edit", name: "edit" },
@@ -49,8 +49,8 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 
 	// Do init funtion
 	connectedCallback() {
-		//This function can used for local development config
-		//configLocal(this);
+		//This function can used for local development config, pass 'true' for config
+		configLocal(this, false);
 		if (this.actionButtons && this.actionButtons !== undefined) {
 			this.actionButtons = JSON.parse(this.actionButtons);
 		}
