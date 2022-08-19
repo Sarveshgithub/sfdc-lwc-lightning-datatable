@@ -88,3 +88,6 @@ Click Button to deploy source in Developer/Sandbox
   <img alt="Deploy to Salesforce"
        src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
 </a>
+
+## Want to contribute? Great!
+Create Pull Request to `dev` branch with your feature banch.
