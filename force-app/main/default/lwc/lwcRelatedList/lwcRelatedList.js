@@ -25,6 +25,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	@api title;
 	@api objectName;
 	@api fields;
+	@api labelsOverride;
 	@api relatedFieldAPI;
 	@api whereClause;
 	@api limit;
@@ -69,6 +70,9 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 			.then((data) => {
 				if (data) {
 					this.data = data.records;
+					if(this.labelsOverride) {
+						this.initLabelsOverride(data);
+					}
 					this.iconName = this.iconName ? this.iconName : data.iconName;
 					data.cols.push({
 						type: "action",
@@ -83,6 +87,35 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 					this.formatError(error);
 				}
 			});
+	}
+
+	initLabelsOverride(data) {
+		let columns = JSON.parse(JSON.stringify(data.cols) );
+
+		let allLabelOverride = null;
+		if(this.labelsOverride.includes(',') ) {
+			allLabelOverride = this.labelsOverride.split(',');
+		} else if(this.labelsOverride.includes('=')) {
+			allLabelOverride = [this.labelsOverride];
+		}
+		
+		if(allLabelOverride) {
+			allLabelOverride.forEach(override => {
+				const elements = override.split('=');
+				if(elements) {
+					const apiName = elements[0];
+					const newLabel = elements[1];
+				
+					columns.forEach(column => {
+						if(column.fieldName === apiName) {
+							column.label = newLabel;
+						}
+					});
+				}
+			});
+		}
+
+		data.cols = columns;
 	}
 
 	fetchRecords() {

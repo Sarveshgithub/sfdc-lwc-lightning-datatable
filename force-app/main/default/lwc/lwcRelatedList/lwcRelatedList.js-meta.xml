@@ -13,7 +13,8 @@
       <property name="iconName" type="String" label="Enter Icon Name" />
       <property name="title" type="String" required="true" label="Enter Title" default="LWC Table" />
       <property name="objectName" type="String" required="true" label="Enter Object API Name" />
-      <property name="fields" type="String" required="true" label="Enter Field API Name by comma seprated" />
+      <property name="fields" type="String" required="true" label="Enter Field API Name by comma separated" />
+      <property name="labelsOverride" type="String" required="false" label="Enter labels override(ex : Name=The account name,Industry=related industry)" />
       <property name="relatedFieldAPI" type="String" label="Enter Related field API Name" />
       <property name="showCheckboxes" type="Boolean" default="true" label="Hide/Unhide checkbox column" />
       <property name="whereClause" type="String" label="Enter WHERE clause" />
