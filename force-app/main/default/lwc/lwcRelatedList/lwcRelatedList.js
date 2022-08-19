@@ -11,7 +11,7 @@ import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getRecords from "@salesforce/apex/RelatedList.getRecords";
 import buildFieldJSON from "@salesforce/apex/RelatedList.buildFieldJSON";
 import { updateRecord } from "lightning/uiRecordApi";
-import { configLocal } from "./lwcRelatedListHelper";
+import { configLocal, setPredefinedColumnJSON } from "./lwcRelatedListHelper";
 const actions = [
 	{ label: "Show details", name: "show_details" },
 	{ label: "Edit", name: "edit" },
@@ -33,6 +33,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	@api showCheckboxes;
 	@api showViewAll;
 	@api hasPagination;
+	@api predefinedCol;
 	// Private Property
 	@track data;
 	@track soql;
@@ -45,17 +46,20 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	@track sortBy;
 	@track sortDirection;
 	@track columns;
+	@track colsJson;
 	draftValues = [];
 
 	// Do init funtion
 	connectedCallback() {
 		//This function can used for local development config, pass 'true' for config
-		configLocal(this, false);
+		configLocal(this, true);
+		setPredefinedColumnJSON(this);
 		if (this.actionButtons && this.actionButtons !== undefined) {
 			this.actionButtons = JSON.parse(this.actionButtons);
 		}
 		this.initialLimit = this.limit;
 		this.buildSOQL();
+		console.log("cols::::----", this.colsJson, this.soql);
 		this.init();
 	}
 
@@ -64,11 +68,28 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 			soql: this.soql,
 			fields: this.fields,
 			objectName: this.objectName,
-			whereClause: this.appendWhere()
+			whereClause: this.appendWhere(),
+			colsJson: JSON.stringify(this.colsJson)
 		})
 			.then((data) => {
 				if (data) {
-					this.data = data.records;
+					console.log("return data:::", data);
+					let records = JSON.parse(JSON.stringify(data.records).toLowerCase());
+					console.log("lowercase::", records);
+					if (data) {
+						records.forEach((e) => {
+							for (let key in e) {
+								if (typeof e[key] === "object") {
+									for (let onLevel in e[key]) {
+										if (Object.prototype.hasOwnProperty.call(e[key], onLevel)) {
+											e[key + "." + onLevel] = e[key][onLevel];
+										}
+									}
+								}
+							}
+						});
+						this.data = records;
+					}
 					this.iconName = this.iconName ? this.iconName : data.iconName;
 					data.cols.push({
 						type: "action",

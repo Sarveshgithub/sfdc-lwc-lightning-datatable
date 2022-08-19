@@ -1,4 +1,6 @@
 public with sharing class RelatedList {
+	private static Map<String, String> mapFieldToLwcDataType = new Map<String, String>{ 'datetime' => 'date' };
+	//String a = '"typeAttributes":{"day":"numeric","month":"short","year":"numeric","hour":"2-digit","minute":"2-digit","second":"2-digit","hour12"';
 	public class ColumnJson {
 		@AuraEnabled
 		public String fieldName;
@@ -40,26 +42,53 @@ public with sharing class RelatedList {
 	 * Purpose : This method is used for building the Column JSON for data table
 	 */
 	@AuraEnabled
-	public static ListResults buildFieldJSON(String fields, String soql, String objectName, String whereClause) {
+	public static ListResults buildFieldJSON(
+		String fields,
+		String soql,
+		String objectName,
+		String whereClause,
+		String colsJson
+	) {
 		try {
 			fields = fields.toLowercase();
+			Map<String, ColumnJson> mapOfPredefinedCols = (Map<String, ColumnJson>) Json.deserialize(
+				colsJson,
+				Map<String, ColumnJson>.class
+			);
+			System.debug('mapOfPredefinedCols:::' + mapOfPredefinedCols);
 			SObjectType accountType = Schema.getGlobalDescribe().get(objectName);
 			Map<String, Schema.SObjectField> mfields = accountType.getDescribe().fields.getMap();
 			List<ColumnJson> lstOfColumns = new List<ColumnJson>();
-			for (String fieldName : fields.split(',')) {
-				lstOfColumns.add(
-					new ColumnJson(
-						mfields.get(fieldName).getDescribe().getName(),
-						mfields.get(fieldName).getDescribe().getLabel(),
-						String.valueOf(mfields.get(fieldName).getDescribe().getType()),
-						mfields.get(fieldName).getDescribe().isUpdateable(),
-						mfields.get(fieldName).getDescribe().isSortable()
-					)
-				);
+			for (String fieldName : mapOfPredefinedCols.keySet()) {
+				fieldName = fieldName.toLowercase();
+				//continue;
+				if (fieldName.contains('.')) {
+					continue;
+				}
+				//Check if values predefined in LWC
+				String label = mapOfPredefinedCols.get(fieldName).label != null
+						? mapOfPredefinedCols.get(fieldName).label
+						: mfields.get(fieldName).getDescribe().getLabel(),
+					type = mapOfPredefinedCols.get(fieldName).type != null
+						? mapOfPredefinedCols.get(fieldName).type.toLowercase()
+						: String.valueOf(mfields.get(fieldName).getDescribe().getType()).toLowercase();
+				Boolean editable = mapOfPredefinedCols.get(fieldName).editable != null
+						? mapOfPredefinedCols.get(fieldName).editable
+						: mfields.get(fieldName).getDescribe().isUpdateable(),
+					sortable = mapOfPredefinedCols.get(fieldName).sortable != null
+						? mapOfPredefinedCols.get(fieldName).sortable
+						: mfields.get(fieldName).getDescribe().isSortable();
+				//Update Map Json
+				mapOfPredefinedCols.get(fieldName).label = label;
+				mapOfPredefinedCols.get(fieldName).type = mapFieldToLwcDataType.containskey(type)
+					? mapFieldToLwcDataType.get(type)
+					: type;
+				mapOfPredefinedCols.get(fieldName).editable = editable;
+				mapOfPredefinedCols.get(fieldName).sortable = sortable;
 			}
 			return new ListResults(
 				getRecords(soql),
-				lstOfColumns,
+				mapOfPredefinedCols.values(),
 				countRecords(objectName, whereClause),
 				IconUtils.getIconName(objectName)
 			);
