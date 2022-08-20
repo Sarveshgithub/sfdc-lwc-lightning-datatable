@@ -13,43 +13,63 @@ const configLocal = (cmp, local) => {
 		cmp.showCheckboxes = true;
 		cmp.showViewAll = false;
 		cmp.hasPagination = false;
-		cmp.predefinedCol = '{"Account.Name":{"label":"Account Name","type":"text"}}';
+		cmp.predefinedCol =
+			'{"Account.Name":{"label":"Account Name","type":"url","typeAttributes":{"label": { "fieldName": "AccountId"}}},"AccountId":{"label":"Ac Id","type":"Id"}}';
 	}
 };
 
 const setPredefinedColumnJSON = (cmp) => {
 	if (cmp.fields.includes(".") && !cmp.predefinedCol) {
 		cmp.error = "You have not configured related field defination.";
-		return;
+		throw new Error("error");
 	}
 	const predefinedCol = JSON.parse(cmp.predefinedCol);
-	// Object.defineProperty(Object, 'hasOwnPropertyCI', {
-	// 	enumerable: false,
-	// 	value: (keyName) => (
-	// 		Object.keys(this).findIndex(
-	// 			v => v.toUpperCase() === keyName.toUpperCase()
-	// 		) > -1
-	// 	});
-
-	Object.keys(predefinedCol).forEach((i) => {
-		predefinedCol[i.toLowerCase()] = predefinedCol[i];
-		delete predefinedCol[i];
-	});
-	console.log("llll", predefinedCol);
 	const setPredefinedCol = {};
-	cmp.fields
-		.toLowerCase()
-		.split(",")
-		.forEach((element) => {
-			element = element.trim();
-			if (Object.prototype.hasOwnProperty.call(predefinedCol, element)) {
-				setPredefinedCol[element] = { ...predefinedCol[element], fieldName: element };
-			} else {
-				setPredefinedCol[element] = { fieldName: element };
-			}
-		});
+	cmp.fields.split(",").forEach((element) => {
+		element = element.trim();
+		if (Object.prototype.hasOwnProperty.call(predefinedCol, element)) {
+			setPredefinedCol[element] = { ...predefinedCol[element], fieldName: element };
+		} else {
+			setPredefinedCol[element] = { fieldName: element };
+		}
+	});
 	console.log("data:::", setPredefinedCol);
 	cmp.colsJson = setPredefinedCol;
 };
 
-export { configLocal, setPredefinedColumnJSON };
+const formatData = (records, cols) => {
+	records.forEach((e) => {
+		// eslint-disable-next-line guard-for-in
+		for (let key in e) {
+			// if (key === 'fieldName'){
+			// 	let a = 3;
+			//cols[e[key]].type = 'url'
+			// }
+			// if(Object.prototype.hasOwnProperty.call(cols, key)) {
+			// 	//let a =
+			// 	if(cols[key].type === 'url'){
+
+			// 	}
+			// }
+
+			if (typeof e[key] === "object") {
+				for (let onLevel in e[key]) {
+					if (Object.prototype.hasOwnProperty.call(e[key], onLevel)) {
+						e[key + "." + onLevel] = e[key][onLevel];
+						key = key + "." + onLevel;
+					}
+				}
+			}
+			if (Object.prototype.hasOwnProperty.call(cols, key) && cols[key].type === "url") {
+				console.log("fieed:::", cols[key]);
+				//cols[key].typeAttributes.label.fieldName = cols[key].typeAttributes.label.fieldName + "URL";
+
+				e[key + "URL"] = "/" + e.Id;
+				//e[key + "URL"] = e[key];
+			}
+		}
+	});
+	return records;
+};
+
+export { configLocal, setPredefinedColumnJSON, formatData };

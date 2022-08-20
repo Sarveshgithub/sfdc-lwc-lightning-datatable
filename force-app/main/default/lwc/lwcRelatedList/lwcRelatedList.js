@@ -11,7 +11,7 @@ import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getRecords from "@salesforce/apex/RelatedList.getRecords";
 import buildFieldJSON from "@salesforce/apex/RelatedList.buildFieldJSON";
 import { updateRecord } from "lightning/uiRecordApi";
-import { configLocal, setPredefinedColumnJSON } from "./lwcRelatedListHelper";
+import { configLocal, setPredefinedColumnJSON, formatData } from "./lwcRelatedListHelper";
 const actions = [
 	{ label: "Show details", name: "show_details" },
 	{ label: "Edit", name: "edit" },
@@ -54,7 +54,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 		//This function can used for local development config, pass 'true' for config
 		configLocal(this, true);
 		setPredefinedColumnJSON(this);
-		if (this.actionButtons && this.actionButtons !== undefined) {
+		if (this.actionButtons) {
 			this.actionButtons = JSON.parse(this.actionButtons);
 		}
 		this.initialLimit = this.limit;
@@ -74,28 +74,25 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 			.then((data) => {
 				if (data) {
 					console.log("return data:::", data);
-					let records = JSON.parse(JSON.stringify(data.records).toLowerCase());
-					console.log("lowercase::", records);
-					if (data) {
-						records.forEach((e) => {
-							for (let key in e) {
-								if (typeof e[key] === "object") {
-									for (let onLevel in e[key]) {
-										if (Object.prototype.hasOwnProperty.call(e[key], onLevel)) {
-											e[key + "." + onLevel] = e[key][onLevel];
-										}
-									}
-								}
-							}
-						});
-						this.data = records;
-					}
-					this.iconName = this.iconName ? this.iconName : data.iconName;
-					data.cols.push({
+
+					const cols = Object.values(data.cols);
+					console.log("cols:::", cols);
+					cols.forEach((e) => {
+						if (e.fieldName === "Account.Name") {
+							e.fieldName = e.fieldName + "URL";
+							e.typeAttributes = {
+								label: { fieldName: "Account.Name", recId: "Id", taget: "_blank" }
+							};
+						}
+					});
+					cols.push({
 						type: "action",
 						typeAttributes: { rowActions: actions }
 					});
-					this.columns = data.cols;
+					this.data = formatData(data.records, data.cols);
+					this.columns = cols;
+					//this.data = formatData(data.records, data.cols);
+					this.iconName = this.iconName ? this.iconName : data.iconName;
 					this.totalRows = data.count;
 				}
 			})
@@ -110,19 +107,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 		getRecords({ soql: this.soql })
 			.then((data) => {
 				if (data) {
-					let records = data;
-					records.forEach((e) => {
-						for (let key in e) {
-							if (typeof e[key] === "object") {
-								for (let onLevel in e[key]) {
-									if (Object.prototype.hasOwnProperty.call(e[key], onLevel)) {
-										e[key + "." + onLevel] = e[key][onLevel];
-									}
-								}
-							}
-						}
-					});
-					this.data = records;
+					this.data = formatData(data);
 				}
 			})
 			.catch((error) => {

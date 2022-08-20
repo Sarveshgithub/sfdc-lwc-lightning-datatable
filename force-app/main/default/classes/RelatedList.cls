@@ -12,25 +12,18 @@ public with sharing class RelatedList {
 		public Boolean editable;
 		@AuraEnabled
 		public Boolean sortable;
-		public ColumnJson(String fieldName, String lable, String type, Boolean editable, Boolean sortable) {
-			this.fieldName = fieldName;
-			this.label = lable;
-			this.type = type;
-			this.editable = editable;
-			this.sortable = sortable;
-		}
 	}
 
 	public class ListResults {
 		@AuraEnabled
 		public List<SObject> records;
 		@AuraEnabled
-		public List<ColumnJson> cols;
+		public Map<String, ColumnJson> cols;
 		@AuraEnabled
 		public Integer count;
 		@AuraEnabled
 		public String iconName;
-		public ListResults(List<SObject> records, List<ColumnJson> cols, Integer count, String iconName) {
+		public ListResults(List<SObject> records, Map<String, ColumnJson> cols, Integer count, String iconName) {
 			this.records = records;
 			this.cols = cols;
 			this.count = count;
@@ -60,7 +53,7 @@ public with sharing class RelatedList {
 			Map<String, Schema.SObjectField> mfields = accountType.getDescribe().fields.getMap();
 			List<ColumnJson> lstOfColumns = new List<ColumnJson>();
 			for (String fieldName : mapOfPredefinedCols.keySet()) {
-				fieldName = fieldName.toLowercase();
+				// fieldName = fieldName.toLowercase();
 				//continue;
 				if (fieldName.contains('.')) {
 					continue;
@@ -88,7 +81,7 @@ public with sharing class RelatedList {
 			}
 			return new ListResults(
 				getRecords(soql),
-				mapOfPredefinedCols.values(),
+				mapOfPredefinedCols,
 				countRecords(objectName, whereClause),
 				IconUtils.getIconName(objectName)
 			);
