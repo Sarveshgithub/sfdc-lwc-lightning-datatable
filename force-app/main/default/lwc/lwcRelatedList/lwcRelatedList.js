@@ -52,7 +52,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	// Do init funtion
 	connectedCallback() {
 		//This function can used for local development config, pass 'true' for config
-		configLocal(this, true);
+		configLocal(this, false);
 		setPredefinedColumnJSON(this);
 		if (this.actionButtons) {
 			this.actionButtons = JSON.parse(this.actionButtons);
