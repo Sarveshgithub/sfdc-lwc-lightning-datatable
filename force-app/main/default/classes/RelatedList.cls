@@ -1,6 +1,5 @@
 public with sharing class RelatedList {
 	private static Map<String, String> mapFieldToLwcDataType = new Map<String, String>{ 'datetime' => 'date' };
-	//String a = '"typeAttributes":{"day":"numeric","month":"short","year":"numeric","hour":"2-digit","minute":"2-digit","second":"2-digit","hour12"';
 	public class ColumnJson {
 		@AuraEnabled
 		public String fieldName;
@@ -53,11 +52,11 @@ public with sharing class RelatedList {
 			Map<String, Schema.SObjectField> mfields = accountType.getDescribe().fields.getMap();
 			List<ColumnJson> lstOfColumns = new List<ColumnJson>();
 			for (String fieldName : mapOfPredefinedCols.keySet()) {
-				// fieldName = fieldName.toLowercase();
 				//continue;
 				if (fieldName.contains('.')) {
 					continue;
 				}
+				//TODO : constainkey check for mapOfPredefinedCols and Move below code to Helper Method
 				//Check if values predefined in LWC
 				String label = mapOfPredefinedCols.get(fieldName).label != null
 						? mapOfPredefinedCols.get(fieldName).label

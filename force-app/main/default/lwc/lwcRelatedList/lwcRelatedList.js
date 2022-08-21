@@ -11,7 +11,7 @@ import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getRecords from "@salesforce/apex/RelatedList.getRecords";
 import buildFieldJSON from "@salesforce/apex/RelatedList.buildFieldJSON";
 import { updateRecord } from "lightning/uiRecordApi";
-import { configLocal, setPredefinedColumnJSON, formatData } from "./lwcRelatedListHelper";
+import { configLocal, setPredefinedColumnJSON, formatData, _formatData } from "./lwcRelatedListHelper";
 const actions = [
 	{ label: "Show details", name: "show_details" },
 	{ label: "Edit", name: "edit" },
@@ -59,7 +59,6 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 		}
 		this.initialLimit = this.limit;
 		this.buildSOQL();
-		console.log("cols::::----", this.colsJson, this.soql);
 		this.init();
 	}
 
@@ -74,26 +73,17 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 			.then((data) => {
 				if (data) {
 					console.log("return data:::", data);
-
-					const cols = Object.values(data.cols);
-					console.log("cols:::", cols);
-					cols.forEach((e) => {
-						if (e.fieldName === "Account.Name") {
-							e.fieldName = e.fieldName + "URL";
-							e.typeAttributes = {
-								label: { fieldName: "Account.Name", recId: "Id", taget: "_blank" }
-							};
-						}
-					});
-					cols.push({
+					const { records, cols, count, iconName } = formatData(this, data);
+					this.colsJson = cols;
+					const colAc = Object.values(cols);
+					colAc.push({
 						type: "action",
 						typeAttributes: { rowActions: actions }
 					});
-					this.data = formatData(data.records, data.cols);
-					this.columns = cols;
-					//this.data = formatData(data.records, data.cols);
-					this.iconName = this.iconName ? this.iconName : data.iconName;
-					this.totalRows = data.count;
+					this.columns = colAc;
+					this.data = records;
+					this.iconName = this.iconName ? this.iconName : iconName;
+					this.totalRows = count;
 				}
 			})
 			.catch((error) => {
@@ -107,7 +97,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 		getRecords({ soql: this.soql })
 			.then((data) => {
 				if (data) {
-					this.data = formatData(data);
+					this.data = _formatData(this.colsJson, data);
 				}
 			})
 			.catch((error) => {
