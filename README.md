@@ -51,7 +51,7 @@ Design Attribute
 
   `type`  : This key is for override column Type [supported_lwc_datatable_datatype](https://developer.salesforce.com/docs/component-library/bundle/lightning-datatable/documentation). ( Ex : `url` ). ( [Example : Related Field Customized](#example--related-field-customized) )
 
-  `typeAttributes` : This key is used for hyperlink to recordId. ( `recId` stored recordId Field ). ( [Example : Related Field Customized](#example--add-hyperlink-for-navigate-to-record) )
+  `typeAttributes` : This key is used for hyperlink to recordId. ( `recId` stored recordId Field ). ( [Example : Add Hyperlink for navigate to record](#example--add-hyperlink-for-navigate-to-record) )
 
   ### Example : Override Column Label
   ```yml
