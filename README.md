@@ -110,7 +110,7 @@ Click Button to deploy source in Developer/Sandbox
 
 ## Q & A
 
-Feel free to ask any Question/Suggestion/Issue [here](https://github.com/Sarveshgithub/sfdc-lwc-lightning-datatable/discussions/categories/q-a)
+Feel free to ask any Question, Suggestion, Issue [here](https://github.com/Sarveshgithub/sfdc-lwc-lightning-datatable/discussions/categories/q-a)
 
 ## Want to contribute? Great!
 Create Pull Request to `dev` branch with your feature banch.
