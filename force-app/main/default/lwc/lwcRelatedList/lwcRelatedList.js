@@ -11,7 +11,7 @@ import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getRecords from "@salesforce/apex/RelatedList.getRecords";
 import buildFieldJSON from "@salesforce/apex/RelatedList.buildFieldJSON";
 import { updateRecord } from "lightning/uiRecordApi";
-import { configLocal } from "./lwcRelatedListHelper";
+import { configLocal, setPredefinedColumnJSON, formatData, _formatData } from "./lwcRelatedListHelper";
 const actions = [
 	{ label: "Show details", name: "show_details" },
 	{ label: "Edit", name: "edit" },
@@ -33,6 +33,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	@api showCheckboxes;
 	@api showViewAll;
 	@api hasPagination;
+	@api predefinedCol;
 	// Private Property
 	@track data;
 	@track soql;
@@ -45,13 +46,15 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	@track sortBy;
 	@track sortDirection;
 	@track columns;
+	@track colsJson;
 	draftValues = [];
 
 	// Do init funtion
 	connectedCallback() {
 		//This function can used for local development config, pass 'true' for config
 		configLocal(this, false);
-		if (this.actionButtons && this.actionButtons !== undefined) {
+		setPredefinedColumnJSON(this);
+		if (this.actionButtons) {
 			this.actionButtons = JSON.parse(this.actionButtons);
 		}
 		this.initialLimit = this.limit;
@@ -62,20 +65,24 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	init() {
 		buildFieldJSON({
 			soql: this.soql,
-			fields: this.fields,
 			objectName: this.objectName,
-			whereClause: this.appendWhere()
+			whereClause: this.appendWhere(),
+			colsJson: JSON.stringify(this.colsJson)
 		})
 			.then((data) => {
 				if (data) {
-					this.data = data.records;
-					this.iconName = this.iconName ? this.iconName : data.iconName;
-					data.cols.push({
+					console.log("return data:::", data);
+					const { records, cols, count, iconName } = formatData(this, data);
+					this.colsJson = cols;
+					const colAc = Object.values(cols);
+					colAc.push({
 						type: "action",
 						typeAttributes: { rowActions: actions }
 					});
-					this.columns = data.cols;
-					this.totalRows = data.count;
+					this.columns = colAc;
+					this.data = records;
+					this.iconName = this.iconName ? this.iconName : iconName;
+					this.totalRows = count;
 				}
 			})
 			.catch((error) => {
@@ -89,19 +96,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 		getRecords({ soql: this.soql })
 			.then((data) => {
 				if (data) {
-					let records = data;
-					records.forEach((e) => {
-						for (let key in e) {
-							if (typeof e[key] === "object") {
-								for (let onLevel in e[key]) {
-									if (Object.prototype.hasOwnProperty.call(e[key], onLevel)) {
-										e[key + "." + onLevel] = e[key][onLevel];
-									}
-								}
-							}
-						}
-					});
-					this.data = records;
+					this.data = _formatData(this.colsJson, data);
 				}
 			})
 			.catch((error) => {
