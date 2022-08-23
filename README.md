@@ -36,6 +36,7 @@ Design Attribute
 | Enter Title                              | :heavy_check_mark: | String  | provide table title                                                                                                                   | LWC Table                                                          |
 | Enter Object API Name                    | :heavy_check_mark: | String  | provide object custom or standard API name                                                                                            | Account                                                            |
 | Enter Columns API Name by comma seprated | :heavy_check_mark: | String  | **Note** : for related field it should be concat with . i.e : Account.Name for contact, Inline Edit not support cross reference Field | FirstName,LastName,Email,Phone                                     |
+| Enter Customized Field JSON ( This is Mandatory for Related Field )| :x: | String  | customized Column Label, Record Redirect, Data Type. **Note** : This is Mandatory for Related Fields i.e : Account.Name for contact| See below [**Customized Field JSON**](#customized-field-json)|
 | Enter Related field API Name             | :x:                | String  | Enter related field api name                                                                                                          | Example AccountId for contact when component is on account layout. |
 | Hide/Unhide checkbox column              | :x:                | Boolean | true/false                                                                                                                            | Hide/Unhide Checkbox                                               |
 | Enter WHERE clause                       | :x:                | String  | provide aditional filters                                                                                                             | Example `LastName like '%s' AND Account.Name like '%t'`            |
@@ -44,6 +45,27 @@ Design Attribute
 | Show the view all / collapse buttons     | :x:                | Boolean | display buttons to expand/collapse records                                                                                            | checked(true) OR not checked(false)                                |
 | Enable/Disable pagination                | :x:                | Boolean | enable or disable pagination for the list                                                                                             | checked(true) OR not checked(false)                                |
 | Buttons to display                       | :x:                | String  | buttons that we want to display                                                                                                       | See below [**Buttons configuration**](#buttons-configuration)      |
+
+## Customized Field JSON
+  `label` : This key is for override column Name. ( [Example : Override Column Label](#example--override-column-label) )
+
+  `type`  : This key is for override column Type [supported_lwc_datatable_datatype](https://developer.salesforce.com/docs/component-library/bundle/lightning-datatable/documentation). ( Ex : `url` ). ( [Example : Related Field Customized](#example--related-field-customized) )
+
+  `typeAttributes` : This key is used for hyperlink to recordId. ( `recId` stored recordId Field ). ( [Example : Related Field Customized](#example--add-hyperlink-for-navigate-to-record) )
+
+  ### Example : Override Column Label
+  ```yml
+  { "AccountId":{"label":"Account Record Id"}} }
+  ```
+  ### Example : Related Field Customized
+  ```yml
+  { "Account.Name":{"label":"Account Name","type":"text" }} }
+  ```
+  
+  ## Example : Add Hyperlink for navigate to record
+  ```yml
+  { "Account.Name":{"label":"Account Name","type":"url","typeAttributes":{"label":{"fieldName":"Account.Name","recId":"AccountId"}} }
+  ```
 
 ## Buttons configuration
 
