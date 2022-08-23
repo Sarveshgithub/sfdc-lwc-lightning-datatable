@@ -14,7 +14,7 @@
       <property name="title" type="String" required="true" label="Enter Title" default="LWC Table" />
       <property name="objectName" type="String" required="true" label="Enter Object API Name" />
       <property name="fields" type="String" required="true" label="Enter Field API Name by comma seprated" />
-      <property name="predefinedCol" type="String" label="Enter Field Defination for Related Fields" />
+      <property name="predefinedCol" type="String" label="Enter Customized Field JSON ( This is Mandatory for Related Field )" />
       <property name="relatedFieldAPI" type="String" label="Enter Related field API Name" />
       <property name="showCheckboxes" type="Boolean" default="true" label="Hide/Unhide checkbox column" />
       <property name="whereClause" type="String" label="Enter WHERE clause" />
