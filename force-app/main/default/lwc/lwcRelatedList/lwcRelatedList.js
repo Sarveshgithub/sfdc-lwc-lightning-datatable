@@ -65,7 +65,6 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	init() {
 		buildFieldJSON({
 			soql: this.soql,
-			fields: this.fields,
 			objectName: this.objectName,
 			whereClause: this.appendWhere(),
 			colsJson: JSON.stringify(this.colsJson)

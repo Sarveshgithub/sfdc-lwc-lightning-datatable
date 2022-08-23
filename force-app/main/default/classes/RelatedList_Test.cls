@@ -13,7 +13,12 @@ public with sharing class RelatedList_Test {
 		User testUser = [SELECT id FROM user WHERE id = :UserInfo.getUserId()];
 		RelatedList.ListResults results;
 		System.runAs(testUser) {
-			results = RelatedList.buildFieldJSON('Id,FirstName', 'SELECT ID,FirstName From Contact', 'Contact', '');
+			results = RelatedList.buildFieldJSON(
+				'SELECT ID,FirstName,Accountid From Contact',
+				'Contact',
+				'',
+				'{ "AccountId":{"label":"Account Record Id"}} }'
+			);
 		}
 		System.assertEquals(results != null, true);
 		Test.stopTest();
