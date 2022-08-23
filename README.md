@@ -25,14 +25,11 @@ The data table has following features.
 
 ## Steps to Customization through Design Attribute
 
-**Icon name :** <br/>
-Only specify the icon name if you wish to override the default icon of the object.
-<br/><br/>
-Design Attribute
+### Design Attribute
 
 | Label                                    | Required           | Type    | Value                                                                                                                                 | Example                                                            |
 | ---------------------------------------- | ------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| Enter Icon Name                          | :x:                | String  | provide slds icon name                                                                                                                | `standard:account`                                                 |
+| Enter Icon Name                          | :x:                | String  | provide slds icon name (if you wish to override the default icon of the object)                                                       | `standard:account`                                                 |
 | Enter Title                              | :heavy_check_mark: | String  | provide table title                                                                                                                   | LWC Table                                                          |
 | Enter Object API Name                    | :heavy_check_mark: | String  | provide object custom or standard API name                                                                                            | Contact                                                            |
 | Enter Columns API Name by comma seprated | :heavy_check_mark: | String  | **Note** : for related field it should be concat with . i.e : Account.Name for contact, Inline Edit not support cross reference Field | FirstName,LastName,Email,Phone                                     |
