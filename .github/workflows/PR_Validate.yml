@@ -9,6 +9,9 @@ on:
         paths:
             - "force-app/**"
 
+env:
+    SFDX_INTEGRATION_URL: ${{ secrets.SFDX_INTEGRATION_URL }}
+
 # Jobs to be executed when the above conditions are met
 jobs:
     # This is the name of the job. You can give it whatever name you want
@@ -53,7 +56,7 @@ jobs:
             - name: "Populate auth file with SFDX_URL secret of integration org"
               shell: bash
               run: |
-                  echo ${{ secrets.SFDX_INTEGRATION_URL}} > ./SFDX_INTEGRATION_URL.txt
+                  echo $SFDX_INTEGRATION_URL > ./SFDX_INTEGRATION_URL.txt
 
             # Authenticate to org using the URL stored in the text file
             - name: "Authenticate to Integration Org"
