@@ -3,7 +3,7 @@ name: Validate PR on develop branch
 
 # Definition when the workflow should run
 on:
-    pull_request:
+    pull_request_target:
         types: [opened, synchronize]
         branches: [optimize]
         paths:
