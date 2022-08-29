@@ -35,6 +35,7 @@ public with sharing class RelatedList {
 	 */
 	@AuraEnabled
 	public static ListResults buildFieldJSON(String soql, String objectName, String whereClause, String colsJson) {
+		System.debug('sdfd');
 		try {
 			Map<String, ColumnJson> mapPreCols = (Map<String, ColumnJson>) Json.deserialize(
 				colsJson,
