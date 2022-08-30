@@ -1,4 +1,4 @@
-//test CI ll kk
+//test CI ll kk mm
 public with sharing class RelatedList {
 	private static Map<String, String> mapFieldToLwcDataType = new Map<String, String>{ 'datetime' => 'date' };
 	public class ColumnJson {
