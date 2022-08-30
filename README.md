@@ -42,6 +42,7 @@ The data table has following features.
 | Show the view all / collapse buttons     | :x:                | Boolean | display buttons to expand/collapse records                                                                                            | checked(true) OR not checked(false)                                |
 | Enable/Disable pagination                | :x:                | Boolean | enable or disable pagination for the list                                                                                             | checked(true) OR not checked(false)                                |
 | Buttons to display                       | :x:                | String  | buttons that we want to display                                                                                                       | See below [**Buttons configuration**](#buttons-configuration)      |
+| Enable/Disable search                | :x:                | Boolean | enable or disable search bar                                                                                            | checked(true) OR not checked
 
 ## Customized Field JSON
 `label` : This key is for override column Name. ( [Example : Override Column Label](#example--override-column-label) )

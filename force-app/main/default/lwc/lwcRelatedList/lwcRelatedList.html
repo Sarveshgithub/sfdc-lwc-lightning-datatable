@@ -24,6 +24,12 @@
 				</lightning-button>
 			</template>
 		</template>
+
+		<!-- SEARCH BAR -->
+		<div class="slds-p-around_small lgc-bg" if:true={hasSearchBar}>
+			<lightning-input type="text" onchange={onSearchChange} value={searchTerm}></lightning-input>
+		</div>
+
 		<!-- Data table  -->
 		<template if:true={data}>
 			<!-- DATATABLE WITH CHECKBOXES -->
