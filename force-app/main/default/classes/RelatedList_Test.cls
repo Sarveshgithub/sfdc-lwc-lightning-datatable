@@ -45,4 +45,16 @@ public with sharing class RelatedList_Test {
 		}
 		Test.stopTest();
 	}
+    
+    @IsTest
+    static void onSearch_Test() {
+        Test.startTest();
+		User testUser = [SELECT id FROM user WHERE id = :UserInfo.getUserId()];
+		List<SObject> results;
+		System.runAs(testUser) {
+            results = RelatedList.onSearch('Fi', 'Contact', 'FirstName,LastName');
+		}
+		System.assertEquals(results.size() > 0, true);
+		Test.stopTest();
+    }
 }
