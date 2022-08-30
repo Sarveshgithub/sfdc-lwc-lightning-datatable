@@ -7,7 +7,7 @@
     {
       "path": "changed-sources",
       "default": false
-    },
+    }
   ],
   "name": "sfdc-lwc-lightning-datatable",
   "namespace": "",
