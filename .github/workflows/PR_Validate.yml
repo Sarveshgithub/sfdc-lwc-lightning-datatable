@@ -92,7 +92,7 @@ jobs:
             # If the env variable equals all, we run all tests
             - name: "Check-only deploy delta changes - run all tests"
               run: |
-                  sfdx force:source:deploy -p force-app --checkonly --testlevel RunLocalTests  --json
+                  sfdx force:source:deploy -p changed-sources/force-app --checkonly --testlevel RunLocalTests  --json
 
             # - name: "Deploy destructive changes (if any)"
             #   run: sfdx force:mdapi:deploy -d "changed-sources/destructiveChanges" --checkonly --ignorewarnings
