@@ -4,7 +4,8 @@ name: Validate PR on develop branch
 # Definition when the workflow should run
 on:
     pull_request_target:
-        branches: [master]
+        types: [opened, synchronize]
+        branches: [dev]
         paths:
             - "force-app/**"
 
@@ -46,6 +47,10 @@ jobs:
             - name: "Installing java"
               run: sudo apt-get install openjdk-8-jdk
 
+            # Install SFDX scanner
+            - name: "Installing SFDX scanner"
+              run: sfdx plugins:install @salesforce/sfdx-scanner
+
             # The URL is stored in the Github Secret named SFDX_INTEGRATION_URL
             # so here we store the URL into a text file
             - name: "Populate auth file with SFDX_URL secret of integration org"
@@ -57,5 +62,25 @@ jobs:
             - name: "Authenticate to Integration Org"
               run: sfdx auth:sfdxurl:store -f ./SFDX_INTEGRATION_URL.txt -s -a integration
               
-            - name: 'Deploy the entire branch to Production org'
-              run: sfdx force:source:deploy -p force-app --testlevel RunLocalTests --json
+            # Now we can use the sfdx scanner to scan the code in the delta directory
+            # The output of the scan is stored in a file called apexScanResults.sarif
+
+            # The .sarif file can later be uploaded to github, so that we can see the
+            # results of the scan directly from the PR.
+
+            - name: "Scan code"
+              run: |
+                  cd changed-sources
+                  sfdx scanner:run --format sarif --target './**/*.cls' --category "Design,Best Practices,Performance" --outfile 'apexScanResults.sarif'  
+                  cd ..
+
+            # Now we upload the .sarif file as explained in the previous step
+            - name: Upload SARIF file
+              uses: github/codeql-action/upload-sarif@v1
+              with:
+                  sarif_file: changed-sources/apexScanResults.sarif
+
+            # If the env variable equals all, we run all tests
+            - name: "Check-only deploy delta changes - run all tests"
+              run: |
+                  sfdx force:source:deploy -p force-app --checkonly --testlevel RunLocalTests  --json
