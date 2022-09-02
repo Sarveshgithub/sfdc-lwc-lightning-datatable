@@ -5,7 +5,7 @@ const configLocal = (cmp, local) => {
 		// cmp.relatedFieldAPI = "AccountId";
 		// cmp.whereClause;
 		cmp.title = "Contacts";
-		cmp.fields = "FirstName,LastName,AccountId,CreatedDate,Account.Name";
+		cmp.fields = "FirstName";
 		cmp.objectName = "Contact";
 		cmp.limit = 5;
 		cmp.isCounterDisplayed = true;
@@ -13,8 +13,10 @@ const configLocal = (cmp, local) => {
 		cmp.showCheckboxes = true;
 		cmp.showViewAll = false;
 		cmp.hasPagination = false;
-		cmp.predefinedCol =
+		cmp.hasSearchBar = false;
+		/*cmp.predefinedCol =
 			'{"Account.Name":{"label":"Account Name","type":"url","typeAttributes":{"label": { "fieldName": "Account.Name" ,"recId": "AccountId"}}},"AccountId":{"label":"Ac Id","type":"Id"}}';
+		*/
 	}
 };
 //Prepare Col JSON with predefined data
@@ -23,12 +25,12 @@ const setPredefinedColumnJSON = (cmp) => {
 		cmp.error = "You have not configured related field defination.";
 		throw new Error("error");
 	}
-	const predefinedCol = JSON.parse(cmp.predefinedCol);
+	const predefinedCol = cmp.predefinedCol ? JSON.parse(cmp.predefinedCol) : cmp.predefinedCol;
 	cmp.predefinedCol = predefinedCol;
 	const setPredefinedCol = {};
 	cmp.fields.split(",").forEach((element) => {
 		element = element.trim();
-		if (Object.prototype.hasOwnProperty.call(predefinedCol, element)) {
+		if (predefinedCol && Object.prototype.hasOwnProperty.call(predefinedCol, element)) {
 			if (
 				predefinedCol[element].type === "url" &&
 				Object.prototype.hasOwnProperty.call(predefinedCol[element], "typeAttributes")
@@ -83,6 +85,7 @@ const formatData = (cmp, data) => {
 	let { records, cols } = data;
 	Object.keys(cols).forEach((e) => {
 		if (
+			cmp.predefinedCol &&
 			Object.prototype.hasOwnProperty.call(cmp.predefinedCol, e) &&
 			Object.prototype.hasOwnProperty.call(cmp.predefinedCol[e], "typeAttributes")
 		) {
