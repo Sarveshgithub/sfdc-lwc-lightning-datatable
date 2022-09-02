@@ -1,38 +1,61 @@
-name: MASTER
+# Unique name for this workflow
+name: Validate PR on develop branch
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
+# Definition when the workflow should run
 on:
-  push:
-    branches: [ master ]
+    pull_request_target:
+        branches: [master]
+        paths:
+            - "force-app/**"
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+env:
+    SFDX_INTEGRATION_URL: ${{ secrets.SFDX_INTEGRATION_URL }}
+
+# Jobs to be executed when the above conditions are met
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    # This is the name of the job. You can give it whatever name you want
+    validate-deployment-on-develop-org:
+        runs-on: ubuntu-latest
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        steps:
+            # Now we install nodejs in the VM, and specify version 14
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: "14"
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
+            - name: "Checkout source code"
+              uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
 
-    # Runs a single command using the runners shell
-    - name: 'Build and Deploy'
-      run: |
-        wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
-        mkdir sfdx-cli
-        tar xJf sfdx-linux-amd64.tar.xz -C sfdx-cli --strip-components 1
-        ./sfdx-cli/install
- # Runs a set of commands using the runners shell
-    - name: 'Decrypt file'
-      run: openssl enc -nosalt -aes-256-cbc -d -in asset/server.key.enc -out server.key -base64 -K ${{secrets.DECRYPTION_KEY}} -iv ${{secrets.DECRYPTION_IV}}
-    - name: 'Authorize'
-      run: |
-        echo username value ${{ secrets.USERNAME_STAGING }}
-        sfdx force:auth:jwt:grant --clientid=${{ secrets.CONSUMER_KEY }} --username=${{ secrets.USERNAME }} --jwtkeyfile server.key --setdefaultdevhubusername --setalias=hub-org
-    - name: 'Convert Metadata'
-      run: sfdx force:source:convert --rootdir=force-app --outputdir=convert
-    - name: 'Run Test on Metadata'
-      run: sfdx force:mdapi:deploy --deploydir=convert --testlevel=RunLocalTests -u hub-org
+            # Now Install Salesforce CLI
+            - name: "Install Salesforce CLI"
+              run: |
+                  wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
+                  mkdir ~/sfdx
+                  tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
+                  echo "$HOME/sfdx/bin" >> $GITHUB_PATH
+                  ~/sfdx/bin/sfdx version
+
+            - name: "Installing sfdx git delta"
+              run: |
+                  echo y | sfdx plugins:install sfdx-git-delta
+                  sfdx plugins
+
+            # Install java as it is required for the next step
+            - name: "Installing java"
+              run: sudo apt-get install openjdk-8-jdk
+
+            # The URL is stored in the Github Secret named SFDX_INTEGRATION_URL
+            # so here we store the URL into a text file
+            - name: "Populate auth file with SFDX_URL secret of integration org"
+              shell: bash
+              run: |
+                  echo $SFDX_INTEGRATION_URL > ./SFDX_INTEGRATION_URL.txt
+
+            # Authenticate to org using the URL stored in the text file
+            - name: "Authenticate to Integration Org"
+              run: sfdx auth:sfdxurl:store -f ./SFDX_INTEGRATION_URL.txt -s -a integration
+              
+            - name: 'Deploy the entire branch to Production org'
+              run: sfdx force:source:deploy -p force-app --testlevel RunLocalTests --json
