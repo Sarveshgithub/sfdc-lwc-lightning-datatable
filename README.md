@@ -53,16 +53,16 @@ The data table has following features.
 
 ### Example : Override Column Label
 ```yml
-{ "AccountId":{"label":"Account Record Id"}} }
+{ "AccountId":{"label":"Account Record Id"} }
 ```
 ### Example : Related Field Customized
 ```yml
-{ "Account.Name":{"label":"Account Name","type":"text" }} }
+{ "Account.Name":{"label":"Account Name","type":"text" } }
 ```
 
 ## Example : Add Hyperlink for navigate to record
 ```yml
-{ "Account.Name":{"label":"Account Name","type":"url","typeAttributes":{"label":{"fieldName":"Account.Name","recId":"AccountId"}} }
+{"Account.Name":{"label":"Account Name","type":"url","typeAttributes":{"label": { "fieldName": "Account.Name" ,"recId": "AccountId"}}}}
 ```
 
 ## Buttons configuration
