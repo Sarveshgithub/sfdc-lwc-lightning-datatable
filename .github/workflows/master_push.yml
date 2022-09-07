@@ -3,7 +3,7 @@ name: master
 
 # Definition when the workflow should run
 on:
-    push :
+    push:
         branches: [master]
         paths:
             - "force-app/**"
@@ -37,11 +37,6 @@ jobs:
                   echo "$HOME/sfdx/bin" >> $GITHUB_PATH
                   ~/sfdx/bin/sfdx version
 
-            - name: "Installing sfdx git delta"
-              run: |
-                  echo y | sfdx plugins:install sfdx-git-delta
-                  sfdx plugins
-
             # Install java as it is required for the next step
             - name: "Installing java"
               run: sudo apt-get install openjdk-8-jdk
@@ -56,6 +51,6 @@ jobs:
             # Authenticate to org using the URL stored in the text file
             - name: "Authenticate to Integration Org"
               run: sfdx auth:sfdxurl:store -f ./SFDX_INTEGRATION_URL.txt -s -a integration
-              
-            - name: 'Deploy the entire branch to Production org'
+
+            - name: "Deploy the entire branch to Production org"
               run: sfdx force:source:deploy -p force-app --testlevel RunLocalTests --json
