@@ -38,11 +38,6 @@ jobs:
                   echo "$HOME/sfdx/bin" >> $GITHUB_PATH
                   ~/sfdx/bin/sfdx version
 
-            - name: "Installing sfdx git delta"
-              run: |
-                  echo y | sfdx plugins:install sfdx-git-delta
-                  sfdx plugins
-
             # Install java as it is required for the next step
             - name: "Installing java"
               run: sudo apt-get install openjdk-8-jdk
@@ -61,7 +56,7 @@ jobs:
             # Authenticate to org using the URL stored in the text file
             - name: "Authenticate to Integration Org"
               run: sfdx auth:sfdxurl:store -f ./SFDX_INTEGRATION_URL.txt -s -a integration
-              
+
             # Now we can use the sfdx scanner to scan the code in the delta directory
             # The output of the scan is stored in a file called apexScanResults.sarif
 
@@ -70,7 +65,7 @@ jobs:
 
             - name: "Scan code"
               run: |
-                  cd changed-sources
+                  cd force-app
                   sfdx scanner:run --format sarif --target './**/*.cls' --category "Design,Best Practices,Performance" --outfile 'apexScanResults.sarif'  
                   cd ..
 
