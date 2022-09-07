@@ -1,0 +1,99 @@
+# Unique name for this workflow
+name: Validate PR on develop branch
+
+# Definition when the workflow should run
+on:
+    pull_request_target:
+        types: [opened, synchronize]
+        branches: [optimize]
+        paths:
+            - "force-app/**"
+
+env:
+    SFDX_INTEGRATION_URL: ${{ secrets.SFDX_INTEGRATION_URL }}
+
+# Jobs to be executed when the above conditions are met
+jobs:
+    # This is the name of the job. You can give it whatever name you want
+    validate-deployment-on-develop-org:
+        runs-on: ubuntu-latest
+        if: ${{ github.actor != 'dependabot[bot]' }}
+        steps:
+            # Now we install nodejs in the VM, and specify version 14
+            - uses: actions/setup-node@v2
+              with:
+                  node-version: "14"
+
+            - name: "Checkout source code"
+              uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+                  ref: ${{github.event.pull_request.head.ref}}
+                  repository: ${{github.event.pull_request.head.repo.full_name}}
+
+            # Now Install Salesforce CLI
+            - name: "Install Salesforce CLI"
+              run: |
+                  wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
+                  mkdir ~/sfdx
+                  tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
+                  echo "$HOME/sfdx/bin" >> $GITHUB_PATH
+                  ~/sfdx/bin/sfdx version
+
+            - name: "Installing sfdx git delta"
+              run: |
+                  echo y | sfdx plugins:install sfdx-git-delta
+                  sfdx plugins
+
+            # Install java as it is required for the next step
+            - name: "Installing java"
+              run: sudo apt-get install openjdk-8-jdk
+
+            # Install SFDX scanner
+            - name: "Installing SFDX scanner"
+              run: sfdx plugins:install @salesforce/sfdx-scanner
+
+            # The URL is stored in the Github Secret named SFDX_INTEGRATION_URL
+            # so here we store the URL into a text file
+            - name: "Populate auth file with SFDX_URL secret of integration org"
+              shell: bash
+              run: |
+                  echo $SFDX_INTEGRATION_URL > ./SFDX_INTEGRATION_URL.txt
+
+            # Authenticate to org using the URL stored in the text file
+            - name: "Authenticate to Integration Org"
+              run: sfdx auth:sfdxurl:store -f ./SFDX_INTEGRATION_URL.txt -s -a integration
+
+            # We use SFDX Git Delta to create a directory with only the metadata that has changed.
+            # this allows us to deploy only those changes, as opposed to deploying the entire branch.
+            # This helps reducing deployment times
+            - name: "Create delta packages for new, modified or deleted metadata"
+              run: |
+                  mkdir changed-sources
+                  sfdx sgd:source:delta --to "HEAD" --from "origin/${{ github.base_ref }}" --output changed-sources/ --generate-delta --source force-app/
+
+            # Now we can use the sfdx scanner to scan the code in the delta directory
+            # The output of the scan is stored in a file called apexScanResults.sarif
+
+            # The .sarif file can later be uploaded to github, so that we can see the
+            # results of the scan directly from the PR.
+
+            - name: "Scan code"
+              run: |
+                  cd changed-sources
+                  sfdx scanner:run --format sarif --target './**/*.cls' --category "Design,Best Practices,Performance" --outfile 'apexScanResults.sarif'  
+                  cd ..
+
+            # Now we upload the .sarif file as explained in the previous step
+            - name: Upload SARIF file
+              uses: github/codeql-action/upload-sarif@v1
+              with:
+                  sarif_file: changed-sources/apexScanResults.sarif
+
+            # If the env variable equals all, we run all tests
+            - name: "Check-only deploy delta changes - run all tests"
+              run: |
+                  sfdx force:source:deploy -p changed-sources/force-app --checkonly --testlevel RunLocalTests  --json
+
+            # - name: "Deploy destructive changes (if any)"
+            #   run: sfdx force:mdapi:deploy -d "changed-sources/destructiveChanges" --checkonly --ignorewarnings

@@ -3,6 +3,10 @@
     {
       "path": "force-app",
       "default": true
+    },
+    {
+      "path": "changed-sources",
+      "default": false
     }
   ],
   "name": "sfdc-lwc-lightning-datatable",
