@@ -9,6 +9,7 @@ import { NavigationMixin } from "lightning/navigation";
 import { deleteRecord } from "lightning/uiRecordApi";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getRecords from "@salesforce/apex/RelatedList.getRecords";
+import onSearch from "@salesforce/apex/RelatedList.onSearch";
 import buildFieldJSON from "@salesforce/apex/RelatedList.buildFieldJSON";
 import { updateRecord } from "lightning/uiRecordApi";
 import { configLocal, setPredefinedColumnJSON, formatData, _formatData } from "./lwcRelatedListHelper";
@@ -33,7 +34,8 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	@api showCheckboxes;
 	@api showViewAll;
 	@api hasPagination;
-	@api predefinedCol;
+	@api predefinedCol = "";
+	@api hasSearchBar;
 	// Private Property
 	@track data;
 	@track soql;
@@ -47,6 +49,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	@track sortDirection;
 	@track columns;
 	@track colsJson;
+	@track searchTerm;
 	draftValues = [];
 
 	// Do init funtion
@@ -71,7 +74,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 		})
 			.then((data) => {
 				if (data) {
-					console.log("return data:::", data);
+					//console.log("return data:::", data);
 					const { records, cols, count, iconName } = formatData(this, data);
 					this.colsJson = cols;
 					const colAc = Object.values(cols);
@@ -349,5 +352,23 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 		this.sortDirection = event.detail.sortDirection;
 		this.buildSOQL();
 		this.fetchRecords();
+	}
+
+	onSearchChange(event) {
+		this.searchTerm = event.detail.value;
+		if (!this.searchTerm || this.searchTerm === "") {
+			this.fetchRecords();
+		}
+
+		//minimum two caracters required to search
+		if (this.searchTerm && this.searchTerm.length > 1) {
+			onSearch({ searchTerm: this.searchTerm, objectApiName: this.objectName, searchFields: this.fields })
+				.then((data) => {
+					this.data = _formatData(this.colsJson, data);
+				})
+				.catch((error) => {
+					this.showToast("Error on search ", error.body.message, "error");
+				});
+		}
 	}
 }

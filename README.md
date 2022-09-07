@@ -1,4 +1,4 @@
-[![Master](https://github.com/Sarveshgithub/sfdc-lwc-lightning-datatable/actions/workflows/master_push.yml/badge.svg?branch=master)](https://github.com/Sarveshgithub/sfdc-lwc-lightning-datatable/actions/workflows/master_push.yml)
+[![master](https://github.com/Sarveshgithub/sfdc-lwc-lightning-datatable/actions/workflows/master_push.yml/badge.svg)](https://github.com/Sarveshgithub/sfdc-lwc-lightning-datatable/actions/workflows/master_push.yml)
 
 # Salesforce Lightning Data table (LWC Version)
 
@@ -42,6 +42,7 @@ The data table has following features.
 | Show the view all / collapse buttons     | :x:                | Boolean | display buttons to expand/collapse records                                                                                            | checked(true) OR not checked(false)                                |
 | Enable/Disable pagination                | :x:                | Boolean | enable or disable pagination for the list                                                                                             | checked(true) OR not checked(false)                                |
 | Buttons to display                       | :x:                | String  | buttons that we want to display                                                                                                       | See below [**Buttons configuration**](#buttons-configuration)      |
+| Enable/Disable search                | :x:                | Boolean | enable or disable search bar                                                                                            | checked(true) OR not checked
 
 ## Customized Field JSON
 `label` : This key is for override column Name. ( [Example : Override Column Label](#example--override-column-label) )
@@ -52,16 +53,16 @@ The data table has following features.
 
 ### Example : Override Column Label
 ```yml
-{ "AccountId":{"label":"Account Record Id"}} }
+{ "AccountId":{"label":"Account Record Id"} }
 ```
 ### Example : Related Field Customized
 ```yml
-{ "Account.Name":{"label":"Account Name","type":"text" }} }
+{ "Account.Name":{"label":"Account Name","type":"text" } }
 ```
 
 ## Example : Add Hyperlink for navigate to record
 ```yml
-{ "Account.Name":{"label":"Account Name","type":"url","typeAttributes":{"label":{"fieldName":"Account.Name","recId":"AccountId"}} }
+{"Account.Name":{"label":"Account Name","type":"url","typeAttributes":{"label": { "fieldName": "Account.Name" ,"recId": "AccountId"}}}}
 ```
 
 ## Buttons configuration
