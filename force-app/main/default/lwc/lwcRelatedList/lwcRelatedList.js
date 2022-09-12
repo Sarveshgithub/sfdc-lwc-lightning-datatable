@@ -119,7 +119,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 			.then(() => {
 				this.showToast("Success", "Record Updated", "success");
 				this.draftValues = [];
-				this.showRowDetails({ Id: this.recordId });
+				this.fetchRecords();
 			})
 			.catch((error) => {
 				if (error) {
