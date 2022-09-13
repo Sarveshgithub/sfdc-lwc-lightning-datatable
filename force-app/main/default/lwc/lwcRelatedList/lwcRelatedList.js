@@ -194,7 +194,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	}
 
 	lastPage() {
-		this.offSet = Math.floor(this.totalRows / this.limit) * this.limit;
+		this.offSet = this.totalRows - this.limit;
 		this.buildSOQL();
 		this.fetchRecords();
 	}
@@ -204,8 +204,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	}
 
 	get isDisableNext() {
-		return this.offSet + (this.hasPagination ? (this.limit > 10 ? this.limit : 10) : this.limit) >=
-			this.totalRows || this.totalRows === 0
+		return this.offSet + this.limit >= this.totalRows || this.totalRows === 0 || !this.limit
 			? true
 			: this.totalRows <= this.limit
 			? false
