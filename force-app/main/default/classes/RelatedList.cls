@@ -72,16 +72,28 @@ public with sharing class RelatedList {
 			throw new AuraHandledException(e.getMessage());
 		}
 	}
-    
-    @AuraEnabled
-    public static List<SObject> onSearch(String searchTerm, String objectApiName, String searchFields) {
-        List<SObject> records = new List<SObject>();
-        List<List<SObject>> results = search.query('FIND :searchTerm IN ALL FIELDS RETURNING '+objectApiName+'('+searchFields+')');
-        for(List<SObject> s: results) {
-            records.addAll(s);
-        }
-        return records;
-    }
+
+	@AuraEnabled
+	public static List<SObject> onSearch(
+		String searchTerm,
+		String objectApiName,
+		String searchFields,
+		String whereClause
+	) {
+		List<SObject> records = new List<SObject>();
+		String SOSL = 'FIND :searchTerm IN ALL FIELDS RETURNING {0}( {1} {2} ) ';
+		List<String> condition = new List<String>{
+			objectApiName,
+			searchFields,
+			String.isNotEmpty(whereClause) ? (' WHERE ' + whereClause) : ''
+		};
+		SOSL = String.format(SOSL, condition);
+		List<List<SObject>> results = search.query(SOSL);
+		for (List<SObject> s : results) {
+			records.addAll(s);
+		}
+		return records;
+	}
 
 	@AuraEnabled(cacheable=true)
 	public static Integer countRecords(String objectName, String whereClause) {

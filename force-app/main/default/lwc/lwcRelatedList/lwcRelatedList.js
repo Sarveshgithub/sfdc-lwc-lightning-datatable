@@ -46,7 +46,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	@track initialLimit;
 	@track showCollapse = false;
 	@track sortBy;
-	@track sortDirection;
+	@track sortDirection = "asc";
 	@track columns;
 	@track colsJson;
 	@track searchTerm;
