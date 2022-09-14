@@ -6,6 +6,7 @@
     <target>lightning__RecordPage</target>
     <target>lightning__AppPage</target>
     <target>lightning__HomePage</target>
+    <target>lightningCommunity__Page</target>
   </targets>
   <!-- Configuring the design attributes -->
   <targetConfigs>
