@@ -6,10 +6,11 @@
     <target>lightning__RecordPage</target>
     <target>lightning__AppPage</target>
     <target>lightning__HomePage</target>
+    <target>lightningCommunity__Page</target>
   </targets>
   <!-- Configuring the design attributes -->
   <targetConfigs>
-    <targetConfig targets="lightning__RecordPage, lightning__HomePage, lightning__AppPage,lightningCommunity__Page">
+    <targetConfig targets="lightning__RecordPage, lightning__HomePage, lightning__AppPage">
       <property name="iconName" type="String" label="Enter Icon Name" />
       <property name="title" type="String" required="true" label="Enter Title" default="LWC Table" />
       <property name="objectName" type="String" required="true" label="Enter Object API Name" default="Contact" />
