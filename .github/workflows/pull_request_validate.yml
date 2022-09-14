@@ -24,17 +24,12 @@ jobs:
               with:
                   node-version: '14'
 
-<<<<<<< HEAD
             - name: 'Checkout source code'
-              uses: actions/checkout@v2
-=======
-            - name: "Checkout source code"
               uses: actions/checkout@v3
->>>>>>> 65d2aa80d94d151f47d6b6f63c03303fceb37c1f
               with:
-                fetch-depth: 0
-                ref: ${{github.event.pull_request.head.ref}}
-                repository: ${{github.event.pull_request.head.repo.full_name}}
+                  fetch-depth: 0
+                  ref: ${{github.event.pull_request.head.ref}}
+                  repository: ${{github.event.pull_request.head.repo.full_name}}
 
             # Now Install Salesforce CLI
             - name: 'Install Salesforce CLI'
