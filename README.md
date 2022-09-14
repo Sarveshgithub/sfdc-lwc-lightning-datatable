@@ -1,4 +1,4 @@
-[![master](https://github.com/Sarveshgithub/sfdc-lwc-lightning-datatable/actions/workflows/master_push.yml/badge.svg)](https://github.com/Sarveshgithub/sfdc-lwc-lightning-datatable/actions/workflows/master_push.yml) Give a ⭐️ to this repository, Starring a repository will motivates maintainer and collabarators.
+[![master](https://github.com/Sarveshgithub/sfdc-lwc-lightning-datatable/actions/workflows/master_push.yml/badge.svg)](https://github.com/Sarveshgithub/sfdc-lwc-lightning-datatable/actions/workflows/master_push.yml) Give a ⭐️ to this repository, Starring a repository will motivates me and contributors.
 
 # Salesforce Lightning Data table (LWC Version)
 
