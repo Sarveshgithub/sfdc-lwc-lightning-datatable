@@ -53,7 +53,7 @@ public with sharing class RelatedList_Test {
 		List<SObject> results;
 		System.runAs(testUser) {
 			Test.setFixedSearchResults(new List<Id>{ [SELECT Id FROM Contact LIMIT 1][0].Id });
-			results = RelatedList.onSearch('Fi', 'Contact', 'FirstName,LastName');
+			results = RelatedList.onSearch('Fi', 'Contact', 'FirstName,LastName', 'FirstName = \'First\'');
 		}
 		System.assertEquals(results.size() > 0, true);
 		Test.stopTest();

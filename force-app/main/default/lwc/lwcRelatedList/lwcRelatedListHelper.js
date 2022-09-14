@@ -5,7 +5,7 @@ const configLocal = (cmp, local) => {
 		// cmp.relatedFieldAPI = "AccountId";
 		// cmp.whereClause;
 		cmp.title = "Contacts";
-		cmp.fields = "FirstName";
+		cmp.fields = "FirstName,LastName,Email,Phone,CreatedDate";
 		cmp.objectName = "Contact";
 		cmp.limit = 5;
 		cmp.isCounterDisplayed = true;
