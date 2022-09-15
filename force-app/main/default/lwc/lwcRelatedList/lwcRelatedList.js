@@ -18,13 +18,13 @@ import {
     formatData,
     _formatData
 } from './lwcRelatedListHelper';
+import recordUpdatedSuccessMessage from '@salesforce/label/c.recordUpdatedSuccessMessage';
+import recordDeletedSuccessMessage from '@salesforce/label/c.recordDeletedSuccessMessage';
 const actions = [
     { label: 'Show details', name: 'show_details' },
     { label: 'Edit', name: 'edit' },
     { label: 'Delete', name: 'delete' }
 ];
-import recordUpdatedSuccessMessage from '@salesforce/label/c.recordUpdatedSuccessMessage';
-import recordDeletedSuccessMessage from '@salesforce/label/c.recordDeletedSuccessMessage';
 export default class LightningDatatable extends NavigationMixin(
     LightningElement
 ) {
