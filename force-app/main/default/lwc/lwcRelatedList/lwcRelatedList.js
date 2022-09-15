@@ -18,12 +18,13 @@ import {
     formatData,
     _formatData
 } from './lwcRelatedListHelper';
+import recordUpdatedSuccessMessage from '@salesforce/label/c.recordUpdatedSuccessMessage';
+import recordDeletedSuccessMessage from '@salesforce/label/c.recordDeletedSuccessMessage';
 const actions = [
     { label: 'Show details', name: 'show_details' },
     { label: 'Edit', name: 'edit' },
     { label: 'Delete', name: 'delete' }
 ];
-
 export default class LightningDatatable extends NavigationMixin(
     LightningElement
 ) {
@@ -58,7 +59,10 @@ export default class LightningDatatable extends NavigationMixin(
     @track colsJson;
     @track searchTerm;
     draftValues = [];
-
+    labels = {
+        recordUpdatedSuccessMessage,
+        recordDeletedSuccessMessage
+    };
     // Do init funtion
     connectedCallback() {
         //This function can used for local development config, pass 'true' for config
@@ -129,7 +133,11 @@ export default class LightningDatatable extends NavigationMixin(
         );
         Promise.all(promises)
             .then(() => {
-                this.showToast('Success', 'Record Updated', 'success');
+                this.showToast(
+                    'Success',
+                    this.labels.recordUpdatedSuccessMessage,
+                    'success'
+                );
                 this.draftValues = [];
                 this.fetchRecords();
             })
@@ -247,7 +255,11 @@ export default class LightningDatatable extends NavigationMixin(
                     this.data = this.data
                         .slice(0, index)
                         .concat(this.data.slice(index + 1));
-                    this.showToast('Success', 'Record deleted', 'success');
+                    this.showToast(
+                        'Success',
+                        this.labels.recordDeletedSuccessMessage,
+                        'success'
+                    );
                 })
                 .catch((error) => {
                     this.showToast(
