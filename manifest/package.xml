@@ -5,8 +5,7 @@
 		<name>ApexClass</name>
 	</types>
 	<types>
-		<members>recordDeletedSuccessMessage</members>
-		<members>recordUpdatedSuccessMessage</members>
+		<members>*</members>
 		<name>CustomLabel</name>
 	</types>
 	<types>
