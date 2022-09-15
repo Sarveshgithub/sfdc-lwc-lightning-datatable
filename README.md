@@ -131,4 +131,4 @@ Feel free to ask any Question, Suggestion, Issue [here](https://github.com/Sarve
 
 ## Want to contribute? Great!
 
-Create Pull Request to `dev` branch with your feature banch.
+Create Pull Request to `dev` branch with your feature banch. Read [Contribution Guidelines](https://quip.com/7OtsAy94piU7)
