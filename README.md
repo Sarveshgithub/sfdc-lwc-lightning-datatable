@@ -21,7 +21,7 @@ The data table has following features.
 -   Row action, like : show detail, edit record, delete record
 -   Hide/Unhide checkbox column
 -   Configurable actions buttons (for developers, see [Buttons configuration](#buttons-configuration) )
--   Sorting by field.
+-   Sorting by field (Note: sort will not work on search).
 
 ## Steps to Customization through Design Attribute
 
