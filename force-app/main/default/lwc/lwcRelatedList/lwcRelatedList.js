@@ -220,12 +220,15 @@ export default class LightningDatatable extends NavigationMixin(
     }
 
     get isDisablePrev() {
-        return this.offSet === 0 || this.totalRows === 0 ? true : false;
+        return this.offSet === 0 || (this.totalRows === 0) | this.searchTerm
+            ? true
+            : false;
     }
 
     get isDisableNext() {
         return this.offSet + this.limit >= this.totalRows ||
             this.totalRows === 0 ||
+            this.searchTerm ||
             !this.limit
             ? true
             : this.totalRows <= this.limit
@@ -388,6 +391,9 @@ export default class LightningDatatable extends NavigationMixin(
         this.fetchRecords();
     }
     handleSort(event) {
+        if (this.searchTerm) {
+            return;
+        }
         this.sortBy = event.detail.fieldName;
         this.sortDirection = event.detail.sortDirection;
         this.buildSOQL();
@@ -395,7 +401,7 @@ export default class LightningDatatable extends NavigationMixin(
     }
 
     onSearchChange(event) {
-        this.searchTerm = event.detail.value;
+        this.searchTerm = event.target.value;
         if (!this.searchTerm || this.searchTerm === '') {
             this.fetchRecords();
         }

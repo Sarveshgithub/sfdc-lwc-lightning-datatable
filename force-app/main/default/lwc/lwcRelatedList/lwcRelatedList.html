@@ -37,12 +37,15 @@
         </template>
 
         <!-- SEARCH BAR -->
-        <div class="slds-p-around_small lgc-bg" if:true={hasSearchBar}>
+        <div
+            class="slds-p-around_small"
+            if:true={hasSearchBar}
+            onkeyup={onSearchChange}
+        >
             <lightning-input
-                type="text"
+                name="enter-search"
                 label="Search"
-                onchange={onSearchChange}
-                value={searchTerm}
+                type="search"
             ></lightning-input>
         </div>
 
