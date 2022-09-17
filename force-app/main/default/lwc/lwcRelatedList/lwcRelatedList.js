@@ -34,7 +34,7 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	@api showCheckboxes;
 	@api showViewAll;
 	@api hasPagination;
-	@api predefinedCol = '';
+	@api predefinedCol = "";
 	@api hasSearchBar;
 	// Private Property
 	@track data;
@@ -74,7 +74,6 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 		})
 			.then((data) => {
 				if (data) {
-					console.log("return data:::", data);
 					const { records, cols, count, iconName } = formatData(this, data);
 					this.colsJson = cols;
 					const colAc = Object.values(cols);
@@ -200,12 +199,14 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	}
 
 	get isDisablePrev() {
-		return this.offSet === 0 || this.totalRows === 0 ? true : false;
+		return this.offSet === 0 || this.totalRows === 0 || this.searchTerm ? true : false;
 	}
 
 	get isDisableNext() {
 		return this.offSet + (this.hasPagination ? (this.limit > 10 ? this.limit : 10) : this.limit) >=
-			this.totalRows || this.totalRows === 0
+			this.totalRows ||
+			this.totalRows === 0 ||
+			this.searchTerm
 			? true
 			: this.totalRows <= this.limit
 			? false
@@ -348,6 +349,9 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 		this.fetchRecords();
 	}
 	handleSort(event) {
+		if (this.searchTerm) {
+			return;
+		}
 		this.sortBy = event.detail.fieldName;
 		this.sortDirection = event.detail.sortDirection;
 		this.buildSOQL();
@@ -355,20 +359,19 @@ export default class LightningDatatable extends NavigationMixin(LightningElement
 	}
 
 	onSearchChange(event) {
-		this.searchTerm = event.detail.value;
-		if(!this.searchTerm || this.searchTerm == '') {
+		this.searchTerm = event.target.value;
+		if (!this.searchTerm || this.searchTerm === "") {
 			this.fetchRecords();
 		}
-
 		//minimum two caracters required to search
-		if(this.searchTerm && this.searchTerm.length > 1) {
-			onSearch({searchTerm: this.searchTerm, objectApiName: this.objectName, searchFields: this.fields})
-			.then((data) => {
-				this.data = _formatData(this.colsJson, data);
-			})
-			.catch((error) => {
-				this.showToast("Error on search ", error.body.message, "error");
-			});
+		if (this.searchTerm && this.searchTerm.length > 1) {
+			onSearch({ searchTerm: this.searchTerm, objectApiName: this.objectName, searchFields: this.fields })
+				.then((data) => {
+					this.data = _formatData(this.colsJson, data);
+				})
+				.catch((error) => {
+					this.showToast("Error on search ", error.body.message, "error");
+				});
 		}
 	}
 }

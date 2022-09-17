@@ -12,7 +12,8 @@ const configLocal = (cmp, local) => {
 		cmp.actionButtons = '[{"name": "New","label": "New","variant": "neutral"}]';
 		cmp.showCheckboxes = true;
 		cmp.showViewAll = false;
-		cmp.hasPagination = false;
+		cmp.hasPagination = true;
+		cmp.hasSearchBar = true;
 		cmp.predefinedCol =
 			'{"Account.Name":{"label":"Account Name","type":"url","typeAttributes":{"label": { "fieldName": "Account.Name" ,"recId": "AccountId"}}},"AccountId":{"label":"Ac Id","type":"Id"}}';
 	}
