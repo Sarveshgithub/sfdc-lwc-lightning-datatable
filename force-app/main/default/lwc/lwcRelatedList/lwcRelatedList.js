@@ -184,11 +184,6 @@ export default class LightningDatatable extends NavigationMixin(
             case 'New':
                 this.newRecord();
                 break;
-            /*
-      case "delete-selected":
-        const eventDeleteSelected = new CustomEvent('deleteselected', { detail: JSON.stringify(this.selectedRows) });
-        this.dispatchEvent(eventDeleteSelected);
-        break;*/
             default:
         }
     }
