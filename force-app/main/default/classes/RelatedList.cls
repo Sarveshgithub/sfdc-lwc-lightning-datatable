@@ -94,14 +94,14 @@ public with sharing class RelatedList {
         String whereClause
     ) {
         List<SObject> records = new List<SObject>();
-        String SOSL = 'FIND :searchTerm IN ALL FIELDS RETURNING {0}( {1} {2} ) ';
+        String sosl = 'FIND :searchTerm IN ALL FIELDS RETURNING {0}( {1} {2} ) ';
         List<String> condition = new List<String>{
             objectApiName,
             searchFields,
             String.isNotEmpty(whereClause) ? (' WHERE ' + whereClause) : ''
         };
-        SOSL = String.format(SOSL, condition);
-        List<List<SObject>> results = search.query(SOSL);
+        sosl = String.format(sosl, condition);
+        List<List<SObject>> results = search.query(sosl);
         for (List<SObject> s : results) {
             records.addAll(s);
         }
