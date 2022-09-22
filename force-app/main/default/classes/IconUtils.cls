@@ -1,6 +1,6 @@
 public class IconUtils {
     public static String getIconName(String sObjectName) {
-        String u;
+        String iconName;
         List<Schema.DescribeTabSetResult> tabSetDesc = Schema.describeTabs();
         List<Schema.DescribeTabResult> tabDesc = new List<Schema.DescribeTabResult>();
         List<Schema.DescribeIconResult> iconDesc = new List<Schema.DescribeIconResult>();
@@ -14,13 +14,14 @@ public class IconUtils {
                 if (tr.isCustom() == true) {
                     iconDesc.addAll(tr.getIcons());
                 } else {
-                    u = 'standard:' + sObjectName.toLowerCase();
+                    iconName = 'standard:' + sObjectName.toLowerCase();
                 }
             }
         }
+
         for (Schema.DescribeIconResult ir : iconDesc) {
             if (ir.getContentType() == 'image/svg+xml') {
-                u =
+                iconName =
                     'custom:' +
                     ir.getUrl()
                         .substringBetween('custom/', '.svg')
@@ -29,6 +30,6 @@ public class IconUtils {
             }
         }
 
-        return u;
+        return iconName;
     }
 }
