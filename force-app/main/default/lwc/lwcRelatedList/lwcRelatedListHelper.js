@@ -1,8 +1,8 @@
 const configLocal = (cmp, local) => {
     if (local) {
-        // cmp.iconName = "standard:account";
+        cmp.iconName = 'standard:account';
         // cmp.recordId = "recid";
-        // cmp.relatedFieldAPI = "AccountId";
+        cmp.relatedFieldAPI = 'AccountId';
         // cmp.whereClause;
         cmp.title = 'Contacts';
         cmp.fields = 'FirstName,LastName,Email,Phone,CreatedDate';
