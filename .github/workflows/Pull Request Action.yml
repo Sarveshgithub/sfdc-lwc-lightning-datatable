@@ -7,7 +7,7 @@ jobs:
     create-pull-request:
         runs-on: ubuntu-latest
         steps:
-            - name: Check if PR exists
+          - name: Check if PR exists
             id: check
             run: |
                 prs=$(gh pr list --repo "$GITHUB_REPOSITORY" \
@@ -22,7 +22,7 @@ jobs:
             env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Create pull request
+          - name: Create pull request
             if: steps.check.outputs.skip != 'true'
             uses: actions/github-script@v6
             with:
