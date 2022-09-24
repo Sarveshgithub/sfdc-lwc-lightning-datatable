@@ -8,8 +8,8 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Check if PR exists
-                id: check
-                run: |
+              id: check
+              run: |
                   prs=$(gh pr list \
                       --json baseRefName,headRefName \
                       --jq '
