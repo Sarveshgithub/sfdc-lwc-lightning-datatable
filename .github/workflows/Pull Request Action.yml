@@ -9,6 +9,8 @@ jobs:
         steps:
             - name: Check if PR exists
               id: check
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
                   prs=$(gh pr list \
                   --json baseRefName,headRefName \
