@@ -1,13 +1,31 @@
 name: Pull Request Action
-on:
+'on':
     push:
-        branches: ['dev']
-
+        branches:
+            - dev
 jobs:
     create-pull-request:
         runs-on: ubuntu-latest
         steps:
-            - name: Create Pull Request
+            - name: Check if PR exists
+              id: check
+              run: |
+                  prs=$(gh pr list \
+                      --json baseRefName,headRefName \
+                      --jq '
+                          map(select(.baseRefName == "master" and .headRefName == "dev"))
+                          | length
+                      ')
+                  if ((prs > 0)); then
+                      echo "::set-output name=skip::true"
+                  fi
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  OWNER: ${{ github.repository_owner }}
+                  REPO: ${{ github.event.repository.name }}
+
+            - name: Create pull request
+              if: steps.check.outputs.skip != true
               uses: actions/github-script@v6
               with:
                   script: |
