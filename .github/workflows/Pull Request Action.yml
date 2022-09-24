@@ -8,8 +8,8 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Check if PR exists
-                id: check
-                run: |
+            id: check
+            run: |
                     prs=$(gh pr list --repo "$GITHUB_REPOSITORY" \
                         --json baseRefName,headRefName \
                         --jq '
@@ -19,16 +19,16 @@ jobs:
                     if ((prs > 0)); then
                         echo "::set-output name=skip::true"
                     fi
-                env:
-                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Create pull request
-                if: steps.check.outputs.skip != 'true'
-                uses: actions/github-script@v6
-                with:
-                    script: |
-                        const { repo, owner } = context.repo;
-                        const result = await github.rest.pulls.create({
+            if: steps.check.outputs.skip != 'true'
+            uses: actions/github-script@v6
+            with:
+            script: |
+                    const { repo, owner } = context.repo;
+                    const result = await github.rest.pulls.create({
                             title: 'Master Sync : Auto Generated PR',
                             owner,
                             repo,
