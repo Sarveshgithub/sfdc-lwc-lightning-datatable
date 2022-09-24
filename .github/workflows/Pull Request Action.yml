@@ -20,7 +20,7 @@ jobs:
                       echo "::set-output name=skip::true"
                   fi
             - name: Create pull request
-              if: steps.check.outputs.skip != "true"
+              if: steps.check.outputs.skip != true
               uses: actions/github-script@v6
               with:
                   script: |
