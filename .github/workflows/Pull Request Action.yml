@@ -10,13 +10,10 @@ jobs:
             - name: Check if PR exists
               id: check
               run: |
-                  prs=$(gh pr list \
-                  --json baseRefName,headRefName \
-                  --jq '
-                      map(select(.baseRefName == "master" and .headRefName == "dev"))
-                      | length
-                  ')
-                  if ((prs > 0)); then
+                  prs=$(gh pr list -B master -H dev)
+                  echo "prs"
+                  if ((prs > 0));
+                    then
                       echo "::set-output name=skip::true"
                   fi
               env:
