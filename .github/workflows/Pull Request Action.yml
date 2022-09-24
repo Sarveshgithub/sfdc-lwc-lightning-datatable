@@ -21,7 +21,6 @@ jobs:
                   fi
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  OWNER: ${{ github.repository_owner }}
 
             - name: Create pull request
               if: steps.check.outputs.skip != 'true'
