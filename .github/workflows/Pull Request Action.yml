@@ -9,12 +9,13 @@ jobs:
         steps:
             - name: Check if PR exists
               id: check
-              run: |
-                  gh pr list -B master -H dev
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   OWNER: ${{ github.repository_owner }}
                   REPO: ${{ github.event.repository.name }}
+              run: |
+                  gh pr list -B master -H dev
+
             - name: Create pull request
               if: steps.check.outputs.skip != true
               uses: actions/github-script@v6
