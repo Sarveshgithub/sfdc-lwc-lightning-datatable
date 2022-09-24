@@ -13,8 +13,7 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   OWNER: ${{ github.repository_owner }}
                   REPO: ${{ github.event.repository.name }}
-              run: |
-                  gh pr list -B master -H dev
+              run: gh pr list -B master -H dev
 
             - name: Create pull request
               if: steps.check.outputs.skip != true
