@@ -10,12 +10,7 @@ jobs:
             - name: Check if PR exists
               id: check
               run: |
-                  prs=$(gh pr list -B master -H dev)
-                  echo "prs"
-                  if ((prs > 0));
-                    then
-                      echo "::set-output name=skip::true"
-                  fi
+                  gh pr list -B master -H dev
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   OWNER: ${{ github.repository_owner }}
