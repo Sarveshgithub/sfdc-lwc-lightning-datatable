@@ -11,6 +11,8 @@ jobs:
               id: check
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  OWNER: ${{ github.repository_owner }}
+                  REPO: ${{ github.event.repository.name }}
               run: |
                   prs=$(gh pr list \
                   --json baseRefName,headRefName \
