@@ -1,0 +1,35 @@
+<template>
+    <div class="slds-p-around_medium" style="height: 300px; display: flex">
+        <lightning-combobox
+            name="progress"
+            label="Status"
+            value={value}
+            placeholder="Select Progress"
+            options={options}
+            onchange={handleChange}
+        ></lightning-combobox>
+        <lightning-button-icon
+            icon-name="utility:edit"
+            alternative-text="Settings"
+            title="Settings"
+        ></lightning-button-icon>
+        <lightning-button-icon
+            icon-name="utility:delete"
+            alternative-text="Delete"
+            class="slds-m-left_xx-small"
+            title="Delete"
+        ></lightning-button-icon>
+        <lightning-button-icon
+            icon-name="utility:copy"
+            alternative-text="Add user"
+            class="slds-m-left_xx-small"
+            title="Add user"
+        ></lightning-button-icon>
+        <lightning-button-icon
+            icon-name="utility:filterList"
+            alternative-text="Save"
+            class="slds-m-left_xx-small"
+            title="Save"
+        ></lightning-button-icon>
+    </div>
+</template>

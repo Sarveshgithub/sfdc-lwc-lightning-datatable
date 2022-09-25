@@ -2,7 +2,7 @@ const configLocal = (cmp, local) => {
     if (local) {
         cmp.iconName = 'standard:account';
         // cmp.recordId = "recid";
-        cmp.relatedFieldAPI = 'AccountId';
+        //cmp.relatedFieldAPI = 'AccountId';
         // cmp.whereClause;
         cmp.title = 'Contacts';
         cmp.fields = 'FirstName,LastName,Email,Phone,CreatedDate';
@@ -15,7 +15,6 @@ const configLocal = (cmp, local) => {
         cmp.showViewAll = false;
         cmp.hasPagination = true;
         cmp.hasSearchBar = true;
-        cmp.hasSearchBar = false;
         /*cmp.predefinedCol =
 			'{"Account.Name":{"label":"Account Name","type":"url","typeAttributes":{"label": { "fieldName": "Account.Name" ,"recId": "AccountId"}}},"AccountId":{"label":"Ac Id","type":"Id"}}';
 		*/
