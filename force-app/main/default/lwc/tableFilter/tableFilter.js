@@ -1,4 +1,5 @@
 import { LightningElement } from 'lwc';
+import fetchFilters from '@salesforce/apex/RelatedList.fetchFilters';
 const operationList = [
     { label: 'equals', value: '=' },
     { label: 'not equal to', value: '!=' },
@@ -23,6 +24,13 @@ const listFilters = [
 ];
 export default class TableFilter extends LightningElement {
     connectedCallback() {
+        fetchFilters({ cmpName: 'data' })
+            .then((data) => {
+                console.log('data::', data);
+            })
+            .catch((error) => {
+                console.log('error::', error);
+            });
         console.log('testsss');
     }
     value = 'inProgress';
