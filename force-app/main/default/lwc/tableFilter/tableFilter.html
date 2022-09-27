@@ -1,6 +1,7 @@
 <template>
     <div class="slds-p-around_medium" style="height: 300px; display: flex">
         <lightning-combobox
+            if:true={options}
             name="progress"
             label="Status"
             value={value}

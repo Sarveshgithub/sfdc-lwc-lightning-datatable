@@ -23,29 +23,27 @@ const listFilters = [
     }
 ];
 export default class TableFilter extends LightningElement {
+    options;
     connectedCallback() {
         fetchFilters({ cmpName: 'data' })
             .then((data) => {
-                console.log('data::', data);
+                let copyData = JSON.parse(JSON.stringify(data));
+                let filters = Object.values(copyData);
+                for (let i = 0; i < filters.length; i++) {
+                    filters[i].label = filters[i].Name;
+                    filters[i].value = filters[i].Id;
+                }
+                this.options = filters;
+                console.log('sfdsfdsfs', this.options);
             })
             .catch((error) => {
                 console.log('error::', error);
             });
-        console.log('testsss');
     }
-    value = 'inProgress';
-
-    get options() {
-        return [
-            { label: 'New', value: 'new' },
-            { label: 'In Progress', value: 'inProgress' },
-            { label: 'Finished', value: 'finished' }
-        ];
-    }
-
     handleChange(event) {
         this.value = event.detail.value;
     }
+
     handleEdit = (index) => {
         console.log(operationList);
         //update listFilters filters key using operationList , open mockup and set UI values i.e fields, operator , value
