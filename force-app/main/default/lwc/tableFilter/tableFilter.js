@@ -1,16 +1,7 @@
 import { LightningElement } from 'lwc';
 import fetchFilters from '@salesforce/apex/RelatedList.fetchFilters';
-const operationList = [
-    { label: 'equals', value: '=' },
-    { label: 'not equal to', value: '!=' },
-    { label: 'less than', value: '<' },
-    { label: 'greater than', value: '>' },
-    { label: 'less or equal', value: '<=' },
-    { label: 'contain', value: 'contain' },
-    { label: 'does not contain', value: 'not_contain' },
-    { label: 'start with', value: 'start_with' },
-    { label: 'end with', value: 'end_with' }
-];
+import getObjectFields from '@salesforce/apex/RelatedList.getObjectFields';
+//getObjectFields
 const listFilters = [
     {
         Name: 'sdf',
@@ -23,7 +14,21 @@ const listFilters = [
     }
 ];
 export default class TableFilter extends LightningElement {
+    //Public variable
+    //Private variable
     options;
+    openModal = false;
+    operationList = [
+        { label: 'equals', value: '=' },
+        { label: 'not equal to', value: '!=' },
+        { label: 'less than', value: '<' },
+        { label: 'greater than', value: '>' },
+        { label: 'less or equal', value: '<=' },
+        { label: 'contain', value: 'contain' },
+        { label: 'does not contain', value: 'not_contain' },
+        { label: 'start with', value: 'start_with' },
+        { label: 'end with', value: 'end_with' }
+    ];
     connectedCallback() {
         fetchFilters({ cmpName: 'data' })
             .then((data) => {
@@ -39,12 +44,21 @@ export default class TableFilter extends LightningElement {
             .catch((error) => {
                 console.log('error::', error);
             });
+
+        getObjectFields({ objName: 'Contact' })
+            .then((data) => {
+                console.log('sobject', data);
+            })
+            .catch((error) => {
+                console.log('getObjectFields Error::', error);
+            });
     }
     handleChange(event) {
         this.value = event.detail.value;
     }
 
     handleEdit = (index) => {
+        this.openModal = true;
         console.log(operationList);
         //update listFilters filters key using operationList , open mockup and set UI values i.e fields, operator , value
         return listFilters[index];
@@ -61,4 +75,8 @@ export default class TableFilter extends LightningElement {
     handleAppleFilter = () => {
         // Apply filter - this will append where clause and do fetchRecords()
     };
+    showHideModal() {
+        this.openModal = !this.openModal;
+        console.log('sfds', this.openModal);
+    }
 }
