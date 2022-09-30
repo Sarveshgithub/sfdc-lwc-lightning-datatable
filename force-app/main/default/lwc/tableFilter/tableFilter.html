@@ -3,11 +3,11 @@
         <lightning-combobox
             if:true={options}
             name="progress"
-            label="Status"
+            label="Filters"
             value={value}
             placeholder="Select Progress"
             options={options}
-            onchange={handleChange}
+            onchange={handleChangeFilter}
         ></lightning-combobox>
         <lightning-button-icon
             icon-name="utility:edit"
@@ -34,7 +34,7 @@
             title="Save"
         ></lightning-button-icon>
 
-        <div class="demo-only" style="height: 24rem" if:true={openModal}>
+        <div if:true={openModal}>
             <section
                 role="dialog"
                 tabindex="0"
@@ -44,25 +44,45 @@
                 class="slds-modal slds-fade-in-open slds-modal_prompt"
             >
                 <div class="slds-modal__container">
-                    <div class="slds-modal__header">
-                        <h1
-                            class="slds-text-heading_medium"
-                            id="prompt-heading-id"
-                        >
-                            Service unavailable
-                        </h1>
+                    <div
+                        class="slds-modal__header"
+                        style="text-align: left; padding: 0.5rem"
+                    >
+                        <lightning-input
+                            type="text"
+                            value={filterName}
+                            label="Name"
+                        ></lightning-input>
                     </div>
                     <div
                         class="slds-modal__content slds-p-around_medium"
                         id="prompt-message-wrapper"
+                        style="overflow: initial"
                     >
+                        <lightning-combobox
+                            name="field"
+                            label="Field"
+                            placeholder="Select Operator"
+                            options={fields}
+                            onchange={handleChangeField}
+                        ></lightning-combobox>
                         <lightning-combobox
                             name="operator"
                             label="Operator"
                             placeholder="Select Operator"
                             options={operationList}
-                            onchange={handleChange}
+                            onchange={handleChangeOperator}
                         ></lightning-combobox>
+                        <lightning-input
+                            type={fieldType}
+                            label="Value"
+                        ></lightning-input>
+                        <div class="slds-m-top_x-small">
+                            <lightning-button
+                                label="Add"
+                                variant="brand"
+                            ></lightning-button>
+                        </div>
                     </div>
                     <div class="slds-modal__footer slds-theme_default">
                         <lightning-button

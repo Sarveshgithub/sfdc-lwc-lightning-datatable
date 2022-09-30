@@ -17,7 +17,10 @@ export default class TableFilter extends LightningElement {
     //Public variable
     //Private variable
     options;
+    fields;
     openModal = false;
+    fieldType = 'text';
+    filterName;
     operationList = [
         { label: 'equals', value: '=' },
         { label: 'not equal to', value: '!=' },
@@ -47,19 +50,36 @@ export default class TableFilter extends LightningElement {
 
         getObjectFields({ objName: 'Contact' })
             .then((data) => {
+                const fields = [];
                 console.log('sobject', data);
+                for (const [key, value] of Object.entries(data)) {
+                    console.log(`${key}: ${value}`);
+                    fields.push({
+                        label: key,
+                        value: value[0] + '-' + value[1]
+                    });
+                }
+                this.fields = fields;
+                console.log('fields::', fields);
             })
             .catch((error) => {
                 console.log('getObjectFields Error::', error);
             });
     }
     handleChange(event) {
-        this.value = event.detail.value;
+        console.log(event);
+        let value = event.detail.value;
+        this.fieldType = value.split('-')[1];
+        console.log('this.fieldType', this.fieldType);
     }
-
+    handleChangeFilter(event) {
+        this.filterName = this.options.find(
+            (opt) => opt.value === event.detail.value
+        ).label;
+        //this.filterName = event.detail.label;
+    }
     handleEdit = (index) => {
         this.openModal = true;
-        console.log(operationList);
         //update listFilters filters key using operationList , open mockup and set UI values i.e fields, operator , value
         return listFilters[index];
     };
