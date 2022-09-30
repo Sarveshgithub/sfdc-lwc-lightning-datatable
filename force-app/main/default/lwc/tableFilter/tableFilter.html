@@ -2,18 +2,17 @@
     <div class="slds-p-around_medium" style="height: 300px; display: flex">
         <lightning-combobox
             if:true={options}
-            name="progress"
             label="Filters"
             value={value}
-            placeholder="Select Progress"
+            placeholder="Select Filter"
             options={options}
             onchange={handleChangeFilter}
         ></lightning-combobox>
         <lightning-button-icon
             icon-name="utility:edit"
             onclick={handleEdit}
-            alternative-text="Settings"
-            title="Settings"
+            alternative-text="Edit"
+            title="Edit"
         ></lightning-button-icon>
         <lightning-button-icon
             icon-name="utility:delete"
@@ -23,15 +22,16 @@
         ></lightning-button-icon>
         <lightning-button-icon
             icon-name="utility:copy"
-            alternative-text="Add user"
+            alternative-text="Clone Selected Filter"
             class="slds-m-left_xx-small"
-            title="Add user"
+            title="Clone Selected Filter"
         ></lightning-button-icon>
         <lightning-button-icon
             icon-name="utility:filterList"
-            alternative-text="Save"
+            alternative-text="Create New Filter"
             class="slds-m-left_xx-small"
-            title="Save"
+            title="Create New Filter"
+            onclick={handleNewFilter}
         ></lightning-button-icon>
 
         <div if:true={openModal}>
@@ -49,6 +49,7 @@
                         style="text-align: left; padding: 0.5rem"
                     >
                         <lightning-input
+                            required
                             type="text"
                             value={filterName}
                             label="Name"
@@ -60,20 +61,22 @@
                         style="overflow: initial"
                     >
                         <lightning-combobox
-                            name="field"
+                            required
                             label="Field"
                             placeholder="Select Operator"
                             options={fields}
                             onchange={handleChangeField}
                         ></lightning-combobox>
                         <lightning-combobox
-                            name="operator"
+                            required
                             label="Operator"
                             placeholder="Select Operator"
                             options={operationList}
                             onchange={handleChangeOperator}
                         ></lightning-combobox>
                         <lightning-input
+                            required
+                            data-element="filterVal"
                             type={fieldType}
                             label="Value"
                         ></lightning-input>
@@ -81,7 +84,31 @@
                             <lightning-button
                                 label="Add"
                                 variant="brand"
+                                onclick={handleAddCondition}
                             ></lightning-button>
+                        </div>
+                        <div>
+                            <div
+                                for:each={conditions}
+                                for:item="con"
+                                key={con.field}
+                                class="slds-card_boundary slds-p-around_xx-small slds-grid"
+                            >
+                                <div class="slds-media__body top-scrollbars">
+                                    <div>
+                                        <h2 class="slds-text-heading_small">
+                                            {con.field}
+                                        </h2>
+                                        &nbsp;&nbsp;
+                                        {con.operator}&nbsp;&nbsp;{con.value}
+                                    </div>
+                                </div>
+                                <div>
+                                    <a herf="#" class="slds-text-link_reset">
+                                        x
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="slds-modal__footer slds-theme_default">

@@ -21,6 +21,8 @@ export default class TableFilter extends LightningElement {
     openModal = false;
     fieldType = 'text';
     filterName;
+    fieldAPI;
+    conditions = [];
     operationList = [
         { label: 'equals', value: '=' },
         { label: 'not equal to', value: '!=' },
@@ -33,6 +35,7 @@ export default class TableFilter extends LightningElement {
         { label: 'end with', value: 'end_with' }
     ];
     connectedCallback() {
+        console.log('sfsdfsdfsdf');
         fetchFilters({ cmpName: 'data' })
             .then((data) => {
                 let copyData = JSON.parse(JSON.stringify(data));
@@ -51,9 +54,9 @@ export default class TableFilter extends LightningElement {
         getObjectFields({ objName: 'Contact' })
             .then((data) => {
                 const fields = [];
-                console.log('sobject', data);
+                // console.log('data::::')
+                console.log('data-fields', data);
                 for (const [key, value] of Object.entries(data)) {
-                    console.log(`${key}: ${value}`);
                     fields.push({
                         label: key,
                         value: value[0] + '-' + value[1]
@@ -66,11 +69,15 @@ export default class TableFilter extends LightningElement {
                 console.log('getObjectFields Error::', error);
             });
     }
-    handleChange(event) {
+    handleChangeField(event) {
         console.log(event);
         let value = event.detail.value;
         this.fieldType = value.split('-')[1];
-        console.log('this.fieldType', this.fieldType);
+        this.fieldAPI = value.split('-')[0];
+        console.log('this.fieldType', this.fieldType, this.fieldAPI);
+    }
+    handleChangeOperator(event) {
+        console.log(event);
     }
     handleChangeFilter(event) {
         this.filterName = this.options.find(
@@ -83,7 +90,20 @@ export default class TableFilter extends LightningElement {
         //update listFilters filters key using operationList , open mockup and set UI values i.e fields, operator , value
         return listFilters[index];
     };
+    handleNewFilter(event) {
+        console.log('event:::', event);
+        this.openModal = true;
+    }
     handleAddCondition = () => {
+        let value = this.template.querySelector(
+            '[data-element="filterVal"]'
+        ).value;
+        console.log('value', value);
+        this.conditions.push({
+            field: this.fieldAPI,
+            operator: 'equals',
+            value
+        });
         //update filters and Condition__c
     };
     handleDelete = () => {
