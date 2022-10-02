@@ -82,17 +82,18 @@
                         ></lightning-input>
                         <div class="slds-m-top_x-small">
                             <lightning-button
+                                disabled={disableAdd}
                                 label="Add"
                                 variant="brand"
                                 onclick={handleAddCondition}
                             ></lightning-button>
                         </div>
-                        <div>
+                        <div if:true={conditions}>
                             <div
                                 for:each={conditions}
                                 for:item="con"
                                 key={con.field}
-                                class="slds-card_boundary slds-p-around_xx-small slds-grid"
+                                class="slds-card_boundary slds-m-top_x-small slds-p-around_xx-small slds-grid"
                             >
                                 <div class="slds-media__body top-scrollbars">
                                     <div>

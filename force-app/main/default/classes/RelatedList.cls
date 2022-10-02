@@ -162,7 +162,7 @@ public with sharing class RelatedList {
                     .getName();
                 List<String> listStrings = new List<String>();
                 listStrings.add(fieldApi);
-                listStrings.add(fieldType); //Adding field type
+                listStrings.add(fieldType.toLowercase()); //Adding field type
                 string fieldLabelName = fieldMap.get(fieldName)
                     .getDescribe()
                     .getLabel();

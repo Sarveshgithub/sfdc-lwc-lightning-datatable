@@ -1,6 +1,7 @@
-import { LightningElement } from 'lwc';
+import { LightningElement, track } from 'lwc';
 import fetchFilters from '@salesforce/apex/RelatedList.fetchFilters';
 import getObjectFields from '@salesforce/apex/RelatedList.getObjectFields';
+import { mapOperatorType } from './helper';
 //getObjectFields
 const listFilters = [
     {
@@ -22,18 +23,9 @@ export default class TableFilter extends LightningElement {
     fieldType = 'text';
     filterName;
     fieldAPI;
-    conditions = [];
-    operationList = [
-        { label: 'equals', value: '=' },
-        { label: 'not equal to', value: '!=' },
-        { label: 'less than', value: '<' },
-        { label: 'greater than', value: '>' },
-        { label: 'less or equal', value: '<=' },
-        { label: 'contain', value: 'contain' },
-        { label: 'does not contain', value: 'not_contain' },
-        { label: 'start with', value: 'start_with' },
-        { label: 'end with', value: 'end_with' }
-    ];
+    operator;
+    @track conditions = [];
+    operationList;
     connectedCallback() {
         console.log('sfsdfsdfsdf');
         fetchFilters({ cmpName: 'data' })
@@ -59,7 +51,7 @@ export default class TableFilter extends LightningElement {
                 for (const [key, value] of Object.entries(data)) {
                     fields.push({
                         label: key,
-                        value: value[0] + '-' + value[1]
+                        value: value[0] + '>' + value[1]
                     });
                 }
                 this.fields = fields;
@@ -72,12 +64,20 @@ export default class TableFilter extends LightningElement {
     handleChangeField(event) {
         console.log(event);
         let value = event.detail.value;
-        this.fieldType = value.split('-')[1];
-        this.fieldAPI = value.split('-')[0];
+        const { type, operator } = mapOperatorType(value.split('>')[1]);
+        console.log(
+            '----',
+            mapOperatorType(value.split('>')[1]),
+            value.split('>')[1]
+        );
+        this.fieldType = type;
+        this.operationList = operator;
+        this.fieldAPI = value.split('>')[0];
         console.log('this.fieldType', this.fieldType, this.fieldAPI);
     }
     handleChangeOperator(event) {
         console.log(event);
+        this.operator = event.detail.value;
     }
     handleChangeFilter(event) {
         this.filterName = this.options.find(
@@ -94,6 +94,13 @@ export default class TableFilter extends LightningElement {
         console.log('event:::', event);
         this.openModal = true;
     }
+    get disableAdd() {
+        return !(
+            this.fieldAPI &&
+            this.operator &&
+            this.template.querySelector('[data-element="filterVal"]').value
+        );
+    }
     handleAddCondition = () => {
         let value = this.template.querySelector(
             '[data-element="filterVal"]'
@@ -106,6 +113,7 @@ export default class TableFilter extends LightningElement {
         });
         //update filters and Condition__c
     };
+
     handleDelete = () => {
         //Delete filter using recordUpdateUI LDS ( no Apex)
     };
