@@ -26,6 +26,7 @@ export default class TableFilter extends LightningElement {
     operator;
     @track conditions = [];
     operationList;
+    disableAdd = true;
     connectedCallback() {
         console.log('sfsdfsdfsdf');
         fetchFilters({ cmpName: 'data' })
@@ -94,12 +95,15 @@ export default class TableFilter extends LightningElement {
         console.log('event:::', event);
         this.openModal = true;
     }
-    get disableAdd() {
-        return !(
-            this.fieldAPI &&
-            this.operator &&
-            this.template.querySelector('[data-element="filterVal"]').value
-        );
+    handleChangeValue(event) {
+        this.fieldValue = event.detail.value;
+        console.log('value', this.fieldValue, event);
+        this.disableAdd = ![
+            ...this.template.querySelectorAll('lightning-input')
+        ].reduce((validSoFar, inputCmp) => {
+            inputCmp.reportValidity();
+            return validSoFar && inputCmp.checkValidity();
+        }, true);
     }
     handleAddCondition = () => {
         let value = this.template.querySelector(
