@@ -178,7 +178,7 @@ export default class LightningDatatable extends NavigationMixin(
 
     handleButtonAction(event) {
         //call desired javacript method or apex call, or throw an event based on the button key(new, delete-selected...)
-        //if button has needSelectedRows set to true, have selected rows using this.selectedRows
+        //you have selected rows in this.selectedRows
         const buttonLabel = event.target.dataset.name;
         switch (buttonLabel) {
             case 'New':
