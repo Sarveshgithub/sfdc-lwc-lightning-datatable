@@ -152,4 +152,31 @@ public with sharing class RelatedList {
         mapPreCols.get(fieldName).sortable = sortable;
         return mapPreCols;
     }
+
+    @AuraEnabled(cacheable=true)
+    public static map<string, list<object>> getObjectFields(String objName) {
+        map<string, list<object>> retVal = new Map<string, list<object>>();
+        Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe()
+            .get(objName)
+            .getDescribe()
+            .fields.getMap();
+        for (String fieldName : fieldMap.keySet()) {
+            string fieldType = String.ValueOf(
+                fieldMap.get(fieldName).getDescribe().getType()
+            );
+            if (fieldType != 'TEXTAREA') {
+                String fieldApi = fieldMap.get(fieldName)
+                    .getDescribe()
+                    .getName();
+                List<String> listStrings = new List<String>();
+                listStrings.add(fieldApi);
+                listStrings.add(fieldType.toLowercase()); //Adding field type
+                string fieldLabelName = fieldMap.get(fieldName)
+                    .getDescribe()
+                    .getLabel();
+                retVal.put(fieldLabelName, listStrings);
+            }
+        }
+        return retVal;
+    }
 }
