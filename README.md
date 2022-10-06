@@ -54,28 +54,42 @@ The data table has following features.
 
 ### Example : Override Column Label
 
-```yml
-{ 'AccountId': { 'label': 'Account Record Id' } }
-```
-
-### Example : Related Field Customized
+#### Single override
 
 ```yml
-{ 'Account.Name': { 'label': 'Account Name', 'type': 'text' } }
+{ "AccountId": { "label": "Account Record Id", "type": "Id" } }
 ```
 
-## Example : Add Hyperlink for navigate to record
+#### Multiple override
+
+```yml
+{ 
+    "LastName": { "label": "Surname", "type": "text" },
+    "AccountId": { "label": "Account Record Id", "type": "Id" }
+}
+```
+
+
+#### Related Field Customized
+
+```yml
+{ "Account.Name": { "label": "Account Name", "type": "text" } }
+```
+
+#### Add a hyperlink to navigate to the record
+
+The example enables redirection to the account when we click on the account name of a contact (the field Account.Name is included in columns api name in the example).
 
 ```yml
 {
-    'Account.Name':
+    "Account.Name":
         {
-            'label': 'Account Name',
-            'type': 'url',
-            'typeAttributes':
+            "label": "Account Name",
+            "type": "url",
+            "typeAttributes":
                 {
-                    'label':
-                        { 'fieldName': 'Account.Name', 'recId': 'AccountId' }
+                    "label":
+                        { "fieldName": "Account.Name", "recId": "AccountId" }
                 }
         }
 }
@@ -83,10 +97,22 @@ The data table has following features.
 
 ## Buttons configuration
 
-### Buttons JSON :
+To configure buttons(variant are the style of a button) see the documentation here : 
+[buttons documentation](https://developer.salesforce.com/docs/component-library/bundle/lightning-button/example)
+
+#### Single button
 
 ```yml
-[{ 'name': 'New', 'label': 'New', 'variant': 'neutral' }]
+[{ "name": "New", "label": "New", "variant": "neutral" }]
+```
+
+#### Multiple buttons
+
+```yml
+[
+    { "name": "New", "label": "New", "variant": "neutral" },
+    { "name": "DeleteAll", "label": "Delete all", "variant": "destructive" }
+]
 ```
 
 ### Default displayed buttons
@@ -99,21 +125,17 @@ You can implement your own logic for your new buttons based on button JSON (new,
 
 ```JS
   handleButtonAction(event) {
-    //call desired javacript method or apex call, or throw an event based on the button key(new, delete-selected...)
-    //if button has needSelectedRows set to true, have selected rows using this.selectedRows
-    const buttonLabel = event.target.dataset.name;
-    switch (buttonLabel) {
-      case "New":
-        this.newRecord();
-        break;
-      /* TODO
-      case "delete-selected":
-        const eventDeleteSelected = new CustomEvent('deleteselected', { detail: JSON.stringify(this.selectedRows) });
-        this.dispatchEvent(eventDeleteSelected);
-        break;*/
-      default:
-    }
+      //call desired javacript method or apex call, or throw an event based on the button key(new, delete-selected...)
+      //you have selected rows in this.selectedRows
+      const buttonLabel = event.target.dataset.name;
+      switch (buttonLabel) {
+          case 'New':
+              this.newRecord();
+              break;
+          default:
+      }
   }
+
 ```
 
 ## Deploy
