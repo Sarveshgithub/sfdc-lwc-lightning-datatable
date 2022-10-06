@@ -1,6 +1,7 @@
 public with sharing class RelatedList {
     private static Map<String, String> mapFieldToLwcDataType = new Map<String, String>{
-        'datetime' => 'date'
+        'datetime' => 'date',
+        'date' => 'date-local'
     };
     public class ColumnJson {
         @AuraEnabled
@@ -124,53 +125,6 @@ public with sharing class RelatedList {
         return 0;
     }
 
-    @AuraEnabled(cacheable=true)
-    public static Map<Id, List_Filter__c> fetchFilters(String cmpName) {
-        Id currentUser = userInfo.getUserId();
-        return new Map<Id, List_Filter__c>(
-            [
-                SELECT
-                    Id,
-                    Name,
-                    Condition__c,
-                    Public__c,
-                    CreatedById,
-                    CreatedBy.Name
-                FROM List_Filter__c
-                WHERE
-                    Screen_Name__c = :cmpName
-                    AND CreatedById = :currentUser
-                    AND Public__c = :true
-                WITH SECURITY_ENFORCED
-            ]
-        );
-    }
-    @AuraEnabled(cacheable=true)
-    public static map<string, list<object>> getObjectFields(String objName) {
-        map<string, list<object>> retVal = new Map<string, list<object>>();
-        Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe()
-            .get(objName)
-            .getDescribe()
-            .fields.getMap();
-        for (String fieldName : fieldMap.keySet()) {
-            string fieldType = String.ValueOf(
-                fieldMap.get(fieldName).getDescribe().getType()
-            );
-            if (fieldType != 'TEXTAREA') {
-                String fieldApi = fieldMap.get(fieldName)
-                    .getDescribe()
-                    .getName();
-                List<String> listStrings = new List<String>();
-                listStrings.add(fieldApi);
-                listStrings.add(fieldType.toLowercase()); //Adding field type
-                string fieldLabelName = fieldMap.get(fieldName)
-                    .getDescribe()
-                    .getLabel();
-                retVal.put(fieldLabelName, listStrings);
-            }
-        }
-        return retVal;
-    }
     private static Map<String, ColumnJson> checkOverride(
         Map<String, ColumnJson> mapPreCols,
         String fieldName,
