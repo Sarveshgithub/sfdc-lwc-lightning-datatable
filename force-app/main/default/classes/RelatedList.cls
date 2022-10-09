@@ -179,4 +179,26 @@ public with sharing class RelatedList {
         }
         return retVal;
     }
+
+    @AuraEnabled(cacheable=true)
+    public static Map<Id, List_Filter__c> fetchFilters(String cmpName) {
+        Id currentUser = userInfo.getUserId();
+        return new Map<Id, List_Filter__c>(
+            [
+                SELECT
+                    Id,
+                    Name,
+                    Condition__c,
+                    Public__c,
+                    CreatedById,
+                    CreatedBy.Name
+                FROM List_Filter__c
+                WHERE
+                    Screen_Name__c = :cmpName
+                    AND CreatedById = :currentUser
+                    AND Public__c = :true
+                WITH SECURITY_ENFORCED
+            ]
+        );
+    }
 }

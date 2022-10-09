@@ -17,8 +17,8 @@ const listFilters = [
 export default class TableFilter extends LightningElement {
     //Public variable
     //Private variable
-    options;
-    fields;
+    @track options;
+    @track fields;
     openModal = false;
     fieldType = 'text';
     filterName;
@@ -106,8 +106,12 @@ export default class TableFilter extends LightningElement {
         }, true);
     }
     handleAddCondition = () => {
+        //debugger;
         let value = this.template.querySelector(
             '[data-element="filterVal"]'
+        ).value;
+        let fieldVal = this.template.querySelector(
+            '[data-element="objField"]'
         ).value;
         console.log('value', value);
         this.conditions.push({
@@ -115,6 +119,18 @@ export default class TableFilter extends LightningElement {
             operator: 'equals',
             value
         });
+        let f = this.fields;
+        for (let i = 0; i < f.length; i++) {
+            if (f[i].value === fieldVal) {
+                f.splice(i, 1);
+                // f[i].disable = true;
+                break;
+            }
+        }
+        this.fields = [...f];
+
+        console.log('his.fields', this.fields);
+
         //update filters and Condition__c
     };
 
