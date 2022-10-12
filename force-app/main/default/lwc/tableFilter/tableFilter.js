@@ -19,6 +19,9 @@ export default class TableFilter extends LightningElement {
     //Private variable
     @track options;
     @track fields;
+    @track fieldSelected;
+    mapOfFilters;
+    selectedFilterId;
     openModal = false;
     fieldType = 'text';
     filterName;
@@ -32,6 +35,7 @@ export default class TableFilter extends LightningElement {
         fetchFilters({ cmpName: 'data' })
             .then((data) => {
                 let copyData = JSON.parse(JSON.stringify(data));
+                this.mapOfFilters = copyData;
                 let filters = Object.values(copyData);
                 for (let i = 0; i < filters.length; i++) {
                     filters[i].label = filters[i].Name;
@@ -63,6 +67,7 @@ export default class TableFilter extends LightningElement {
             });
     }
     handleChangeField(event) {
+        this.disableAdd = false;
         console.log(event);
         let value = event.detail.value;
         const { type, operator } = mapOperatorType(value.split('>')[1]);
@@ -74,6 +79,7 @@ export default class TableFilter extends LightningElement {
         this.fieldType = type;
         this.operationList = operator;
         this.fieldAPI = value.split('>')[0];
+        this.fieldSelected = value;
         console.log('this.fieldType', this.fieldType, this.fieldAPI);
     }
     handleChangeOperator(event) {
@@ -81,6 +87,7 @@ export default class TableFilter extends LightningElement {
         this.operator = event.detail.value;
     }
     handleChangeFilter(event) {
+        this.selectedFilterId = event.detail.value;
         this.filterName = this.options.find(
             (opt) => opt.value === event.detail.value
         ).label;
@@ -98,14 +105,12 @@ export default class TableFilter extends LightningElement {
     handleChangeValue(event) {
         this.fieldValue = event.detail.value;
         console.log('value', this.fieldValue, event);
-        this.disableAdd = ![
-            ...this.template.querySelectorAll('lightning-input')
-        ].reduce((validSoFar, inputCmp) => {
-            inputCmp.reportValidity();
-            return validSoFar && inputCmp.checkValidity();
-        }, true);
     }
     handleAddCondition = () => {
+        if (!this.validation()) {
+            console.log(this.validation());
+            return;
+        }
         //debugger;
         let value = this.template.querySelector(
             '[data-element="filterVal"]'
@@ -113,10 +118,13 @@ export default class TableFilter extends LightningElement {
         let fieldVal = this.template.querySelector(
             '[data-element="objField"]'
         ).value;
-        console.log('value', value);
+        let operator = this.template.querySelector(
+            '[data-element="operator"]'
+        ).value;
+        console.log('value', value, fieldVal, operator);
         this.conditions.push({
             field: this.fieldAPI,
-            operator: 'equals',
+            operator,
             value
         });
         let f = this.fields;
@@ -129,8 +137,8 @@ export default class TableFilter extends LightningElement {
         }
         this.fields = [...f];
 
-        console.log('his.fields', this.fields);
-
+        console.log('his.fields', this.conditions);
+        this.disableAdd = true;
         //update filters and Condition__c
     };
 
@@ -138,6 +146,13 @@ export default class TableFilter extends LightningElement {
         //Delete filter using recordUpdateUI LDS ( no Apex)
     };
     handleSave = () => {
+        let condition = [];
+        this.conditions.forEach((val) => {
+            condition.push(`( ${val.field} ${val.operator} ${val.value} )`);
+        });
+        condition = condition.join(' AND ');
+        console.log(condition);
+        console.log('selected', this.mapOfFilters[this.selectedFilterId]);
         //update filter Object using recordUpdateUI LDS ( no Apex)
     };
     handleAppleFilter = () => {
@@ -146,5 +161,15 @@ export default class TableFilter extends LightningElement {
     showHideModal() {
         this.openModal = !this.openModal;
         console.log('sfds', this.openModal);
+    }
+
+    validation() {
+        return [...this.template.querySelectorAll('lightning-input')].reduce(
+            (validSoFar, inputCmp) => {
+                inputCmp.reportValidity();
+                return validSoFar && inputCmp.checkValidity();
+            },
+            true
+        );
     }
 }

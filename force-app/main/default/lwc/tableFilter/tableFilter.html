@@ -71,6 +71,7 @@
                         <lightning-combobox
                             required
                             label="Operator"
+                            data-element="operator"
                             placeholder="Select Operator"
                             options={operationList}
                             onchange={handleChangeOperator}
@@ -80,13 +81,14 @@
                             data-element="filterVal"
                             type={fieldType}
                             label="Value"
+                            value={fieldValue}
                             onchange={handleChangeValue}
                         ></lightning-input>
                         <div class="slds-m-top_x-small">
                             <lightning-button
-                                disabled={disableAdd}
                                 label="Add"
                                 variant="brand"
+                                disabled={disableAdd}
                                 onclick={handleAddCondition}
                             ></lightning-button>
                         </div>
@@ -123,6 +125,7 @@
                             label="Save"
                             variant="brand"
                             class="slds-m-left_x-small"
+                            onclick={handleSave}
                         ></lightning-button>
                     </div>
                 </div>
