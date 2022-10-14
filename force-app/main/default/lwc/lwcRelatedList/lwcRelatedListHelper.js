@@ -27,6 +27,15 @@ const setPredefinedColumnJSON = (cmp) => {
         cmp.error = 'You have not configured related field defination.';
         throw new Error('error');
     }
+    let tempFields = new Set(cmp.fields.replace(/\s/g, '').split(','));
+    if (tempFields.has('id')) {
+        tempFields.delete('id');
+    } else if (tempFields.has('Id')) {
+        tempFields.delete('Id');
+    } else if (tempFields.has('ID')) {
+        tempFields.delete('ID');
+    }
+    cmp.fields = tempFields.join(',');
     const predefinedCol = cmp.predefinedCol
         ? JSON.parse(cmp.predefinedCol)
         : cmp.predefinedCol;
