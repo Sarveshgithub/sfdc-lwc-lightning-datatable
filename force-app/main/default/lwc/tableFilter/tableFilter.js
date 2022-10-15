@@ -2,6 +2,8 @@ import { LightningElement, track } from 'lwc';
 import fetchFilters from '@salesforce/apex/RelatedList.fetchFilters';
 import getObjectFields from '@salesforce/apex/RelatedList.getObjectFields';
 import { mapOperatorType } from './helper';
+import NAME_FIELD from '@salesforce/schema/Account.Name';
+import { updateRecord } from 'lightning/uiRecordApi';
 //getObjectFields
 const listFilters = [
     {
@@ -137,7 +139,7 @@ export default class TableFilter extends LightningElement {
         }
         this.fields = [...f];
 
-        console.log('his.fields', this.conditions);
+        console.log('his.fields', this.conditions, NAME_FIELD);
         this.disableAdd = true;
         //update filters and Condition__c
     };
@@ -154,6 +156,13 @@ export default class TableFilter extends LightningElement {
         console.log(condition);
         console.log('selected', this.mapOfFilters[this.selectedFilterId]);
         //update filter Object using recordUpdateUI LDS ( no Apex)
+        updateRecord(this.mapOfFilters[this.selectedFilterId])
+            .then((record) => {
+                console.log(record);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     };
     handleAppleFilter = () => {
         // Apply filter - this will append where clause and do fetchRecords()
