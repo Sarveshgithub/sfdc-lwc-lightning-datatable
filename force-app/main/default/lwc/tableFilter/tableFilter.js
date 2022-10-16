@@ -114,9 +114,9 @@ export default class TableFilter extends LightningElement {
             return;
         }
         //debugger;
-        let value = this.template.querySelector(
-            '[data-element="filterVal"]'
-        ).value;
+        let value = this.template.querySelector('[data-element="filterVal"]')[
+            this.fieldType === 'checkbox' ? 'checked' : 'value'
+        ];
         let fieldVal = this.template.querySelector(
             '[data-element="objField"]'
         ).value;
@@ -127,7 +127,8 @@ export default class TableFilter extends LightningElement {
         this.conditions.push({
             field: this.fieldAPI,
             operator,
-            value
+            value,
+            type: this.fieldType
         });
         let f = this.fields;
         for (let i = 0; i < f.length; i++) {
@@ -156,9 +157,13 @@ export default class TableFilter extends LightningElement {
         console.log(condition);
         console.log('selected', this.mapOfFilters[this.selectedFilterId]);
         //update filter Object using recordUpdateUI LDS ( no Apex)
-        updateRecord(this.mapOfFilters[this.selectedFilterId])
-            .then((record) => {
-                console.log(record);
+        let fields = {};
+        fields.Id = this.selectedFilterId;
+        fields.Condition__c = condition;
+        console.log('record::', fields);
+        updateRecord({ fields })
+            .then((res) => {
+                console.log(res);
             })
             .catch((error) => {
                 console.log(error);
