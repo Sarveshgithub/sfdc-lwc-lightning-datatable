@@ -82,5 +82,32 @@ const mapOperatorType = (type) => {
     returnType.operator = operaterMap[returnType.type];
     return returnType;
 };
+const formatCondition = (conditions) => {
+    let { field, value, type, operator } = conditions,
+        sQuote = "'";
+    switch (operator) {
+        case '=':
+        case '>=':
+        case '<=':
+        case '!=':
+        case '>':
+        case '<':
+            return `${field} ${operator} ${
+                type === 'number' || type === 'checkbox'
+                    ? value
+                    : sQuote + value + sQuote
+            }`;
+        case 'contain':
+            return `${field} like '%${value}%' `;
+        case 'not_contain':
+            return `not ${field} like '%${value}%' `;
+        case 'start_with':
+            return `${field} like '${value}%' `;
+        case 'end_with':
+            return `${field} like '%${value}' `;
+        default:
+    }
+    return null;
+};
 
-export { mapOperatorType };
+export { mapOperatorType, formatCondition };

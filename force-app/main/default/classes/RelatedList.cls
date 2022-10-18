@@ -190,15 +190,25 @@ public with sharing class RelatedList {
                     Name,
                     Condition__c,
                     Public__c,
+                    Condition_JSON__c,
                     CreatedById,
                     CreatedBy.Name
                 FROM List_Filter__c
                 WHERE
-                    Screen_Name__c = :cmpName
-                    AND CreatedById = :currentUser
-                    AND Public__c = :true
+                    (Screen_Name__c = :cmpName
+                    AND CreatedById = :currentUser)
+                    OR Public__c = TRUE
                 WITH SECURITY_ENFORCED
             ]
         );
+    }
+    @AuraEnabled
+    public static List_Filter__c insertFilter(List_Filter__c objFilter) {
+        try {
+            insert objFilter;
+            return objFilter;
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
     }
 }

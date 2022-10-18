@@ -1,21 +1,9 @@
 import { LightningElement, track } from 'lwc';
 import fetchFilters from '@salesforce/apex/RelatedList.fetchFilters';
 import getObjectFields from '@salesforce/apex/RelatedList.getObjectFields';
-import { mapOperatorType } from './helper';
-import NAME_FIELD from '@salesforce/schema/Account.Name';
+import insertFilter from '@salesforce/apex/RelatedList.insertFilter';
+import { mapOperatorType, formatCondition } from './helper';
 import { updateRecord } from 'lightning/uiRecordApi';
-//getObjectFields
-const listFilters = [
-    {
-        Name: 'sdf',
-        Public__c: true,
-        Screen_Name__c: 'test',
-        Condition__c: 'Name = sdfdsf',
-        filters: [],
-        CreatedById: 'Id',
-        Id: 'test'
-    }
-];
 export default class TableFilter extends LightningElement {
     //Public variable
     //Private variable
@@ -23,6 +11,7 @@ export default class TableFilter extends LightningElement {
     @track fields;
     @track fieldSelected;
     mapOfFilters;
+    mapOfFields;
     selectedFilterId;
     openModal = false;
     fieldType = 'text';
@@ -38,6 +27,7 @@ export default class TableFilter extends LightningElement {
             .then((data) => {
                 let copyData = JSON.parse(JSON.stringify(data));
                 this.mapOfFilters = copyData;
+                console.log('this.mapOfFilters', this.mapOfFilters);
                 let filters = Object.values(copyData);
                 for (let i = 0; i < filters.length; i++) {
                     filters[i].label = filters[i].Name;
@@ -52,17 +42,23 @@ export default class TableFilter extends LightningElement {
 
         getObjectFields({ objName: 'Contact' })
             .then((data) => {
-                const fields = [];
+                const fieldJSON = {};
                 // console.log('data::::')
                 console.log('data-fields', data);
                 for (const [key, value] of Object.entries(data)) {
-                    fields.push({
+                    fieldJSON[value[0]] = {
                         label: key,
                         value: value[0] + '>' + value[1]
-                    });
+                    };
                 }
-                this.fields = fields;
-                console.log('fields::', fields);
+                this.fields = Object.values(fieldJSON);
+                this.mapOfFields = fieldJSON;
+                console.log(
+                    'fields::',
+                    fieldJSON,
+                    this.fields,
+                    this.mapOfFields
+                );
             })
             .catch((error) => {
                 console.log('getObjectFields Error::', error);
@@ -93,15 +89,16 @@ export default class TableFilter extends LightningElement {
         this.filterName = this.options.find(
             (opt) => opt.value === event.detail.value
         ).label;
-        //this.filterName = event.detail.label;
+        if (this.mapOfFilters[this.selectedFilterId].Condition_JSON__c) {
+            this.conditions = JSON.parse(
+                this.mapOfFilters[this.selectedFilterId].Condition_JSON__c
+            );
+        }
     }
-    handleEdit = (index) => {
+    handleEdit = () => {
         this.openModal = true;
-        //update listFilters filters key using operationList , open mockup and set UI values i.e fields, operator , value
-        return listFilters[index];
     };
-    handleNewFilter(event) {
-        console.log('event:::', event);
+    handleNewFilter() {
         this.openModal = true;
     }
     handleChangeValue(event) {
@@ -109,11 +106,12 @@ export default class TableFilter extends LightningElement {
         console.log('value', this.fieldValue, event);
     }
     handleAddCondition = () => {
+        //debugger;
         if (!this.validation()) {
             console.log(this.validation());
             return;
         }
-        //debugger;
+
         let value = this.template.querySelector('[data-element="filterVal"]')[
             this.fieldType === 'checkbox' ? 'checked' : 'value'
         ];
@@ -124,23 +122,26 @@ export default class TableFilter extends LightningElement {
             '[data-element="operator"]'
         ).value;
         console.log('value', value, fieldVal, operator);
+        let operatorLabel = this.operationList.find(
+                (opt) => opt.value === operator
+            ).label,
+            label = this.mapOfFields[this.fieldAPI].label;
         this.conditions.push({
             field: this.fieldAPI,
             operator,
             value,
-            type: this.fieldType
+            type: this.fieldType,
+            label,
+            operatorLabel
         });
         let f = this.fields;
         for (let i = 0; i < f.length; i++) {
             if (f[i].value === fieldVal) {
                 f.splice(i, 1);
-                // f[i].disable = true;
                 break;
             }
         }
         this.fields = [...f];
-
-        console.log('his.fields', this.conditions, NAME_FIELD);
         this.disableAdd = true;
         //update filters and Condition__c
     };
@@ -151,23 +152,24 @@ export default class TableFilter extends LightningElement {
     handleSave = () => {
         let condition = [];
         this.conditions.forEach((val) => {
-            condition.push(`( ${val.field} ${val.operator} ${val.value} )`);
+            condition.push(formatCondition(val));
         });
         condition = condition.join(' AND ');
-        console.log(condition);
-        console.log('selected', this.mapOfFilters[this.selectedFilterId]);
-        //update filter Object using recordUpdateUI LDS ( no Apex)
+        console.log('conditionLLL', condition);
         let fields = {};
-        fields.Id = this.selectedFilterId;
+        fields.Name = this.template.querySelector(
+            '[data-element="objFilterName"]'
+        ).value;
         fields.Condition__c = condition;
+        fields.Condition_JSON__c = JSON.stringify(this.conditions);
         console.log('record::', fields);
-        updateRecord({ fields })
-            .then((res) => {
-                console.log(res);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+        if (this.selectedFilterId) {
+            fields.Id = this.selectedFilterId;
+            this.updateFilter(fields);
+        } else {
+            fields.Screen_Name__c = 'data';
+            this.insertFilter(fields);
+        }
     };
     handleAppleFilter = () => {
         // Apply filter - this will append where clause and do fetchRecords()
@@ -185,5 +187,25 @@ export default class TableFilter extends LightningElement {
             },
             true
         );
+    }
+
+    insertFilter(obj) {
+        insertFilter({ objFilter: obj })
+            .then((response) => {
+                console.log(response);
+            })
+            .catch((error) => {
+                console.log('error', error);
+            });
+    }
+
+    updateFilter(fields) {
+        updateRecord({ fields })
+            .then((res) => {
+                console.log(res);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     }
 }

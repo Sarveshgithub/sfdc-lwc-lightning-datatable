@@ -52,6 +52,7 @@
                             required
                             type="text"
                             value={filterName}
+                            data-element="objFilterName"
                             label="Name"
                         ></lightning-input>
                     </div>
@@ -102,10 +103,10 @@
                                 <div class="slds-media__body top-scrollbars">
                                     <div>
                                         <h2 class="slds-text-heading_small">
-                                            {con.field}
+                                            {con.label}
                                         </h2>
                                         &nbsp;&nbsp;
-                                        {con.operator}&nbsp;&nbsp;{con.value}
+                                        {con.operatorLabel}&nbsp;&nbsp;{con.value}
                                     </div>
                                 </div>
                                 <div>
