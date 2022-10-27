@@ -1,9 +1,9 @@
 import { LightningElement, track } from 'lwc';
-import fetchFilters from '@salesforce/apex/RelatedList.fetchFilters';
-import getObjectFields from '@salesforce/apex/RelatedList.getObjectFields';
-import insertFilter from '@salesforce/apex/RelatedList.insertFilter';
+import fetchFilters from '@salesforce/apex/ListFilterController.fetchFilters';
+import getObjectFields from '@salesforce/apex/ListFilterController.getObjectFields';
+import insertFilter from '@salesforce/apex/ListFilterController.insertFilter';
 import { mapOperatorType, formatCondition } from './helper';
-import { updateRecord } from 'lightning/uiRecordApi';
+import { updateRecord, deleteRecord } from 'lightning/uiRecordApi';
 export default class TableFilter extends LightningElement {
     //Public variable
     //Private variable
@@ -22,24 +22,7 @@ export default class TableFilter extends LightningElement {
     operationList;
     disableAdd = true;
     connectedCallback() {
-        console.log('sfsdfsdfsdf');
-        fetchFilters({ cmpName: 'data' })
-            .then((data) => {
-                let copyData = JSON.parse(JSON.stringify(data));
-                this.mapOfFilters = copyData;
-                console.log('this.mapOfFilters', this.mapOfFilters);
-                let filters = Object.values(copyData);
-                for (let i = 0; i < filters.length; i++) {
-                    filters[i].label = filters[i].Name;
-                    filters[i].value = filters[i].Id;
-                }
-                this.options = filters;
-                console.log('sfdsfdsfs', this.options);
-            })
-            .catch((error) => {
-                console.log('error::', error);
-            });
-
+        this.getFilters();
         getObjectFields({ objName: 'Contact' })
             .then((data) => {
                 const fieldJSON = {};
@@ -62,6 +45,25 @@ export default class TableFilter extends LightningElement {
             })
             .catch((error) => {
                 console.log('getObjectFields Error::', error);
+            });
+    }
+    getFilters() {
+        console.log('sfsdfsdfsdf');
+        fetchFilters({ cmpName: 'data' })
+            .then((data) => {
+                let copyData = JSON.parse(JSON.stringify(data));
+                this.mapOfFilters = copyData;
+                console.log('this.mapOfFilters', this.mapOfFilters);
+                let filters = Object.values(copyData);
+                for (let i = 0; i < filters.length; i++) {
+                    filters[i].label = filters[i].Name;
+                    filters[i].value = filters[i].Id;
+                }
+                this.options = filters;
+                console.log('sfdsfdsfs', this.options);
+            })
+            .catch((error) => {
+                console.log('error::', error);
             });
     }
     handleChangeField(event) {
@@ -100,6 +102,19 @@ export default class TableFilter extends LightningElement {
     };
     handleNewFilter() {
         this.openModal = true;
+    }
+    handleDelete() {
+        if (this.selectedFilterId) {
+            deleteRecord(this.selectedFilterId)
+                .then((response) => {
+                    this.selectedFilterId = null;
+                    this.getFilters();
+                    console.log(response);
+                })
+                .catch((error) => {
+                    console.log('error::', error);
+                });
+        }
     }
     handleChangeValue(event) {
         this.fieldValue = event.detail.value;
@@ -146,9 +161,6 @@ export default class TableFilter extends LightningElement {
         //update filters and Condition__c
     };
 
-    handleDelete = () => {
-        //Delete filter using recordUpdateUI LDS ( no Apex)
-    };
     handleSave = () => {
         let condition = [];
         this.conditions.forEach((val) => {
