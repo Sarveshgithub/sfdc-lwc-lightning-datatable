@@ -1,5 +1,5 @@
 <template>
-    <div class="slds-p-around_medium" style="height: 300px; display: flex">
+    <div style="display: flex; align-items: flex-end">
         <lightning-combobox
             if:true={options}
             label="Filters"
@@ -12,6 +12,7 @@
             icon-name="utility:edit"
             onclick={handleEdit}
             alternative-text="Edit"
+            class="slds-m-left_xx-small"
             title="Edit"
         ></lightning-button-icon>
         <lightning-button-icon

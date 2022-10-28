@@ -66,7 +66,7 @@ export default class LightningDatatable extends NavigationMixin(
     // Do init funtion
     connectedCallback() {
         //This function can used for local development config, pass 'true' for config
-        configLocal(this, false);
+        configLocal(this, true);
         setPredefinedColumnJSON(this);
         if (this.actionButtons) {
             this.actionButtons = JSON.parse(this.actionButtons);
@@ -419,5 +419,18 @@ export default class LightningDatatable extends NavigationMixin(
                     );
                 });
         }
+    }
+
+    @track filterCondition;
+    handleFilterEvent(event) {
+        console.log(event.detail);
+        if (this.whereClause) {
+            this.whereClause = this.whereClause + event.detail;
+        } else {
+            this.whereClause = event.detail;
+        }
+        this.buildSOQL();
+        console.log('soql', this.soql);
+        this.fetchRecords();
     }
 }

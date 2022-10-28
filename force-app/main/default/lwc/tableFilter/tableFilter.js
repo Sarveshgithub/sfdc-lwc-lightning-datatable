@@ -1,4 +1,4 @@
-import { LightningElement, track } from 'lwc';
+import { LightningElement, track, api } from 'lwc';
 import fetchFilters from '@salesforce/apex/ListFilterController.fetchFilters';
 import getObjectFields from '@salesforce/apex/ListFilterController.getObjectFields';
 import insertFilter from '@salesforce/apex/ListFilterController.insertFilter';
@@ -6,6 +6,8 @@ import { mapOperatorType, formatCondition } from './helper';
 import { updateRecord, deleteRecord } from 'lightning/uiRecordApi';
 export default class TableFilter extends LightningElement {
     //Public variable
+    @api objectName;
+    @api cmpName;
     //Private variable
     @track options;
     @track fields;
@@ -23,7 +25,7 @@ export default class TableFilter extends LightningElement {
     disableAdd = true;
     connectedCallback() {
         this.getFilters();
-        getObjectFields({ objName: 'Contact' })
+        getObjectFields({ objName: this.objectName })
             .then((data) => {
                 const fieldJSON = {};
                 // console.log('data::::')
@@ -49,10 +51,10 @@ export default class TableFilter extends LightningElement {
     }
     getFilters() {
         console.log('sfsdfsdfsdf');
-        fetchFilters({ cmpName: 'data' })
+        fetchFilters({ cmpName: this.cmpName })
             .then((data) => {
-                let copyData = JSON.parse(JSON.stringify(data));
-                this.mapOfFilters = copyData;
+                let copyData = data;
+                this.mapOfFilters = data;
                 console.log('this.mapOfFilters', this.mapOfFilters);
                 let filters = Object.values(copyData);
                 for (let i = 0; i < filters.length; i++) {
@@ -205,6 +207,7 @@ export default class TableFilter extends LightningElement {
         insertFilter({ objFilter: obj })
             .then((response) => {
                 console.log(response);
+                this.fireEvent(response.Condition__c);
             })
             .catch((error) => {
                 console.log('error', error);
@@ -215,9 +218,18 @@ export default class TableFilter extends LightningElement {
         updateRecord({ fields })
             .then((res) => {
                 console.log(res);
+                this.fireEvent(res.fields.Condition__c.value);
             })
             .catch((error) => {
                 console.log(error);
             });
+    }
+
+    fireEvent(res) {
+        const selectEvent = new CustomEvent('filterevent', {
+            detail: res
+        });
+        this.dispatchEvent(selectEvent);
+        this.showHideModal();
     }
 }
