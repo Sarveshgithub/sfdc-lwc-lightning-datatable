@@ -44,6 +44,7 @@ export default class LightningDatatable extends NavigationMixin(
     @api hasPagination;
     @api predefinedCol = '';
     @api hasSearchBar;
+    @api orderBy;
     // Private Property
     @track data;
     @track soql;
@@ -309,8 +310,14 @@ export default class LightningDatatable extends NavigationMixin(
         if (this.fields) soql = this.appendField();
         soql += this.appendWhere();
         soql += ' WITH SECURITY_ENFORCED ';
-        if (this.sortBy && this.sortDirection)
+
+        //if we filter on a column then we ignore the ORDER BY defined in the configuration
+        if(this.orderBy && !this.sortBy) {
+            soql += ` ORDER BY ${this.orderBy}`;
+        } else if (this.sortBy && this.sortDirection) {
             soql += ` ORDER BY ${this.sortBy} ${this.sortDirection} `;
+        }
+        
         if (this.limit && this.limit > 0) {
             soql += this.appendLimit();
             soql += this.appendOffset();
