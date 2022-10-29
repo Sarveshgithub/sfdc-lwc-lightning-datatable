@@ -82,11 +82,13 @@ export default class LightningDatatable extends NavigationMixin(
             soql: this.soql,
             objectName: this.objectName,
             whereClause: this.appendWhere(),
-            colsJson: JSON.stringify(this.colsJson)
+            colsJson: JSON.stringify(this.colsJson),
+            isFilterEnabled: true,
+            cmpName: 'data'
         })
             .then((data) => {
                 if (data) {
-                    //console.log("return data:::", data);
+                    console.log('return data:::', data);
                     const { records, cols, count, iconName } = formatData(
                         this,
                         data
@@ -312,12 +314,12 @@ export default class LightningDatatable extends NavigationMixin(
         soql += ' WITH SECURITY_ENFORCED ';
 
         //if we filter on a column then we ignore the ORDER BY defined in the configuration
-        if(this.orderBy && !this.sortBy) {
+        if (this.orderBy && !this.sortBy) {
             soql += ` ORDER BY ${this.orderBy}`;
         } else if (this.sortBy && this.sortDirection) {
             soql += ` ORDER BY ${this.sortBy} ${this.sortDirection} `;
         }
-        
+
         if (this.limit && this.limit > 0) {
             soql += this.appendLimit();
             soql += this.appendOffset();

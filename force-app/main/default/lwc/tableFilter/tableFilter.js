@@ -98,12 +98,22 @@ export default class TableFilter extends LightningElement {
                 this.mapOfFilters[this.selectedFilterId].Condition_JSON__c
             );
         }
+        this.fireEvent(this.mapOfFilters[this.selectedFilterId].Condition__c);
     }
     handleEdit = () => {
         this.openModal = true;
     };
+    get disableBtns() {
+        return this.selectedFilterId ? false : true;
+    }
+    get disableSave() {
+        return this.conditions ? true : false;
+    }
     handleNewFilter() {
         this.openModal = true;
+        this.selectedFilterId = null;
+        this.filterName = null;
+        this.conditions = [];
     }
     handleDelete() {
         if (this.selectedFilterId) {
@@ -230,6 +240,6 @@ export default class TableFilter extends LightningElement {
             detail: res
         });
         this.dispatchEvent(selectEvent);
-        this.showHideModal();
+        this.openModal = false;
     }
 }

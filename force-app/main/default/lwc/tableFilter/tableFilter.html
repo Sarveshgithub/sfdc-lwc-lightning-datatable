@@ -14,6 +14,7 @@
             alternative-text="Edit"
             class="slds-m-left_xx-small"
             title="Edit"
+            disabled={disableBtns}
         ></lightning-button-icon>
         <lightning-button-icon
             icon-name="utility:delete"
@@ -21,12 +22,14 @@
             onclick={handleDelete}
             class="slds-m-left_xx-small"
             title="Delete"
+            disabled={disableBtns}
         ></lightning-button-icon>
         <lightning-button-icon
             icon-name="utility:copy"
             alternative-text="Clone Selected Filter"
             class="slds-m-left_xx-small"
             title="Clone Selected Filter"
+            disabled={disableBtns}
         ></lightning-button-icon>
         <lightning-button-icon
             icon-name="utility:filterList"
@@ -129,6 +132,7 @@
                             variant="brand"
                             class="slds-m-left_x-small"
                             onclick={handleSave}
+                            disabled={disableSave}
                         ></lightning-button>
                     </div>
                 </div>
