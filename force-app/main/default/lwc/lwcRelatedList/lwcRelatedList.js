@@ -25,9 +25,10 @@ const actions = [
     { label: 'Edit', name: 'edit' },
     { label: 'Delete', name: 'delete' }
 ];
-export default class LightningDatatable extends NavigationMixin(
-    LightningElement
-) {
+
+import LightningDatatable from 'lightning/datatable'
+
+export default class LwcDatatable extends NavigationMixin(LightningElement(LightningDatatable))  {
     // Public Property
     @api recordId;
     @api iconName;
@@ -59,11 +60,14 @@ export default class LightningDatatable extends NavigationMixin(
     @track columns;
     @track colsJson;
     @track searchTerm;
+
     draftValues = [];
     labels = {
         recordUpdatedSuccessMessage,
         recordDeletedSuccessMessage
     };
+
+
     // Do init funtion
     connectedCallback() {
         //This function can used for local development config, pass 'true' for config
@@ -97,6 +101,7 @@ export default class LightningDatatable extends NavigationMixin(
                         type: 'action',
                         typeAttributes: { rowActions: actions }
                     });
+
                     this.columns = colAc;
                     this.data = records;
                     this.iconName = this.iconName ? this.iconName : iconName;
@@ -302,6 +307,25 @@ export default class LightningDatatable extends NavigationMixin(
                 actionName: 'edit'
             }
         });
+    }
+
+    handleCellChange(event) {
+        let draftValue = event.detail.draftValues[0];
+        console.log(draftValue);
+
+        let tempValues = JSON.parse(JSON.stringify(this.draftValues));
+
+        if (tempValues.length > 0) {
+            for (let i = 0; i < tempValues.length; i++) {
+                if (tempValues[i].Id == draftValue.Id) {
+                    tempValues[i] = Object.assign(tempValues[i], draftValue);
+                }
+            }
+        }
+        else {
+            tempValues.push(draftValue);
+        }
+        this.draftValues = tempValues;
     }
 
     //Generic function to build soql

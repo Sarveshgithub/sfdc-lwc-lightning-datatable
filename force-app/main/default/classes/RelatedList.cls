@@ -1,9 +1,10 @@
 public with sharing class RelatedList {
     private static Map<String, String> mapFieldToLwcDataType = new Map<String, String>{
         'datetime' => 'date',
-        'date' => 'date-local'
+        'date' => 'date-local',
+        'picklist' => 'picklist'
     };
-    public class ColumnJson {
+    public virtual class ColumnJson {
         @AuraEnabled
         public String fieldName;
         @AuraEnabled
@@ -14,6 +15,28 @@ public with sharing class RelatedList {
         public Boolean editable;
         @AuraEnabled
         public Boolean sortable;
+    }
+    
+    
+    public class TypeAttributeColumnJsonWithPicklist {
+        @AuraEnabled public List<PicklistValue> options = new List<PicklistValue>();
+        @AuraEnabled public String fieldName;
+        
+        public TypeAttributeColumnJsonWithPicklist() {}
+    }
+    
+    public class ColumnJsonWithPicklist extends ColumnJson {
+        @AuraEnabled public TypeAttributeColumnJsonWithPicklist typeAttributes = new TypeAttributeColumnJsonWithPicklist();
+        
+        public ColumnJsonWithPicklist(ColumnJson oldColumn, List<PicklistValue> options) {
+            this.fieldName = oldColumn.fieldName;
+            this.label = oldColumn.label;
+            this.type = oldColumn.type;
+            this.editable = oldColumn.editable;
+            this.sortable = oldColumn.sortable;
+            this.typeAttributes.options = options;
+            this.typeAttributes.fieldName = oldColumn.fieldName;
+        }
     }
 
     public class ListResults {
@@ -53,6 +76,7 @@ public with sharing class RelatedList {
                 colsJson,
                 Map<String, ColumnJson>.class
             );
+            System.debug(Schema.getGlobalDescribe());
             SObjectType objType = Schema.getGlobalDescribe().get(objectName);
             Map<String, Schema.SObjectField> mfields = objType.getDescribe()
                 .fields.getMap();
@@ -65,6 +89,13 @@ public with sharing class RelatedList {
                 //Check if values predefined in LWC
                 if (mapPreCols.containsKey(fieldName)) {
                     mapPreCols = checkOverride(mapPreCols, fieldName, mfields);
+                }
+
+                //get picklistValues
+                if(mapPreCols.get(fieldName).type == 'picklist') {
+                    List<PicklistValue> picklistValues = RelatedList.getPicklistValues(objectName, fieldName);
+    				ColumnJsonWithPicklist col = new ColumnJsonWithPicklist(mapPreCols.get(fieldName), picklistValues);
+                    mapPreCols.put(fieldName, col);
                 }
             }
             return new ListResults(
@@ -130,6 +161,7 @@ public with sharing class RelatedList {
         String fieldName,
         Map<String, Schema.SObjectField> mfields
     ) {
+        System.debug(String.valueOf(mfields.get(fieldName).getDescribe().getType()));
         String label = mapPreCols.get(fieldName).label != null
                 ? mapPreCols.get(fieldName).label
                 : mfields.get(fieldName).getDescribe().getLabel(),
@@ -140,9 +172,7 @@ public with sharing class RelatedList {
         Boolean editable = mapPreCols.get(fieldName).editable != null
                 ? mapPreCols.get(fieldName).editable
                 : mfields.get(fieldName).getDescribe().isUpdateable(),
-            sortable = mapPreCols.get(fieldName).sortable != null
-                ? mapPreCols.get(fieldName).sortable
-                : mfields.get(fieldName).getDescribe().isSortable();
+            sortable = true;
         //Update Map Json
         mapPreCols.get(fieldName).label = label;
         mapPreCols.get(fieldName).type = mapFieldToLwcDataType.containskey(type)
@@ -150,6 +180,53 @@ public with sharing class RelatedList {
             : type;
         mapPreCols.get(fieldName).editable = editable;
         mapPreCols.get(fieldName).sortable = sortable;
+        System.debug(mapPreCols);
         return mapPreCols;
+    }
+    
+    public class PicklistValue {
+        @AuraEnabled public String label;
+        @AuraEnabled public String value;
+        
+        public PicklistValue(String label, String value) {
+            this.label = label;
+            this.value = value;
+        }
+    }
+
+    static List<PicklistValue> getPicklistValues(
+        String objectName,
+        String fieldName
+    ) {
+        List<Schema.PicklistEntry> entries = new List<Schema.PicklistEntry>();
+        Schema.DescribeSobjectResult objDescription = Schema.describeSObjects(
+            new List<String>{ objectName }
+        )[0];
+        Schema.SObjectField field = objDescription.fields.getMap()
+            .get(fieldName);
+        
+        entries = field.getDescribe().getPickListValues();
+        entries = getActivePicklistEntries(entries);
+        
+        List<PicklistValue> picklistValues = new List<PicklistValue>();
+        
+        for(Schema.PicklistEntry pvalue: entries) {
+            picklistValues.add(new PicklistValue(pvalue.getLabel(), pvalue.getValue() ) );
+        }
+        
+        
+        return picklistValues;
+    }
+
+     private static List<Schema.PicklistEntry> getActivePicklistEntries(
+        List<Schema.PicklistEntry> entries
+    ) {
+        List<Schema.PicklistEntry> activeEntries = new List<Schema.PicklistEntry>();
+        for (Schema.PicklistEntry entry : entries) {
+            if (entry.isActive()) {
+                activeEntries.add(entry);
+            }
+        }
+        return activeEntries;
     }
 }
