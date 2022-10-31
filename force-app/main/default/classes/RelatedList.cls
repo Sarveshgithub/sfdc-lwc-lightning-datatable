@@ -25,24 +25,16 @@ public with sharing class RelatedList {
         public Integer count;
         @AuraEnabled
         public String iconName;
-        @AuraEnabled
-        public Map<string, list<object>> fieldsMap;
-        @AuraEnabled
-        public Map<Id, List_Filter__c> filtersMap;
         public ListResults(
             List<SObject> records,
             Map<String, ColumnJson> cols,
             Integer count,
-            String iconName,
-            Map<string, list<object>> fieldsMap,
-            Map<Id, List_Filter__c> filtersMap
+            String iconName
         ) {
             this.records = records;
             this.cols = cols;
             this.count = count;
             this.iconName = iconName;
-            this.fieldsMap = fieldsMap;
-            this.filtersMap = filtersMap;
         }
     }
 
@@ -54,9 +46,7 @@ public with sharing class RelatedList {
         String soql,
         String objectName,
         String whereClause,
-        String colsJson,
-        Boolean isFilterEnabled,
-        String cmpName
+        String colsJson
     ) {
         try {
             Map<String, ColumnJson> mapPreCols = (Map<String, ColumnJson>) Json.deserialize(
@@ -81,13 +71,7 @@ public with sharing class RelatedList {
                 getRecords(soql),
                 mapPreCols,
                 countRecords(objectName, whereClause),
-                IconUtils.getIconName(objectName),
-                isFilterEnabled
-                    ? ListFilterController.getObjectFields(objectName)
-                    : null,
-                isFilterEnabled
-                    ? ListFilterController.fetchFilters(cmpName)
-                    : null
+                IconUtils.getIconName(objectName)
             );
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());

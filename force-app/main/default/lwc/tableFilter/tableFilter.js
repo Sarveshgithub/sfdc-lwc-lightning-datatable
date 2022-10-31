@@ -98,7 +98,17 @@ export default class TableFilter extends LightningElement {
                 this.mapOfFilters[this.selectedFilterId].Condition_JSON__c
             );
         }
+        console.log(' this.conditions:::', this.conditions);
         this.fireEvent(this.mapOfFilters[this.selectedFilterId].Condition__c);
+    }
+    removeCondition(event) {
+        console.log('bw: id = ' + event.currentTarget.dataset.id);
+        const field = event.currentTarget.dataset.id;
+        this.conditions.splice(
+            this.conditions.findIndex((a) => a.field === field),
+            1
+        );
+        console.log('this.conditions:::', this.conditions);
     }
     handleEdit = () => {
         this.openModal = true;
@@ -107,7 +117,7 @@ export default class TableFilter extends LightningElement {
         return this.selectedFilterId ? false : true;
     }
     get disableSave() {
-        return this.conditions ? true : false;
+        return this.conditions.length > 0 ? false : true;
     }
     handleNewFilter() {
         this.openModal = true;
@@ -180,12 +190,12 @@ export default class TableFilter extends LightningElement {
         });
         condition = condition.join(' AND ');
         console.log('conditionLLL', condition);
-        let fields = {};
-        fields.Name = this.template.querySelector(
-            '[data-element="objFilterName"]'
-        ).value;
-        fields.Condition__c = condition;
-        fields.Condition_JSON__c = JSON.stringify(this.conditions);
+        let fields = {
+            Name: this.template.querySelector('[data-element="objFilterName"]')
+                .value,
+            Condition__c: condition,
+            Condition_JSON__c: JSON.stringify(this.conditions)
+        };
         console.log('record::', fields);
         if (this.selectedFilterId) {
             fields.Id = this.selectedFilterId;
@@ -217,6 +227,7 @@ export default class TableFilter extends LightningElement {
         insertFilter({ objFilter: obj })
             .then((response) => {
                 console.log(response);
+                this.getFilters();
                 this.fireEvent(response.Condition__c);
             })
             .catch((error) => {
@@ -228,7 +239,8 @@ export default class TableFilter extends LightningElement {
         updateRecord({ fields })
             .then((res) => {
                 console.log(res);
-                this.fireEvent(res.fields.Condition__c.value);
+                this.getFilters();
+                this.fireEvent(fields.Condition__c);
             })
             .catch((error) => {
                 console.log(error);

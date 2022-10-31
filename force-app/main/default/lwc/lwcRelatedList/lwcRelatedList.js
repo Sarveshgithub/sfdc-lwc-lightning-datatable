@@ -82,13 +82,10 @@ export default class LightningDatatable extends NavigationMixin(
             soql: this.soql,
             objectName: this.objectName,
             whereClause: this.appendWhere(),
-            colsJson: JSON.stringify(this.colsJson),
-            isFilterEnabled: true,
-            cmpName: 'data'
+            colsJson: JSON.stringify(this.colsJson)
         })
             .then((data) => {
                 if (data) {
-                    console.log('return data:::', data);
                     const { records, cols, count, iconName } = formatData(
                         this,
                         data
@@ -324,7 +321,6 @@ export default class LightningDatatable extends NavigationMixin(
             soql += this.appendLimit();
             soql += this.appendOffset();
         }
-
         this.soql = soql;
     }
 
@@ -334,13 +330,12 @@ export default class LightningDatatable extends NavigationMixin(
     }
 
     appendWhere() {
-        let where = ' WHERE ';
+        let con = [];
         if (this.relatedFieldAPI)
-            where += `${this.relatedFieldAPI} = '${this.recordId}'`;
-        if (this.whereClause && this.relatedFieldAPI)
-            where += ` AND ${this.whereClause}`;
-        else if (this.whereClause) where += `${this.whereClause}`;
-        return where === ' WHERE ' ? '' : where;
+            con.push(`${this.relatedFieldAPI} = '${this.recordId}'`);
+        if (this.whereClause) con.push(this.whereClause);
+        if (this.filterCondition) con.push(this.filterCondition);
+        return con.length > 0 ? ' WHERE ' + con.join(' AND ') : '';
     }
 
     appendLimit() {
@@ -433,11 +428,7 @@ export default class LightningDatatable extends NavigationMixin(
     @track filterCondition;
     handleFilterEvent(event) {
         console.log(event.detail);
-        if (this.whereClause) {
-            this.whereClause = this.whereClause + event.detail;
-        } else {
-            this.whereClause = event.detail;
-        }
+        this.filterCondition = event.detail;
         this.buildSOQL();
         console.log('soql', this.soql);
         this.fetchRecords();
