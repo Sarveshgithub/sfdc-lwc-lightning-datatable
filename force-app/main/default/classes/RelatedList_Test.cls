@@ -70,11 +70,11 @@ public with sharing class RelatedList_Test {
         Test.stopTest();
     }
 
-    @isTest
-    static void getObjectFieldsTest() {
-        Map<string, list<object>> returnMap = RelatedList.getObjectFields(
-            'Contact'
-        );
-        System.assert(returnMap != null);
-    }
+    // @isTest
+    // static void getObjectFieldsTest() {
+    //     Map<string, list<object>> returnMap = RelatedList.getObjectFields(
+    //         'Contact'
+    //     );
+    //     System.assert(returnMap != null);
+    // }
 }
