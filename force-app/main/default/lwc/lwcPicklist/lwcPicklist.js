@@ -1,4 +1,4 @@
-import { LightningElement, api} from 'lwc';
+import { LightningElement, track, api} from 'lwc';
 
 
 
@@ -6,27 +6,25 @@ export default class DatatablePicklist extends LightningElement {
     @api options;
     @api value;
     @api fieldName;
+    @api context;
+    @track showPicklist = false;
 
     handleChange(event) {
+        //show the selected value on UI
         this.value = event.detail.value;
 
-        const context = { fieldName: 'Id' };
-
-        let draftValue = {};
-        draftValue[this.contextName] = typeof(this.context) == 'number' ? context.toString() : context;
-        draftValue[this.fieldName] = this.value;
-        let draftValues = [];
-        draftValues.push(draftValue);
-
-        this.dispatchEvent(new CustomEvent('cellchange', {
+        //fire event to send context and selected value to the data table
+        this.dispatchEvent(new CustomEvent('picklistchanged', {
             composed: true,
             bubbles: true,
             cancelable: true,
             detail: {
-
-                draftValues: draftValues
-
+                data: { context: this.context, fieldName: this.fieldName, value: this.value }
             }
         }));
+    }
+    
+    handleClick(event) {
+        this.showPicklist = !this.showPicklist;
     }
 }

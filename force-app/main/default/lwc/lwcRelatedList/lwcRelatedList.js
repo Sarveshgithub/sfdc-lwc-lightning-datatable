@@ -115,6 +115,37 @@ export default class LwcDatatable extends NavigationMixin(LightningElement(Light
             });
     }
 
+    picklistChanged(event) {
+        event.stopPropagation();
+        let dataRecieved = event.detail.data;
+        this.updateDraftValues({ Id: dataRecieved.context, [dataRecieved.fieldName]: dataRecieved.value}, dataRecieved.fieldName);
+    }
+
+    updateDraftValues(updateItem, fieldName) {
+        let draftValueChanged = false;
+        let copyDraftValues = [...this.draftValues];
+        //store changed value to do operations
+        //on save. This will enable inline editing &
+        //show standard cancel & save button
+        copyDraftValues.forEach(item => {
+            console.log(item);
+            if (item.Id === updateItem.Id) {
+                item[fieldName] = updateItem[fieldName];
+                
+                draftValueChanged = true;
+            }
+        });
+ 
+        console.log(draftValueChanged);
+        if (draftValueChanged) {
+            this.draftValues = [...copyDraftValues];
+        } else {
+            this.draftValues = [...copyDraftValues, updateItem];
+        }
+
+        console.log()
+    }
+
     fetchRecords() {
         getRecords({ soql: this.soql })
             .then((data) => {
@@ -307,25 +338,6 @@ export default class LwcDatatable extends NavigationMixin(LightningElement(Light
                 actionName: 'edit'
             }
         });
-    }
-
-    handleCellChange(event) {
-        let draftValue = event.detail.draftValues[0];
-        console.log(draftValue);
-
-        let tempValues = JSON.parse(JSON.stringify(this.draftValues));
-
-        if (tempValues.length > 0) {
-            for (let i = 0; i < tempValues.length; i++) {
-                if (tempValues[i].Id == draftValue.Id) {
-                    tempValues[i] = Object.assign(tempValues[i], draftValue);
-                }
-            }
-        }
-        else {
-            tempValues.push(draftValue);
-        }
-        this.draftValues = tempValues;
     }
 
     //Generic function to build soql

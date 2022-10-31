@@ -10,8 +10,7 @@ export default class ExtendedDatatable extends LightningDatatable {
         picklist: {
 
             template: picklistTemplate,
-
-            typeAttributes: ['options', 'fieldName']
+            typeAttributes: ['options', 'fieldName', 'context']
 
         }
 

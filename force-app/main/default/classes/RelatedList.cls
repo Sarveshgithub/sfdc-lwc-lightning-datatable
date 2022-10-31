@@ -15,11 +15,19 @@ public with sharing class RelatedList {
         public Boolean editable;
         @AuraEnabled
         public Boolean sortable;
+        @AuraEnabled 
+        public Boolean wrapText = false;
     }
     
+    public class ContextTypeAttributeColumnJsonWithPicklist {
+        @AuraEnabled public string fieldName = 'Id';
+        
+        public ContextTypeAttributeColumnJsonWithPicklist() {}
+    }
     
     public class TypeAttributeColumnJsonWithPicklist {
         @AuraEnabled public List<PicklistValue> options = new List<PicklistValue>();
+        @AuraEnabled public ContextTypeAttributeColumnJsonWithPicklist context = new ContextTypeAttributeColumnJsonWithPicklist();
         @AuraEnabled public String fieldName;
         
         public TypeAttributeColumnJsonWithPicklist() {}
@@ -34,7 +42,9 @@ public with sharing class RelatedList {
             this.type = oldColumn.type;
             this.editable = oldColumn.editable;
             this.sortable = oldColumn.sortable;
+            this.wrapText = true;
             this.typeAttributes.options = options;
+            this.typeAttributes.context = new ContextTypeAttributeColumnJsonWithPicklist();
             this.typeAttributes.fieldName = oldColumn.fieldName;
         }
     }
