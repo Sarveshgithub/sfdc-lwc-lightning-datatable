@@ -24,7 +24,7 @@ export default class DatatablePicklist extends LightningElement {
         }));
     }
     
-    handleClick(event) {
+    handlePicklistDisplay(event) {
         this.showPicklist = !this.showPicklist;
     }
 }
