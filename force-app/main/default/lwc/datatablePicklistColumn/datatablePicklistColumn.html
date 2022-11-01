@@ -1,15 +1,25 @@
 <template>
     <div>
         <div if:true={showPicklist}>
-            <lightning-combobox name="progress" variant="label-hidden" value={value} 
-                options={options} onblur={handlePicklistDisplay} onchange={handleChange}>
+            <lightning-combobox name="picklist"
+                                data-id="Picklist Combobox"  
+                                variant="label-hidden"
+                                value={value} 
+                                options={options}
+                                onchange={handleChange}>
             </lightning-combobox>
         </div>
+
         <div if:false={showPicklist} class="slds-table_edit_container slds-is-relative">
-            <span class="slds-grid slds-grid_align-spread slds-cell-edit" ondblclick={handlePicklistDisplay}>
+            <span class="slds-grid slds-grid_align-spread slds-cell-edit" ondblclick={editPicklist}>
                 <span class="slds-truncate" title={value}>{value}</span>
-                <button data-id={context} class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="-1" title="Edit" name="tes"
-                    onclick={handlePicklistDisplay} data-name="myButtonName" >
+                <button data-id={context} 
+                        class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" 
+                        tabindex="-1" 
+                        title="Edit" 
+                        name="tes"
+                        onclick={editPicklist} 
+                        data-name="myButtonName">
                     <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_lock slds-button__icon_small slds-button__icon_edit slds-icon slds-icon-text-default slds-icon_xx-small"
                         aria-hidden="true">
                         <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.37.1#edit"></use>

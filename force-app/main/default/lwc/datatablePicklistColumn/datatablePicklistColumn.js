@@ -22,9 +22,15 @@ export default class DatatablePicklist extends LightningElement {
                 data: { context: this.context, fieldName: this.fieldName, value: this.value }
             }
         }));
+
+        this.closePicklist();
     }
     
-    handlePicklistDisplay(event) {
-        this.showPicklist = !this.showPicklist;
+    editPicklist() {
+        this.showPicklist = true;
+    }
+
+    closePicklist() {
+        this.showPicklist = false;
     }
 }

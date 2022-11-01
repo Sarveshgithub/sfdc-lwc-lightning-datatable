@@ -1,8 +1,7 @@
 public with sharing class RelatedList {
     private static Map<String, String> mapFieldToLwcDataType = new Map<String, String>{
         'datetime' => 'date',
-        'date' => 'date-local',
-        'picklist' => 'picklist'
+        'date' => 'date-local'
     };
     public virtual class ColumnJson {
         @AuraEnabled
@@ -26,7 +25,7 @@ public with sharing class RelatedList {
     }
     
     public class TypeAttributeColumnJsonWithPicklist {
-        @AuraEnabled public List<PicklistValue> options = new List<PicklistValue>();
+        @AuraEnabled public List<PicklistColumnUtils.PicklistValue> options = new List<PicklistColumnUtils.PicklistValue>();
         @AuraEnabled public ContextTypeAttributeColumnJsonWithPicklist context = new ContextTypeAttributeColumnJsonWithPicklist();
         @AuraEnabled public String fieldName;
         
@@ -36,7 +35,7 @@ public with sharing class RelatedList {
     public class ColumnJsonWithPicklist extends ColumnJson {
         @AuraEnabled public TypeAttributeColumnJsonWithPicklist typeAttributes = new TypeAttributeColumnJsonWithPicklist();
         
-        public ColumnJsonWithPicklist(ColumnJson oldColumn, List<PicklistValue> options) {
+        public ColumnJsonWithPicklist(ColumnJson oldColumn, List<PicklistColumnUtils.PicklistValue> options) {
             this.fieldName = oldColumn.fieldName;
             this.label = oldColumn.label;
             this.type = oldColumn.type;
@@ -101,9 +100,9 @@ public with sharing class RelatedList {
                     mapPreCols = checkOverride(mapPreCols, fieldName, mfields);
                 }
 
-                //get picklistValues
+                //set picklistValues
                 if(mapPreCols.get(fieldName).type == 'picklist') {
-                    List<PicklistValue> picklistValues = RelatedList.getPicklistValues(objectName, fieldName);
+                    List<PicklistColumnUtils.PicklistValue> picklistValues = PicklistColumnUtils.getPicklistValues(objectName, fieldName);
     				ColumnJsonWithPicklist col = new ColumnJsonWithPicklist(mapPreCols.get(fieldName), picklistValues);
                     mapPreCols.put(fieldName, col);
                 }
@@ -192,51 +191,5 @@ public with sharing class RelatedList {
         mapPreCols.get(fieldName).sortable = sortable;
         System.debug(mapPreCols);
         return mapPreCols;
-    }
-    
-    public class PicklistValue {
-        @AuraEnabled public String label;
-        @AuraEnabled public String value;
-        
-        public PicklistValue(String label, String value) {
-            this.label = label;
-            this.value = value;
-        }
-    }
-
-    static List<PicklistValue> getPicklistValues(
-        String objectName,
-        String fieldName
-    ) {
-        List<Schema.PicklistEntry> entries = new List<Schema.PicklistEntry>();
-        Schema.DescribeSobjectResult objDescription = Schema.describeSObjects(
-            new List<String>{ objectName }
-        )[0];
-        Schema.SObjectField field = objDescription.fields.getMap()
-            .get(fieldName);
-        
-        entries = field.getDescribe().getPickListValues();
-        entries = getActivePicklistEntries(entries);
-        
-        List<PicklistValue> picklistValues = new List<PicklistValue>();
-        
-        for(Schema.PicklistEntry pvalue: entries) {
-            picklistValues.add(new PicklistValue(pvalue.getLabel(), pvalue.getValue() ) );
-        }
-        
-        
-        return picklistValues;
-    }
-
-     private static List<Schema.PicklistEntry> getActivePicklistEntries(
-        List<Schema.PicklistEntry> entries
-    ) {
-        List<Schema.PicklistEntry> activeEntries = new List<Schema.PicklistEntry>();
-        for (Schema.PicklistEntry entry : entries) {
-            if (entry.isActive()) {
-                activeEntries.add(entry);
-            }
-        }
-        return activeEntries;
-    }
+    }   
 }
