@@ -12,7 +12,6 @@ This is generic lighting data table , which is build in lwc.
 The customization are done by design attributes.
 
 Main features
-The data table has following features.
 
 -   Show records for both custom and standard object.
 -   Add cols as per the fields exist in object in JSON format.
@@ -22,6 +21,11 @@ The data table has following features.
 -   Hide/Unhide checkbox column
 -   Configurable actions buttons (for developers, see [Buttons configuration](#buttons-configuration) )
 -   Sorting by field (Note: sort will not work on search).
+
+Custom Data types (the component extendedDatatable extends lightning:datatable) :
+
+-  picklist
+
 
 ## Steps to Customization through Design Attribute
 
