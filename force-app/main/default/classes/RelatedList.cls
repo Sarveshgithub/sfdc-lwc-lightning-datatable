@@ -3,7 +3,7 @@ public with sharing class RelatedList {
         'datetime' => 'date',
         'date' => 'date-local'
     };
-    public virtual class ColumnJson {
+    public class ColumnJson {
         @AuraEnabled
         public String fieldName;
         @AuraEnabled
@@ -73,7 +73,6 @@ public with sharing class RelatedList {
                 colsJson,
                 Map<String, ColumnJson>.class
             );
-            System.debug(Schema.getGlobalDescribe());
             SObjectType objType = Schema.getGlobalDescribe().get(objectName);
             Map<String, Schema.SObjectField> mfields = objType.getDescribe()
                 .fields.getMap();
@@ -157,7 +156,6 @@ public with sharing class RelatedList {
         String fieldName,
         Map<String, Schema.SObjectField> mfields
     ) {
-        System.debug(String.valueOf(mfields.get(fieldName).getDescribe().getType()));
         String label = mapPreCols.get(fieldName).label != null
                 ? mapPreCols.get(fieldName).label
                 : mfields.get(fieldName).getDescribe().getLabel(),
@@ -176,7 +174,6 @@ public with sharing class RelatedList {
             : type;
         mapPreCols.get(fieldName).editable = editable;
         mapPreCols.get(fieldName).sortable = sortable;
-        System.debug(mapPreCols);
         return mapPreCols;
     }   
 }
