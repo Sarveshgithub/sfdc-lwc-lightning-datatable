@@ -14,6 +14,26 @@ public with sharing class RelatedList {
         public Boolean editable;
         @AuraEnabled
         public Boolean sortable;
+        @AuraEnabled 
+        public Boolean wrapText = false;
+        @AuraEnabled 
+        public TypeAttributeColumnJsonWithPicklist typeAttributes = null;
+
+        public void setTypeAttributes(List<PicklistColumnUtils.PicklistValue> options) {
+            this.typeAttributes = new TypeAttributeColumnJsonWithPicklist();
+            this.typeAttributes.options = options;
+            this.typeAttributes.fieldName = this.fieldName;
+        }
+    }
+    
+    public class TypeAttributeColumnJsonWithPicklist {
+        @AuraEnabled public List<PicklistColumnUtils.PicklistValue> options = new List<PicklistColumnUtils.PicklistValue>();
+        @AuraEnabled public ContextTypeAttributeColumnJsonWithPicklist context = new ContextTypeAttributeColumnJsonWithPicklist();
+        @AuraEnabled public String fieldName;
+    }
+
+    public class ContextTypeAttributeColumnJsonWithPicklist {
+        @AuraEnabled public string fieldName = 'Id';
     }
 
     public class ListResults {
@@ -65,7 +85,13 @@ public with sharing class RelatedList {
                 //Check if values predefined in LWC
                 if (mapPreCols.containsKey(fieldName)) {
                     mapPreCols = checkOverride(mapPreCols, fieldName, mfields);
+
+                    //set picklistValues for picklist type
+                    if(mapPreCols.get(fieldName).type == 'picklist') {
+                        RelatedList.initPicklistColumn(mapPreCols, objectName, fieldName);
+                    }
                 }
+                
             }
             return new ListResults(
                 getRecords(soql),
@@ -76,6 +102,12 @@ public with sharing class RelatedList {
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
+    }
+    
+    public static void initPicklistColumn(Map<String, ColumnJson> mapPreCols, String objectName, String fieldName) {
+        List<PicklistColumnUtils.PicklistValue> picklistValues = PicklistColumnUtils.getPicklistValues(objectName, fieldName);
+        mapPreCols.get(fieldName).wrapText = true;
+        mapPreCols.get(fieldName).setTypeAttributes(picklistValues);
     }
 
     @AuraEnabled
@@ -111,16 +143,10 @@ public with sharing class RelatedList {
 
     @AuraEnabled(cacheable=true)
     public static Integer countRecords(String objectName, String whereClause) {
-        String formattedWhere = (String.isBlank(whereClause))
-            ? ''
-            : ' ' + whereClause;
-        if (String.isNotEmpty(objectName)) {
-            return database.countQuery(
-                'SELECT count() FROM ' +
-                objectName +
-                formattedWhere +
-                ' WITH SECURITY_ENFORCED'
-            );
+        String formattedWhere = (String.isBlank(whereClause)) ? '' : ' ' + whereClause;
+        
+        if(String.isNotEmpty(objectName)) {
+            return database.countQuery('SELECT count() FROM ' +objectName + formattedWhere +' WITH SECURITY_ENFORCED');
         }
         return 0;
     }
@@ -140,9 +166,7 @@ public with sharing class RelatedList {
         Boolean editable = mapPreCols.get(fieldName).editable != null
                 ? mapPreCols.get(fieldName).editable
                 : mfields.get(fieldName).getDescribe().isUpdateable(),
-            sortable = mapPreCols.get(fieldName).sortable != null
-                ? mapPreCols.get(fieldName).sortable
-                : mfields.get(fieldName).getDescribe().isSortable();
+            sortable = true;
         //Update Map Json
         mapPreCols.get(fieldName).label = label;
         mapPreCols.get(fieldName).type = mapFieldToLwcDataType.containskey(type)
@@ -151,5 +175,5 @@ public with sharing class RelatedList {
         mapPreCols.get(fieldName).editable = editable;
         mapPreCols.get(fieldName).sortable = sortable;
         return mapPreCols;
-    }
+    }   
 }

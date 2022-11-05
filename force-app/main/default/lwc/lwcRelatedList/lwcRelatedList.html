@@ -52,7 +52,7 @@
         <!-- Data table  -->
         <template if:true={data}>
             <!-- DATATABLE WITH CHECKBOXES -->
-            <lightning-datatable
+            <c-extended-datatable
                 hide-checkbox-column={showCheckboxes}
                 key-field="Id"
                 data={data}
@@ -64,8 +64,8 @@
                 sorted-direction={sortDirection}
                 onsort={handleSort}
                 sorted-by={sortBy}
-            >
-            </lightning-datatable>
+                onpicklistchanged={picklistChanged} >
+            </c-extended-datatable>
         </template>
 
         <!-- Pagination -->
