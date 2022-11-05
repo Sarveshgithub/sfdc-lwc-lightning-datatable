@@ -90,7 +90,6 @@ export default class LwcDatatable extends NavigationMixin(LightningElement(Light
         })
             .then((data) => {
                 if (data) {
-                    //console.log("return data:::", data);
                     const { records, cols, count, iconName } = formatData(
                         this,
                         data
@@ -128,22 +127,19 @@ export default class LwcDatatable extends NavigationMixin(LightningElement(Light
         //on save. This will enable inline editing &
         //show standard cancel & save button
         copyDraftValues.forEach(item => {
-            console.log(item);
             if (item.Id === updateItem.Id) {
                 item[fieldName] = updateItem[fieldName];
                 
                 draftValueChanged = true;
             }
         });
- 
-        console.log(draftValueChanged);
+
         if (draftValueChanged) {
             this.draftValues = [...copyDraftValues];
         } else {
             this.draftValues = [...copyDraftValues, updateItem];
         }
 
-        console.log()
     }
 
     fetchRecords() {
