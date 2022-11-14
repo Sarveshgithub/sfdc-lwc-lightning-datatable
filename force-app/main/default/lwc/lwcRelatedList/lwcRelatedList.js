@@ -25,9 +25,10 @@ const actions = [
     { label: 'Edit', name: 'edit' },
     { label: 'Delete', name: 'delete' }
 ];
-export default class LightningDatatable extends NavigationMixin(
-    LightningElement
-) {
+
+import LightningDatatable from 'lightning/datatable'
+
+export default class LwcDatatable extends NavigationMixin(LightningElement(LightningDatatable))  {
     // Public Property
     @api recordId;
     @api iconName;
@@ -59,11 +60,14 @@ export default class LightningDatatable extends NavigationMixin(
     @track columns;
     @track colsJson;
     @track searchTerm;
+
     draftValues = [];
     labels = {
         recordUpdatedSuccessMessage,
         recordDeletedSuccessMessage
     };
+
+
     // Do init funtion
     connectedCallback() {
         //This function can used for local development config, pass 'true' for config
@@ -86,7 +90,6 @@ export default class LightningDatatable extends NavigationMixin(
         })
             .then((data) => {
                 if (data) {
-                    //console.log("return data:::", data);
                     const { records, cols, count, iconName } = formatData(
                         this,
                         data
@@ -97,6 +100,7 @@ export default class LightningDatatable extends NavigationMixin(
                         type: 'action',
                         typeAttributes: { rowActions: actions }
                     });
+
                     this.columns = colAc;
                     this.data = records;
                     this.iconName = this.iconName ? this.iconName : iconName;
@@ -108,6 +112,34 @@ export default class LightningDatatable extends NavigationMixin(
                     this.formatError(error);
                 }
             });
+    }
+
+    picklistChanged(event) {
+        event.stopPropagation();
+        let dataRecieved = event.detail.data;
+        this.updateDraftValues({ Id: dataRecieved.context, [dataRecieved.fieldName]: dataRecieved.value}, dataRecieved.fieldName);
+    }
+
+    updateDraftValues(updateItem, fieldName) {
+        let draftValueChanged = false;
+        let copyDraftValues = [...this.draftValues];
+        //store changed value to do operations
+        //on save. This will enable inline editing &
+        //show standard cancel & save button
+        copyDraftValues.forEach(item => {
+            if (item.Id === updateItem.Id) {
+                item[fieldName] = updateItem[fieldName];
+                
+                draftValueChanged = true;
+            }
+        });
+
+        if (draftValueChanged) {
+            this.draftValues = [...copyDraftValues];
+        } else {
+            this.draftValues = [...copyDraftValues, updateItem];
+        }
+
     }
 
     fetchRecords() {
