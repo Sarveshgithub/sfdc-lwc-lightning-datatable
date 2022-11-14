@@ -37,19 +37,16 @@
         </template>
 
         <!-- SEARCH BAR -->
-        <div class="slds-p-around_small" style="display: flex">
-            <c-table-filter
-                object-name={objectName}
-                cmp-name="data"
-                onfilterevent={handleFilterEvent}
-            ></c-table-filter>
-            <div if:true={hasSearchBar} onkeyup={onSearchChange}>
-                <lightning-input
-                    name="enter-search"
-                    label="Search"
-                    type="search"
-                ></lightning-input>
-            </div>
+        <div
+            class="slds-p-around_small"
+            if:true={hasSearchBar}
+            onkeyup={onSearchChange}
+        >
+            <lightning-input
+                name="enter-search"
+                label="Search"
+                type="search"
+            ></lightning-input>
         </div>
 
         <!-- Data table  -->

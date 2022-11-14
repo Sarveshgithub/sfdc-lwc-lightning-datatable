@@ -67,7 +67,7 @@ export default class LightningDatatable extends NavigationMixin(
     // Do init funtion
     connectedCallback() {
         //This function can used for local development config, pass 'true' for config
-        configLocal(this, true);
+        configLocal(this, false);
         setPredefinedColumnJSON(this);
         if (this.actionButtons) {
             this.actionButtons = JSON.parse(this.actionButtons);
@@ -86,6 +86,7 @@ export default class LightningDatatable extends NavigationMixin(
         })
             .then((data) => {
                 if (data) {
+                    //console.log("return data:::", data);
                     const { records, cols, count, iconName } = formatData(
                         this,
                         data
@@ -311,16 +312,17 @@ export default class LightningDatatable extends NavigationMixin(
         soql += ' WITH SECURITY_ENFORCED ';
 
         //if we filter on a column then we ignore the ORDER BY defined in the configuration
-        if (this.orderBy && !this.sortBy) {
+        if(this.orderBy && !this.sortBy) {
             soql += ` ORDER BY ${this.orderBy}`;
         } else if (this.sortBy && this.sortDirection) {
             soql += ` ORDER BY ${this.sortBy} ${this.sortDirection} `;
         }
-
+        
         if (this.limit && this.limit > 0) {
             soql += this.appendLimit();
             soql += this.appendOffset();
         }
+
         this.soql = soql;
     }
 
@@ -330,12 +332,13 @@ export default class LightningDatatable extends NavigationMixin(
     }
 
     appendWhere() {
-        let con = [];
+        let where = ' WHERE ';
         if (this.relatedFieldAPI)
-            con.push(`${this.relatedFieldAPI} = '${this.recordId}'`);
-        if (this.whereClause) con.push(this.whereClause);
-        if (this.filterCondition) con.push(this.filterCondition);
-        return con.length > 0 ? ' WHERE ' + con.join(' AND ') : '';
+            where += `${this.relatedFieldAPI} = '${this.recordId}'`;
+        if (this.whereClause && this.relatedFieldAPI)
+            where += ` AND ${this.whereClause}`;
+        else if (this.whereClause) where += `${this.whereClause}`;
+        return where === ' WHERE ' ? '' : where;
     }
 
     appendLimit() {
@@ -423,14 +426,5 @@ export default class LightningDatatable extends NavigationMixin(
                     );
                 });
         }
-    }
-
-    @track filterCondition;
-    handleFilterEvent(event) {
-        console.log(event.detail);
-        this.filterCondition = event.detail;
-        this.buildSOQL();
-        console.log('soql', this.soql);
-        this.fetchRecords();
     }
 }

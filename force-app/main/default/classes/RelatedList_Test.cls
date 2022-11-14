@@ -12,7 +12,7 @@ public with sharing class RelatedList_Test {
         insert cont;
     }
     @isTest
-    static void buildFieldJSONTest() {
+    static void buildFieldJSON_Test() {
         Test.startTest();
         User testUser = [SELECT id FROM user WHERE id = :UserInfo.getUserId()];
         RelatedList.ListResults results;
@@ -28,7 +28,7 @@ public with sharing class RelatedList_Test {
         Test.stopTest();
     }
     @IsTest
-    static void getRecordsTest() {
+    static void getRecords_Test() {
         Test.startTest();
         User testUser = [SELECT id FROM user WHERE id = :UserInfo.getUserId()];
         List<Sobject> results;
@@ -40,7 +40,7 @@ public with sharing class RelatedList_Test {
     }
 
     @IsTest
-    static void countRecordsTest() {
+    static void countRecords_Test() {
         User testUser = [SELECT id FROM user WHERE id = :UserInfo.getUserId()];
         Test.startTest();
         System.runAs(testUser) {
@@ -51,7 +51,7 @@ public with sharing class RelatedList_Test {
     }
 
     @IsTest
-    static void onSearchTest() {
+    static void onSearch_Test() {
         Test.startTest();
         User testUser = [SELECT id FROM user WHERE id = :UserInfo.getUserId()];
         List<SObject> results;
@@ -69,12 +69,4 @@ public with sharing class RelatedList_Test {
         System.assertEquals(results.size() > 0, true);
         Test.stopTest();
     }
-
-    // @isTest
-    // static void getObjectFieldsTest() {
-    //     Map<string, list<object>> returnMap = RelatedList.getObjectFields(
-    //         'Contact'
-    //     );
-    //     System.assert(returnMap != null);
-    // }
 }
