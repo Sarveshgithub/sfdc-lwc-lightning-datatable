@@ -25,10 +25,9 @@ const actions = [
     { label: 'Edit', name: 'edit' },
     { label: 'Delete', name: 'delete' }
 ];
-
-import LightningDatatable from 'lightning/datatable'
-
-export default class LwcDatatable extends NavigationMixin(LightningElement(LightningDatatable))  {
+export default class LightningDatatable extends NavigationMixin(
+    LightningElement
+) {
     // Public Property
     @api recordId;
     @api iconName;
@@ -60,18 +59,15 @@ export default class LwcDatatable extends NavigationMixin(LightningElement(Light
     @track columns;
     @track colsJson;
     @track searchTerm;
-
     draftValues = [];
     labels = {
         recordUpdatedSuccessMessage,
         recordDeletedSuccessMessage
     };
-
-
     // Do init funtion
     connectedCallback() {
         //This function can used for local development config, pass 'true' for config
-        configLocal(this, false);
+        configLocal(this, true);
         setPredefinedColumnJSON(this);
         if (this.actionButtons) {
             this.actionButtons = JSON.parse(this.actionButtons);
@@ -100,7 +96,6 @@ export default class LwcDatatable extends NavigationMixin(LightningElement(Light
                         type: 'action',
                         typeAttributes: { rowActions: actions }
                     });
-
                     this.columns = colAc;
                     this.data = records;
                     this.iconName = this.iconName ? this.iconName : iconName;
@@ -112,34 +107,6 @@ export default class LwcDatatable extends NavigationMixin(LightningElement(Light
                     this.formatError(error);
                 }
             });
-    }
-
-    picklistChanged(event) {
-        event.stopPropagation();
-        let dataRecieved = event.detail.data;
-        this.updateDraftValues({ Id: dataRecieved.context, [dataRecieved.fieldName]: dataRecieved.value}, dataRecieved.fieldName);
-    }
-
-    updateDraftValues(updateItem, fieldName) {
-        let draftValueChanged = false;
-        let copyDraftValues = [...this.draftValues];
-        //store changed value to do operations
-        //on save. This will enable inline editing &
-        //show standard cancel & save button
-        copyDraftValues.forEach(item => {
-            if (item.Id === updateItem.Id) {
-                item[fieldName] = updateItem[fieldName];
-                
-                draftValueChanged = true;
-            }
-        });
-
-        if (draftValueChanged) {
-            this.draftValues = [...copyDraftValues];
-        } else {
-            this.draftValues = [...copyDraftValues, updateItem];
-        }
-
     }
 
     fetchRecords() {
@@ -344,17 +311,16 @@ export default class LwcDatatable extends NavigationMixin(LightningElement(Light
         soql += ' WITH SECURITY_ENFORCED ';
 
         //if we filter on a column then we ignore the ORDER BY defined in the configuration
-        if(this.orderBy && !this.sortBy) {
+        if (this.orderBy && !this.sortBy) {
             soql += ` ORDER BY ${this.orderBy}`;
         } else if (this.sortBy && this.sortDirection) {
             soql += ` ORDER BY ${this.sortBy} ${this.sortDirection} `;
         }
-        
+
         if (this.limit && this.limit > 0) {
             soql += this.appendLimit();
             soql += this.appendOffset();
         }
-
         this.soql = soql;
     }
 
@@ -364,13 +330,12 @@ export default class LwcDatatable extends NavigationMixin(LightningElement(Light
     }
 
     appendWhere() {
-        let where = ' WHERE ';
+        let con = [];
         if (this.relatedFieldAPI)
-            where += `${this.relatedFieldAPI} = '${this.recordId}'`;
-        if (this.whereClause && this.relatedFieldAPI)
-            where += ` AND ${this.whereClause}`;
-        else if (this.whereClause) where += `${this.whereClause}`;
-        return where === ' WHERE ' ? '' : where;
+            con.push(`${this.relatedFieldAPI} = '${this.recordId}'`);
+        if (this.whereClause) con.push(this.whereClause);
+        if (this.filterCondition) con.push(this.filterCondition);
+        return con.length > 0 ? ' WHERE ' + con.join(' AND ') : '';
     }
 
     appendLimit() {
@@ -458,5 +423,14 @@ export default class LwcDatatable extends NavigationMixin(LightningElement(Light
                     );
                 });
         }
+    }
+
+    @track filterCondition;
+    handleFilterEvent(event) {
+        console.log(event.detail);
+        this.filterCondition = event.detail;
+        this.buildSOQL();
+        console.log('soql', this.soql);
+        this.fetchRecords();
     }
 }

@@ -1,0 +1,151 @@
+<template>
+    <div style="display: flex; align-items: flex-end">
+        <lightning-combobox
+            if:true={options}
+            label="Filters"
+            value={value}
+            placeholder="Select Filter"
+            options={options}
+            onchange={handleChangeFilter}
+        ></lightning-combobox>
+        <lightning-button-icon
+            icon-name="utility:edit"
+            onclick={handleEdit}
+            alternative-text="Edit"
+            class="slds-m-left_xx-small"
+            title="Edit"
+            disabled={disableBtns}
+        ></lightning-button-icon>
+        <lightning-button-icon
+            icon-name="utility:delete"
+            alternative-text="Delete"
+            onclick={handleDelete}
+            class="slds-m-left_xx-small"
+            title="Delete"
+            disabled={disableBtns}
+        ></lightning-button-icon>
+        <lightning-button-icon
+            icon-name="utility:copy"
+            alternative-text="Clone Selected Filter"
+            class="slds-m-left_xx-small"
+            title="Clone Selected Filter"
+            disabled={disableBtns}
+        ></lightning-button-icon>
+        <lightning-button-icon
+            icon-name="utility:filterList"
+            alternative-text="Create New Filter"
+            class="slds-m-left_xx-small"
+            title="Create New Filter"
+            onclick={handleNewFilter}
+        ></lightning-button-icon>
+
+        <div if:true={openModal}>
+            <section
+                role="dialog"
+                tabindex="0"
+                aria-modal="true"
+                aria-labelledby="prompt-heading-id"
+                aria-describedby="prompt-message-wrapper"
+                class="slds-modal slds-fade-in-open slds-modal_prompt"
+            >
+                <div class="slds-modal__container">
+                    <div
+                        class="slds-modal__header"
+                        style="text-align: left; padding: 0.5rem"
+                    >
+                        <lightning-input
+                            required
+                            type="text"
+                            value={filterName}
+                            data-element="objFilterName"
+                            label="Name"
+                        ></lightning-input>
+                    </div>
+                    <div
+                        class="slds-modal__content slds-p-around_medium"
+                        id="prompt-message-wrapper"
+                        style="overflow: initial"
+                    >
+                        <lightning-combobox
+                            required
+                            label="Field"
+                            data-element="objField"
+                            placeholder="Select Field"
+                            options={fields}
+                            onchange={handleChangeField}
+                        ></lightning-combobox>
+                        <lightning-combobox
+                            required
+                            label="Operator"
+                            data-element="operator"
+                            placeholder="Select Operator"
+                            options={operationList}
+                            onchange={handleChangeOperator}
+                        ></lightning-combobox>
+                        <lightning-input
+                            required
+                            data-element="filterVal"
+                            type={fieldType}
+                            label="Value"
+                            value={fieldValue}
+                            onchange={handleChangeValue}
+                        ></lightning-input>
+                        <div class="slds-m-top_x-small">
+                            <lightning-button
+                                label="Add"
+                                variant="brand"
+                                disabled={disableAdd}
+                                onclick={handleAddCondition}
+                            ></lightning-button>
+                        </div>
+                        <div if:true={conditions}>
+                            <div
+                                for:each={conditions}
+                                for:item="con"
+                                key={con.field}
+                                class="slds-card_boundary slds-m-top_x-small slds-p-around_xx-small slds-grid"
+                            >
+                                <div class="slds-media__body top-scrollbars">
+                                    <div>
+                                        <h2 class="slds-text-heading_small">
+                                            {con.label}
+                                        </h2>
+                                        &nbsp;&nbsp;
+                                        {con.operatorLabel}&nbsp;&nbsp;{con.value}
+                                    </div>
+                                </div>
+                                <div>
+                                    <a
+                                        herf="#"
+                                        data-id={con.field}
+                                        class="slds-text-link_reset"
+                                        onclick={removeCondition}
+                                    >
+                                        x
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-modal__footer slds-theme_default">
+                        <lightning-button
+                            label="Cancel"
+                            onclick={showHideModal}
+                        ></lightning-button>
+                        <lightning-button
+                            label="Save"
+                            variant="brand"
+                            class="slds-m-left_x-small"
+                            onclick={handleSave}
+                            disabled={disableSave}
+                        ></lightning-button>
+                    </div>
+                </div>
+            </section>
+            <div
+                class="slds-backdrop slds-backdrop_open"
+                role="presentation"
+            ></div>
+        </div>
+    </div>
+</template>
