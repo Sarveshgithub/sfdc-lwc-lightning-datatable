@@ -37,25 +37,22 @@
         </template>
 
         <!-- SEARCH BAR -->
-        <div class="slds-p-around_small" style="display: flex">
-            <c-table-filter
-                object-name={objectName}
-                cmp-name="data"
-                onfilterevent={handleFilterEvent}
-            ></c-table-filter>
-            <div if:true={hasSearchBar} onkeyup={onSearchChange}>
-                <lightning-input
-                    name="enter-search"
-                    label="Search"
-                    type="search"
-                ></lightning-input>
-            </div>
+        <div
+            class="slds-p-around_small"
+            if:true={hasSearchBar}
+            onkeyup={onSearchChange}
+        >
+            <lightning-input
+                name="enter-search"
+                label="Search"
+                type="search"
+            ></lightning-input>
         </div>
 
         <!-- Data table  -->
         <template if:true={data}>
             <!-- DATATABLE WITH CHECKBOXES -->
-            <lightning-datatable
+            <c-extended-datatable
                 hide-checkbox-column={showCheckboxes}
                 key-field="Id"
                 data={data}
@@ -67,8 +64,8 @@
                 sorted-direction={sortDirection}
                 onsort={handleSort}
                 sorted-by={sortBy}
-            >
-            </lightning-datatable>
+                onpicklistchanged={picklistChanged} >
+            </c-extended-datatable>
         </template>
 
         <!-- Pagination -->
