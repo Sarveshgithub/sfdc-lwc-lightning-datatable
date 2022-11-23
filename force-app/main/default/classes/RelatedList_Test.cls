@@ -69,15 +69,17 @@ public with sharing class RelatedList_Test {
         System.assertEquals(results.size() > 0, true);
         Test.stopTest();
     }
-    
+
     @IsTest
     static void initPicklistColumn_Test() {
-        Map<String, RelatedList.ColumnJson> colsJson = new Map<String, RelatedList.ColumnJson>{'StageName' => new RelatedList.ColumnJson() };
-        
-        RelatedList.initPicklistColumn(colsJson, 
-                                       'Opportunity', 
-                                       'StageName');
-                                                                                               
-    	System.assert(colsJson.get('StageName').typeAttributes.options.size() >= 0);
+        Map<String, RelatedList.ColumnJson> colsJson = new Map<String, RelatedList.ColumnJson>{
+            'StageName' => new RelatedList.ColumnJson()
+        };
+
+        RelatedList.initPicklistColumn(colsJson, 'Opportunity', 'StageName');
+
+        System.assert(
+            colsJson.get('StageName').typeAttributes.options.size() >= 0
+        );
     }
 }

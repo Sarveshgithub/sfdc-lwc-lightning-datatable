@@ -22,7 +22,11 @@ public class IconUtils {
 
         for (Schema.DescribeIconResult ir : iconDesc) {
             if (ir.getContentType() == 'image/svg+xml') {
-                iconName = 'custom:' + ir.getUrl().substringBetween('custom/', '.svg').substringBefore('_');
+                iconName =
+                    'custom:' +
+                    ir.getUrl()
+                        .substringBetween('custom/', '.svg')
+                        .substringBefore('_');
                 break;
             }
         }
