@@ -36,7 +36,7 @@ jobs:
                   tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
                   echo "$HOME/sfdx/bin" >> $GITHUB_PATH
                   ~/sfdx/bin/sfdx version
-                  
+
             # Install java as it is required for the next step
             # - name: 'Installing java'
             #   run: sudo apt-get install openjdk-8-jdk

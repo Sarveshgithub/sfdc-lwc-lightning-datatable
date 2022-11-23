@@ -29,7 +29,7 @@ const setPredefinedColumnJSON = (cmp) => {
     }
     //remove id field if set
     let tempFields = new Set(cmp.fields.replace(/\s/g, '').split(','));
-    ['id', 'Id', 'iD', 'ID'].forEach(idFieldCase => {
+    ['id', 'Id', 'iD', 'ID'].forEach((idFieldCase) => {
         if (tempFields.has(idFieldCase)) {
             tempFields.delete(idFieldCase);
         }

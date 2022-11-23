@@ -26,9 +26,11 @@ const actions = [
     { label: 'Delete', name: 'delete' }
 ];
 
-import LightningDatatable from 'lightning/datatable'
+import LightningDatatable from 'lightning/datatable';
 
-export default class LwcDatatable extends NavigationMixin(LightningElement(LightningDatatable))  {
+export default class LwcDatatable extends NavigationMixin(
+    LightningElement(LightningDatatable)
+) {
     // Public Property
     @api recordId;
     @api iconName;
@@ -66,7 +68,6 @@ export default class LwcDatatable extends NavigationMixin(LightningElement(Light
         recordUpdatedSuccessMessage,
         recordDeletedSuccessMessage
     };
-
 
     // Do init funtion
     connectedCallback() {
@@ -117,7 +118,13 @@ export default class LwcDatatable extends NavigationMixin(LightningElement(Light
     picklistChanged(event) {
         event.stopPropagation();
         let dataRecieved = event.detail.data;
-        this.updateDraftValues({ Id: dataRecieved.context, [dataRecieved.fieldName]: dataRecieved.value}, dataRecieved.fieldName);
+        this.updateDraftValues(
+            {
+                Id: dataRecieved.context,
+                [dataRecieved.fieldName]: dataRecieved.value
+            },
+            dataRecieved.fieldName
+        );
     }
 
     updateDraftValues(updateItem, fieldName) {
@@ -126,10 +133,10 @@ export default class LwcDatatable extends NavigationMixin(LightningElement(Light
         //store changed value to do operations
         //on save. This will enable inline editing &
         //show standard cancel & save button
-        copyDraftValues.forEach(item => {
+        copyDraftValues.forEach((item) => {
             if (item.Id === updateItem.Id) {
                 item[fieldName] = updateItem[fieldName];
-                
+
                 draftValueChanged = true;
             }
         });
@@ -139,7 +146,6 @@ export default class LwcDatatable extends NavigationMixin(LightningElement(Light
         } else {
             this.draftValues = [...copyDraftValues, updateItem];
         }
-
     }
 
     fetchRecords() {
@@ -344,12 +350,12 @@ export default class LwcDatatable extends NavigationMixin(LightningElement(Light
         soql += ' WITH SECURITY_ENFORCED ';
 
         //if we filter on a column then we ignore the ORDER BY defined in the configuration
-        if(this.orderBy && !this.sortBy) {
+        if (this.orderBy && !this.sortBy) {
             soql += ` ORDER BY ${this.orderBy}`;
         } else if (this.sortBy && this.sortDirection) {
             soql += ` ORDER BY ${this.sortBy} ${this.sortDirection} `;
         }
-        
+
         if (this.limit && this.limit > 0) {
             soql += this.appendLimit();
             soql += this.appendOffset();

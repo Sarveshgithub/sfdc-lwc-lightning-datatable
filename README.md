@@ -24,8 +24,7 @@ Main features
 
 Custom Data types (the component extendedDatatable extends lightning:datatable) :
 
--  picklist
-
+-   picklist
 
 ## Steps to Customization through Design Attribute
 
@@ -41,7 +40,7 @@ Custom Data types (the component extendedDatatable extends lightning:datatable) 
 | Enter Related field API Name                                        | :x:                | String  | Enter related field api name                                                                                                          | Example AccountId for contact when component is on account layout. |
 | Hide/Unhide checkbox column                                         | :x:                | Boolean | true/false                                                                                                                            | Hide/Unhide Checkbox                                               |
 | Enter WHERE clause                                                  | :x:                | String  | provide aditional filters                                                                                                             | Example `LastName like '%s' AND Account.Name like '%t'`            |
-| Order by                                                  | :x:                | String  | set the order by clause                                                                                                             | Example `LastName, Account.Name DESC`            |
+| Order by                                                            | :x:                | String  | set the order by clause                                                                                                               | Example `LastName, Account.Name DESC`                              |
 | Enter limit                                                         | :x:                | Integer | limit the displayed number of records for the list                                                                                    | an integer                                                         |
 | Show the number of record                                           | :x:                | Boolean | append the number of records in the title                                                                                             | checked(true) OR not checked(false)                                |
 | Show the view all / collapse buttons                                | :x:                | Boolean | display buttons to expand/collapse records                                                                                            | checked(true) OR not checked(false)                                |
@@ -62,23 +61,22 @@ Custom Data types (the component extendedDatatable extends lightning:datatable) 
 #### Single override
 
 ```yml
-{ "AccountId": { "label": "Account Record Id", "type": "Id" } }
+{ 'AccountId': { 'label': 'Account Record Id', 'type': 'Id' } }
 ```
 
 #### Multiple override
 
 ```yml
-{ 
-    "LastName": { "label": "Surname", "type": "text" },
-    "AccountId": { "label": "Account Record Id", "type": "Id" }
+{
+    'LastName': { 'label': 'Surname', 'type': 'text' },
+    'AccountId': { 'label': 'Account Record Id', 'type': 'Id' }
 }
 ```
-
 
 #### Related Field Customized
 
 ```yml
-{ "Account.Name": { "label": "Account Name", "type": "text" } }
+{ 'Account.Name': { 'label': 'Account Name', 'type': 'text' } }
 ```
 
 #### Add a hyperlink to navigate to the record
@@ -87,14 +85,14 @@ The example enables redirection to the account when we click on the account name
 
 ```yml
 {
-    "Account.Name":
+    'Account.Name':
         {
-            "label": "Account Name",
-            "type": "url",
-            "typeAttributes":
+            'label': 'Account Name',
+            'type': 'url',
+            'typeAttributes':
                 {
-                    "label":
-                        { "fieldName": "Account.Name", "recId": "AccountId" }
+                    'label':
+                        { 'fieldName': 'Account.Name', 'recId': 'AccountId' }
                 }
         }
 }
@@ -102,21 +100,21 @@ The example enables redirection to the account when we click on the account name
 
 ## Buttons configuration
 
-To configure buttons(variant are the style of a button) see the documentation here : 
+To configure buttons(variant are the style of a button) see the documentation here :
 [buttons documentation](https://developer.salesforce.com/docs/component-library/bundle/lightning-button/example)
 
 #### Single button
 
 ```yml
-[{ "name": "New", "label": "New", "variant": "neutral" }]
+[{ 'name': 'New', 'label': 'New', 'variant': 'neutral' }]
 ```
 
 #### Multiple buttons
 
 ```yml
 [
-    { "name": "New", "label": "New", "variant": "neutral" },
-    { "name": "DeleteAll", "label": "Delete all", "variant": "destructive" }
+    { 'name': 'New', 'label': 'New', 'variant': 'neutral' },
+    { 'name': 'DeleteAll', 'label': 'Delete all', 'variant': 'destructive' }
 ]
 ```
 
