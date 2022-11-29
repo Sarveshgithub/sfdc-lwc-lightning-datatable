@@ -2,7 +2,7 @@
 
 # Salesforce Lightning Data table (LWC Version)
 
-![datatable](./lwc-datatable.gif)
+![datatable](https://user-images.githubusercontent.com/39730173/158892595-3e7c91a3-9259-4e13-914b-191504ca8a05.PNG)
 
 ## About
 
@@ -61,22 +61,22 @@ Custom Data types (the component extendedDatatable extends lightning:datatable) 
 #### Single override
 
 ```yml
-{ 'AccountId': { 'label': 'Account Record Id', 'type': 'Id' } }
+{ "AccountId": { "label": "Account Record Id", "type": "Id" } }
 ```
 
 #### Multiple override
 
 ```yml
 {
-    'LastName': { 'label': 'Surname', 'type': 'text' },
-    'AccountId': { 'label': 'Account Record Id', 'type': 'Id' }
+    "LastName": { "label": "Surname", "type": "text" },
+    "AccountId": { "label": "Account Record Id", "type": "Id" }
 }
 ```
 
 #### Related Field Customized
 
 ```yml
-{ 'Account.Name': { 'label': 'Account Name', 'type': 'text' } }
+{ "Account.Name": { "label": "Account Name", "type": "text" } }
 ```
 
 #### Add a hyperlink to navigate to the record
@@ -85,14 +85,14 @@ The example enables redirection to the account when we click on the account name
 
 ```yml
 {
-    'Account.Name':
+    "Account.Name":
         {
-            'label': 'Account Name',
-            'type': 'url',
-            'typeAttributes':
+            "label": "Account Name",
+            "type": "url",
+            "typeAttributes":
                 {
-                    'label':
-                        { 'fieldName': 'Account.Name', 'recId': 'AccountId' }
+                    "label":
+                        { "fieldName": "Account.Name", "recId": "AccountId" }
                 }
         }
 }
@@ -106,15 +106,15 @@ To configure buttons(variant are the style of a button) see the documentation he
 #### Single button
 
 ```yml
-[{ 'name': 'New', 'label': 'New', 'variant': 'neutral' }]
+[{ "name": "New", "label": "New", "variant": "neutral" }]
 ```
 
 #### Multiple buttons
 
 ```yml
 [
-    { 'name': 'New', 'label': 'New', 'variant': 'neutral' },
-    { 'name': 'DeleteAll', 'label': 'Delete all', 'variant': 'destructive' }
+    { "name": "New", "label": "New", "variant": "neutral" },
+    { "name": "DeleteAll", "label": "Delete all", "variant": "destructive" }
 ]
 ```
 
