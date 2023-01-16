@@ -73,6 +73,12 @@ Custom Data types (the component extendedDatatable extends lightning:datatable) 
 }
 ```
 
+#### Label Override using Custom Label
+
+```yml
+{ "FirstName": { "label": "{!Label.MyLabelName}", "type": "text" } }
+```
+
 #### Related Field Customized
 
 ```yml
