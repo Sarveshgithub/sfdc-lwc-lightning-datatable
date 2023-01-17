@@ -26,11 +26,7 @@ const actions = [
     { label: 'Delete', name: 'delete' }
 ];
 
-import LightningDatatable from 'lightning/datatable';
-
-export default class LwcDatatable extends NavigationMixin(
-    LightningElement(LightningDatatable)
-) {
+export default class LwcDatatable extends NavigationMixin(LightningElement) {
     // Public Property
     @api recordId;
     @api iconName;
