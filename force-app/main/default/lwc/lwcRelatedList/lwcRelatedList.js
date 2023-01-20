@@ -275,6 +275,9 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
             attributes: {
                 objectApiName: this.objectName,
                 actionName: 'new'
+            },
+            state: {
+                useRecordTypeCheck: 1
             }
         });
     }
