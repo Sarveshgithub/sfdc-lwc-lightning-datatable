@@ -123,6 +123,18 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
         );
     }
 
+    lookupChanged(event) {
+        event.stopPropagation();
+        let dataReceived = event.detail.data;
+        this.updateDraftValues(
+            {
+                Id: dataReceived.context,
+                [dataReceived.fieldName]: dataReceived.value
+            },
+            dataReceived.fieldName
+        );
+    }
+
     updateDraftValues(updateItem, fieldName) {
         let draftValueChanged = false;
         let copyDraftValues = [...this.draftValues];
@@ -159,10 +171,20 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     }
 
     handleSave(event) {
-        const recordInputs = event.detail.draftValues.slice().map((draft) => {
-            const fields = Object.assign({}, draft);
-            return { fields };
-        });
+        let recordInputs = null;
+
+        if(event.detail.draftValues?.length == 0 && this.draftValues?.length > 0 ) {
+            recordInputs = this.draftValues.slice().map((draft) => {
+                const fields = Object.assign({}, draft);
+                return { fields };
+            });
+        } else {
+            recordInputs = event.detail.draftValues.slice().map((draft) => {
+                const fields = Object.assign({}, draft);
+                return { fields };
+            });
+        }
+
         const promises = recordInputs.map((recordInput) =>
             updateRecord(recordInput)
         );

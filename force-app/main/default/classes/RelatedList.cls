@@ -17,29 +17,53 @@ public with sharing class RelatedList {
         @AuraEnabled
         public Boolean wrapText = false;
         @AuraEnabled
-        public TypeAttributeColumnJsonWithPicklist typeAttributes = null;
+        public TypeAttributes typeAttributes = null;
 
+        //for picklist
         public void setTypeAttributes(
             List<PicklistColumnUtils.PicklistValue> options
         ) {
-            this.typeAttributes = new TypeAttributeColumnJsonWithPicklist();
-            this.typeAttributes.options = options;
-            this.typeAttributes.fieldName = this.fieldName;
+            this.typeAttributes = new TypeAttributeColumnJsonWithPicklist(options, this.fieldName);
         }
     }
 
-    public class TypeAttributeColumnJsonWithPicklist {
+    public virtual class TypeAttributes {}
+
+    public class TypeAttributeColumnJsonWithPicklist extends TypeAttributes {
         @AuraEnabled
         public List<PicklistColumnUtils.PicklistValue> options = new List<PicklistColumnUtils.PicklistValue>();
         @AuraEnabled
-        public ContextTypeAttributeColumnJsonWithPicklist context = new ContextTypeAttributeColumnJsonWithPicklist();
+        public TypeAttributeContext context = new TypeAttributeContext();
         @AuraEnabled
         public String fieldName;
+
+        public TypeAttributeColumnJsonWithPicklist(List<PicklistColumnUtils.PicklistValue> options, String fieldName) {
+            this.options = options;
+            this.fieldName = fieldName;
+        }
     }
 
-    public class ContextTypeAttributeColumnJsonWithPicklist {
+    public class TypeAttributeContext {
         @AuraEnabled
         public string fieldName = 'Id';
+    }
+
+    public class TypeAttributeColumnLookup extends TypeAttributes {
+        public String placeholder;
+        public String objectApiName;
+        public String fieldName;
+        public String label;
+        public TypeAttributeColumnLookupValue value = new TypeAttributeColumnLookupValue();
+        public TypeAttributeContext context = new TypeAttributeContext();
+        public String variant = 'label-hidden';
+        public String name;
+        public List<String> fields;
+        public String target = '_self';
+        
+    }
+
+    public class TypeAttributeColumnLookupValue {
+        public String fieldName;
     }
 
     public class ListResults {
@@ -90,6 +114,11 @@ public with sharing class RelatedList {
                 }
                 //Check if values predefined in LWC
                 if (mapPreCols.containsKey(fieldName)) {
+                    if (mapPreCols.get(fieldName).type == 'lookup') {
+                        mapPreCols.get(fieldName).typeAttributes = new TypeAttributeColumnLookup();
+                        continue;
+                    }
+
                     mapPreCols = checkOverride(mapPreCols, fieldName, mfields);
 
                     //set picklistValues for picklist type
