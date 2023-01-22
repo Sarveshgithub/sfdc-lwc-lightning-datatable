@@ -18,13 +18,6 @@ public with sharing class RelatedList {
         public Boolean wrapText = false;
         @AuraEnabled
         public TypeAttributes typeAttributes = null;
-
-        //for picklist
-        public void setTypeAttributes(
-            List<PicklistColumnUtils.PicklistValue> options
-        ) {
-            this.typeAttributes = new TypeAttributeColumnJsonWithPicklist(options, this.fieldName);
-        }
     }
 
     public virtual class TypeAttributes {}
@@ -152,7 +145,7 @@ public with sharing class RelatedList {
             fieldName
         );
         mapPreCols.get(fieldName).wrapText = true;
-        mapPreCols.get(fieldName).setTypeAttributes(picklistValues);
+        mapPreCols.get(fieldName).typeAttributes = new TypeAttributeColumnJsonWithPicklist(picklistValues, fieldName);
     }
 
     @AuraEnabled

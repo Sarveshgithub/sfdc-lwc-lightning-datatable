@@ -60,6 +60,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     @track searchTerm;
 
     draftValues = [];
+    draftValuesCustomDatatypes = [];
     labels = {
         recordUpdatedSuccessMessage,
         recordDeletedSuccessMessage
@@ -111,19 +112,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
             });
     }
 
-    picklistChanged(event) {
-        event.stopPropagation();
-        let dataRecieved = event.detail.data;
-        this.updateDraftValues(
-            {
-                Id: dataRecieved.context,
-                [dataRecieved.fieldName]: dataRecieved.value
-            },
-            dataRecieved.fieldName
-        );
-    }
-
-    lookupChanged(event) {
+    customTypeChanged(event) {
         event.stopPropagation();
         let dataReceived = event.detail.data;
         this.updateDraftValues(
@@ -137,7 +126,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
 
     updateDraftValues(updateItem, fieldName) {
         let draftValueChanged = false;
-        let copyDraftValues = [...this.draftValues];
+        let copyDraftValues = [...this.draftValuesCustomDatatypes];
         //store changed value to do operations
         //on save. This will enable inline editing &
         //show standard cancel & save button
@@ -150,9 +139,9 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
         });
 
         if (draftValueChanged) {
-            this.draftValues = [...copyDraftValues];
+            this.draftValuesCustomDatatypes = [...copyDraftValues];
         } else {
-            this.draftValues = [...copyDraftValues, updateItem];
+            this.draftValuesCustomDatatypes = [...copyDraftValues, updateItem];
         }
     }
 
@@ -171,19 +160,23 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     }
 
     handleSave(event) {
-        let recordInputs = null;
+        const mergedValues = [...event.detail.draftValues, ...this.draftValuesCustomDatatypes].reduce((merged, current) => {
+            let found = merged.find(val => val.Id === current.Id);
+            if(found) {
+                // merge the current object with the existing object
+                Object.assign(found, current);
+            } else {
+                // add the current object to the merged object
+                merged.push(current);
+            }
+            return merged;
+        }, []);        
+        
 
-        if(event.detail.draftValues?.length == 0 && this.draftValues?.length > 0 ) {
-            recordInputs = this.draftValues.slice().map((draft) => {
-                const fields = Object.assign({}, draft);
-                return { fields };
-            });
-        } else {
-            recordInputs = event.detail.draftValues.slice().map((draft) => {
-                const fields = Object.assign({}, draft);
-                return { fields };
-            });
-        }
+        const recordInputs = mergedValues.slice().map((draft) => {
+            const fields = Object.assign({}, draft);
+            return { fields };
+        });
 
         const promises = recordInputs.map((recordInput) =>
             updateRecord(recordInput)
