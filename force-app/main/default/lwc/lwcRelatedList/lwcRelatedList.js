@@ -450,7 +450,8 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
             onSearch({
                 searchTerm: this.searchTerm,
                 objectApiName: this.objectName,
-                searchFields: this.fields
+                searchFields: this.fields,
+                whereClause: this.whereClause
             })
                 .then((data) => {
                     this.data = _formatData(this.colsJson, data);
