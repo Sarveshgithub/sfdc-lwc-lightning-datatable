@@ -1,6 +1,6 @@
 <template>
   <div class="lookupBlock" id="lookup">
-      <div if:true={showLookup} class="lookup-container">
+      <div if:true={showLookup} class="lookup-container" onmouseleave={onMouseLeaveLookup}>
           <lightning-record-edit-form object-api-name={object}>
               <lightning-input-field 
                   class="slds-popover slds-popover_edit slds-popover__body"

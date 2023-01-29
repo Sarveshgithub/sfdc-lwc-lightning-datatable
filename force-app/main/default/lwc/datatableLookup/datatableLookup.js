@@ -1,7 +1,5 @@
 /* eslint-disable @lwc/lwc/no-api-reassignments */
 import { LightningElement, api, wire } from 'lwc';
-import { loadStyle } from "lightning/platformResourceLoader";
-import CustomDataTableResource from "@salesforce/resourceUrl/CustomDataTable";
 import { getRecord } from "lightning/uiRecordApi";
 
 export default class DatatableLookup extends LightningElement {
@@ -44,9 +42,6 @@ export default class DatatableLookup extends LightningElement {
 
     //loads the custom CSS for lookup custom type on lightning datatable
     renderedCallback() {
-        Promise.all([
-            loadStyle(this, CustomDataTableResource),
-        ]).then(() => { });
         if (!this.guid) {
             this.guid = this.template.querySelector('.lookupBlock').getAttribute('id');
             /* Register the event with this component as event payload. 
@@ -93,6 +88,10 @@ export default class DatatableLookup extends LightningElement {
                 data: { context: context, value: value, label: label, name: name }
             }
         }));
+    }
+
+    onMouseLeaveLookup() {
+        this.showLookup = false;
     }
 
     /*get the fieldname to display, in case if Name is autonumber, pass in different field to show as url text field
