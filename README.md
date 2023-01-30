@@ -8,23 +8,25 @@
 
 To deploy the component see [Deploy](#deploy)
 
-This is generic lighting data table , which is build in lwc.
-The customization are done by design attributes.
+This is a generic lighting datatable, which is built in LWC.
+The customization is done by design attributes.
 
 Main features
 
--   Show records for both custom and standard object.
--   Add cols as per the fields exist in object in JSON format.
--   Pagination as First,Previous,Next,Last buttons.
+-   Show records for both custom and standard objects.
+-   Add cols as per the fields that exist in object in JSON format.
+-   Pagination as First, Previous, Next and Last buttons.
 -   New record creation action
--   Row action, like : show detail, edit record, delete record
+-   Row action like : show detail, edit a record, delete a record
 -   Hide/Unhide checkbox column
 -   Configurable actions buttons (for developers, see [Buttons configuration](#buttons-configuration) )
 -   Sorting by field (Note: sort will not work on search).
+-   Search
 
 Custom Data types (the component extendedDatatable extends lightning:datatable) :
 
 -   picklist
+-   lookup
 
 ## Steps to Customization through Design Attribute
 
@@ -50,11 +52,16 @@ Custom Data types (the component extendedDatatable extends lightning:datatable) 
 
 ## Customized Field JSON
 
-`label` : This key is for override column Name. ( [Example : Override Column Label](#example--override-column-label) )
+`label` : This key is for override column Name. ( [Example : Override Column Label](#single-override) )
 
-`type` : This key is for override column Type [supported_lwc_datatable_datatype](https://developer.salesforce.com/docs/component-library/bundle/lightning-datatable/documentation). ( Ex : `url` ). ( [Example : Related Field Customized](#example--related-field-customized) )
+`type` : This key is for the override column Type :
+- [supported_lwc_datatable_datatype](https://developer.salesforce.com/docs/component-library/bundle/lightning-datatable/documentation). ( Ex : `url` ). ( [Example : Related Field Customized](#related-field-customized) )
+- [lookup editable column](#lookup-editable-column)
+- [picklist editable column](#picklist-editable-column)
 
-`typeAttributes` : This key is used for hyperlink to recordId. ( `recId` stored recordId Field ). ( [Example : Add Hyperlink for navigate to record](#example--add-hyperlink-for-navigate-to-record) )
+`typeAttributes` : This key is used for custom columns :
+- a hyperlink to recordId (id of the current detail page) ( `recId` stored recordId Field ). ( [Example : Add Hyperlink for navigate to record](#example--add-hyperlink-for-navigate-to-record) )
+- [lookup editable column](#lookup-editable-column)
 
 ### Example : Override Column Label
 
@@ -64,7 +71,15 @@ Custom Data types (the component extendedDatatable extends lightning:datatable) 
 { "AccountId": { "label": "Account Record Id", "type": "Id" } }
 ```
 
-#### Multiple override
+`AccountId` : the api name of the column for which you want to override the label (**only use the columns displayed**)
+
+#### Label Override using Custom Label
+
+```yml
+{ "FirstName": { "label": "{!Label.MyLabelName}", "type": "text" } }
+```
+
+#### Multiple overrides
 
 ```yml
 {
@@ -73,11 +88,10 @@ Custom Data types (the component extendedDatatable extends lightning:datatable) 
 }
 ```
 
-#### Label Override using Custom Label
-
-```yml
-{ "FirstName": { "label": "{!Label.MyLabelName}", "type": "text" } }
-```
+When overriding columns you can override different columns for the different uses cases :
+- [lookup editable column](#lookup-editable-column)
+- [picklist editable column](#picklist-editable-column)
+- [hyperlink to navigate to the record](#add-a-hyperlink-to-navigate-to-the-record)
 
 #### Related Field Customized
 
@@ -85,9 +99,57 @@ Custom Data types (the component extendedDatatable extends lightning:datatable) 
 { "Account.Name": { "label": "Account Name", "type": "text" } }
 ```
 
+#### Picklist editable column
+
+```yml
+    {"StageName" : {"type": "picklist"} }
+```
+you can also override the label
+
+```yml
+    {"StageName" : {"label": "Step", "type": "picklist"} }
+```
+
+#### Lookup editable column
+
+```yml
+{
+    "Account.Name":
+    {
+        "label":"Account Name",
+        "type":"lookup",
+        "typeAttributes":{
+            "placeholder": "Choose Account",
+            "objectApiName": "Contact",
+            "fieldName": "AccountId",
+            "label": "Account",
+            "value": { "fieldName": "AccountId" },
+            "context": { "fieldName": "Id" },
+            "variant": "label-hidden",
+            "name": "Account",
+            "fields": ["Account.Name"],
+            "target": "_self"
+        } 
+    }
+
+}
+```
+`placeholder` : text displayed when the lookup search bar is empty
+
+`fieldName` and `value.fieldName` : field API name that links the record to the parent record
+
+`fields` : what is displayed in the column (here the name of the account)
+
 #### Add a hyperlink to navigate to the record
 
-The example enables redirection to the account when we click on the account name of a contact (the field Account.Name is included in columns api name in the example).
+
+**Use cases :**
+- non-editable lookup redirection to the record page
+- redirection when a field is clicked (ex: a click on the firstname or lastname of a contact redirects to the record page)
+
+The example enables redirection to the account when we click on the account name of a contact (the field Account.Name is included in columns API name in the example).
+
+**When used for a lookup the field is not editable (to have an editable lookup field see the [section](#lookup-editable-column) above for editable lookup)**
 
 ```yml
 {
@@ -106,7 +168,7 @@ The example enables redirection to the account when we click on the account name
 
 ## Buttons configuration
 
-To configure buttons(variant are the style of a button) see the documentation here :
+To configure buttons(variant is the style of a button) see the documentation here :
 [buttons documentation](https://developer.salesforce.com/docs/component-library/bundle/lightning-button/example)
 
 #### Single button
@@ -130,7 +192,7 @@ The "New" button is displayed by default
 
 ### Button logic definition (fire an event, call a method in the javascript controller)
 
-You can implement your own logic for your new buttons based on button JSON (new, delete-selected...).
+You can implement your logic for your new buttons based on button JSON (new, delete-selected...).
 
 ```JS
   handleButtonAction(event) {
@@ -162,4 +224,4 @@ Feel free to ask any Question, Suggestion, Issue [here](https://github.com/Sarve
 
 ## Want to contribute? Great!
 
-Create Pull Request to `dev` branch with your feature banch. Read [Contribution Guidelines](https://quip.com/7OtsAy94piU7)
+Create Pull Request to `dev` branch with your feature branch. Read [Contribution Guidelines](https://quip.com/7OtsAy94piU7)

@@ -78,8 +78,9 @@ public with sharing class RelatedList_Test {
 
         RelatedList.initPicklistColumn(colsJson, 'Opportunity', 'StageName');
 
+        RelatedList.TypeAttributeColumnJsonWithPicklist typesAttributesPicklist = (RelatedList.TypeAttributeColumnJsonWithPicklist) colsJson.get('StageName').typeAttributes;
         System.assert(
-            colsJson.get('StageName').typeAttributes.options.size() >= 0
+            typesAttributesPicklist.options.size() >= 0
         );
     }
 }

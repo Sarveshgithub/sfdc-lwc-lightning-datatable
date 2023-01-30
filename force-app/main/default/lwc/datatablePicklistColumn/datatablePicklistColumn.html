@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div if:true={showPicklist}>
+        <div if:true={showPicklist} onmouseleave={closePicklist}>
             <lightning-combobox
                 name="picklist"
                 data-id="Picklist Combobox"
