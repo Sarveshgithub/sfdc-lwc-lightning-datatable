@@ -59,6 +59,18 @@ public with sharing class RelatedList {
         public String fieldName;
     }
 
+    public class TypeAttributeColumnTextarea extends TypeAttributes {
+        @AuraEnabled
+        public TypeAttributeContext context = new TypeAttributeContext();
+        @AuraEnabled
+        public String fieldName;
+
+        public TypeAttributeColumnTextarea(String fieldName) {
+            this.fieldName = fieldName;
+        }
+        
+    }
+
     public class ListResults {
         @AuraEnabled
         public List<SObject> records;
@@ -107,21 +119,24 @@ public with sharing class RelatedList {
                 }
                 //Check if values predefined in LWC
                 if (mapPreCols.containsKey(fieldName)) {
-                    if (mapPreCols.get(fieldName).type == 'lookup') {
-                        mapPreCols.get(fieldName).typeAttributes = new TypeAttributeColumnLookup();
-                        continue;
+                    switch on mapPreCols.get(fieldName).type {
+                        when 'lookup' {
+                            mapPreCols.get(fieldName).typeAttributes = new TypeAttributeColumnLookup();
+                        }
+                        when 'picklist' {
+                            //set picklistValues for picklist type
+                            RelatedList.initPicklistColumn(
+                                mapPreCols,
+                                objectName,
+                                fieldName
+                            );
+                        }
+                        when 'textarea' {
+                            mapPreCols.get(fieldName).typeAttributes = new TypeAttributeColumnTextarea(fieldName);
+                        }
                     }
 
                     mapPreCols = checkOverride(mapPreCols, fieldName, mfields);
-
-                    //set picklistValues for picklist type
-                    if (mapPreCols.get(fieldName).type == 'picklist') {
-                        RelatedList.initPicklistColumn(
-                            mapPreCols,
-                            objectName,
-                            fieldName
-                        );
-                    }
                 }
             }
             return new ListResults(

@@ -2,6 +2,8 @@ import LightningDatatable from 'lightning/datatable';
 
 import picklistTemplate from './picklistTemplate.html';
 import customLookup from './customLookup.html';
+import textAreaTemplate from './textAreaTemplate.html';
+import imageTemplate from './imageTemplate.html';
 
 export default class ExtendedDatatable extends LightningDatatable {
     static customTypes = {
@@ -14,6 +16,15 @@ export default class ExtendedDatatable extends LightningDatatable {
           template: customLookup,
           standardCellLayout: true,
           typeAttributes: ['label', 'value', 'placeholder', 'fieldName', 'objectApiName', 'context', 'variant', 'name', 'fields', 'target']
+        },
+        textarea: {
+            template: textAreaTemplate,
+            standardCellLayout: false,
+            typeAttributes: ['fieldName', 'context']
+        },
+        image: {
+            template: imageTemplate,
+            standardCellLayout: false
         }
     };
 }
