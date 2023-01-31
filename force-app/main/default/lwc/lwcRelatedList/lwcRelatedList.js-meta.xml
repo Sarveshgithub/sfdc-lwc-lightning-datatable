@@ -53,7 +53,7 @@
                 name="formulaImageFields"
                 type="String"
                 default='["FormulaField__c"]'
-                label="Formula Image Field API Names (This is mandatory when Image Formula Fields are added as columns e.g. traffic lights)"
+                label="Formula Image Field API Names"
              />
       <property
                 name="showCheckboxes"

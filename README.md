@@ -27,6 +27,8 @@ Custom Data types (the component extendedDatatable extends lightning:datatable) 
 
 -   picklist
 -   lookup
+-   long text area
+-   formula (image)
 
 ## Steps to Customization through Design Attribute
 
@@ -40,6 +42,7 @@ Custom Data types (the component extendedDatatable extends lightning:datatable) 
 | Enter Columns API Name by comma seprated                            | :heavy_check_mark: | String  | **Note** : for related field it should be concat with . i.e : Account.Name for contact, Inline Edit not support cross reference Field | FirstName,LastName,Email,Phone                                     |
 | Enter Customized Field JSON ( This is Mandatory for Related Field ) | :x:                | String  | customized Column Label, Record Redirect, Data Type. **Note** : This is Mandatory for Related Fields i.e : Account.Name for contact   | See below [**Customized Field JSON**](#customized-field-json)      |
 | Enter Related field API Name                                        | :x:                | String  | Enter related field api name                                                                                                          | Example AccountId for contact when component is on account layout. |
+| Formula Image Field API Names                                       | :x:                | String  | Enter formula field api names **Note** : This is mandatory for formula fields displaying images                                       | \["FormulaField__c"\]                 |
 | Hide/Unhide checkbox column                                         | :x:                | Boolean | true/false                                                                                                                            | Hide/Unhide Checkbox                                               |
 | Enter WHERE clause                                                  | :x:                | String  | provide aditional filters                                                                                                             | Example `LastName like '%s' AND Account.Name like '%t'`            |
 | Order by                                                            | :x:                | String  | set the order by clause                                                                                                               | Example `LastName, Account.Name DESC`                              |
