@@ -1,0 +1,46 @@
+<!-- sldsValidatorIgnore -->
+<template>
+    <div>
+        <div if:true={showTextarea}>
+            <lightning-textarea 
+                name="textarea" 
+                data-id="Textarea"
+                variant="label-hidden"
+                value={value}
+                onblur={handleChange}
+                >
+            </lightning-textarea>
+        </div>
+
+        <div
+            if:false={showTextarea}
+            class="slds-table_edit_container slds-is-relative"
+        >
+            <span
+                class="slds-grid slds-grid_align-spread slds-cell-edit"
+                ondblclick={editTextarea}
+            >
+                <span class="slds-truncate" title={value}>{value}</span>
+                <button
+                    data-id={context}
+                    class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small"
+                    tabindex="-1"
+                    title="Edit"
+                    name="tes"
+                    onclick={editTextarea}
+                    data-name="myButtonName"
+                >
+                    <svg
+                        class="slds-button__icon slds-button__icon_hint slds-button__icon_lock slds-button__icon_small slds-button__icon_edit slds-icon slds-icon-text-default slds-icon_xx-small"
+                        aria-hidden="true"
+                    >
+                        <use
+                            xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.37.1#edit"
+                        ></use>
+                    </svg>
+                    <span class="slds-assistive-text">Edit</span>
+                </button>
+            </span>
+        </div>
+    </div>
+</template>

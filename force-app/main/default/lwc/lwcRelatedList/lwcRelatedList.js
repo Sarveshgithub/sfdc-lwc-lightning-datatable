@@ -34,6 +34,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     @api objectName;
     @api fields;
     @api relatedFieldAPI;
+    @api formulaImageFields;
     @api whereClause;
     @api limit;
     @api isCounterDisplayed;
@@ -59,7 +60,6 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     @track colsJson;
     @track searchTerm;
 
-    draftValues = [];
     draftValuesCustomDatatypes = [];
     labels = {
         recordUpdatedSuccessMessage,
@@ -73,6 +73,9 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
         setPredefinedColumnJSON(this);
         if (this.actionButtons) {
             this.actionButtons = JSON.parse(this.actionButtons);
+        }
+        if (this.formulaImageFields) {
+            this.formulaImageFields = JSON.parse(this.formulaImageFields);
         }
         this.initialLimit = this.limit;
         this.buildSOQL();
@@ -103,6 +106,8 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
                     this.data = records;
                     this.iconName = this.iconName ? this.iconName : iconName;
                     this.totalRows = count;
+
+                    this.checkFormulaImageFields();
                 }
             })
             .catch((error) => {
@@ -110,6 +115,18 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
                     this.formatError(error);
                 }
             });
+    }
+
+    // Formula fields with images (e.g. traffic lights) are of type 'string'
+    // Change the type to 'image' to use custom data type to correctly display actual images
+    checkFormulaImageFields() {
+        if (this.formulaImageFields) {
+            this.columns.forEach((col) => {
+                if (this.formulaImageFields.indexOf(col.fieldName) != -1) {
+                    col.type = 'image';
+                }
+            });
+        }
     }
 
     customTypeChanged(event) {
@@ -188,7 +205,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
                     this.labels.recordUpdatedSuccessMessage,
                     'success'
                 );
-                this.draftValues = [];
+                this.draftValuesCustomDatatypes = [];
                 this.fetchRecords();
             })
             .catch((error) => {

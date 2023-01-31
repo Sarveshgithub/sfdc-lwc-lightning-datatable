@@ -60,12 +60,13 @@
                 onrowaction={handleRowAction}
                 onrowselection={handleRowSelection}
                 onsave={handleSave}
-                draft-values={draftValues}
+                draft-values={draftValuesCustomDatatypes}
                 sorted-direction={sortDirection}
                 onsort={handleSort}
                 sorted-by={sortBy}
                 onpicklistchanged={customTypeChanged}
                 onlookupchanged={customTypeChanged}
+                ontextareachanged={customTypeChanged}
             >
             </c-extended-datatable>
         </template>
