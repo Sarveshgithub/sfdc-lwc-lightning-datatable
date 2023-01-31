@@ -110,6 +110,8 @@ export default class DatatableLookup extends LightningElement {
 
     //value of formatted url
     get lookupValue() {
+        if(!this.value) return '';
+
         return (this.record.data != null && this.record.data.fields[this.getFieldName()].value) ? '/' + this.value : '';
     }
 }

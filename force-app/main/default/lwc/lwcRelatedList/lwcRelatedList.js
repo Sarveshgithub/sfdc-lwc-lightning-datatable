@@ -60,6 +60,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     @track colsJson;
     @track searchTerm;
 
+    draftValues = []; // don't touch
     draftValuesCustomDatatypes = [];
     labels = {
         recordUpdatedSuccessMessage,
@@ -135,7 +136,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
         this.updateDraftValues(
             {
                 Id: dataReceived.context,
-                [dataReceived.fieldName]: dataReceived.value
+                [dataReceived.fieldName]: (dataReceived.value) ? dataReceived.value : null
             },
             dataReceived.fieldName
         );
@@ -143,11 +144,11 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
 
     updateDraftValues(updateItem, fieldName) {
         let draftValueChanged = false;
-        let copyDraftValues = [...this.draftValuesCustomDatatypes];
+        let copyDraftValuesCustomTypes = [...this.draftValuesCustomDatatypes];
         //store changed value to do operations
         //on save. This will enable inline editing &
         //show standard cancel & save button
-        copyDraftValues.forEach((item) => {
+        copyDraftValuesCustomTypes.forEach((item) => {
             if (item.Id === updateItem.Id) {
                 item[fieldName] = updateItem[fieldName];
 
@@ -156,10 +157,23 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
         });
 
         if (draftValueChanged) {
-            this.draftValuesCustomDatatypes = [...copyDraftValues];
+            this.draftValuesCustomDatatypes = [...copyDraftValuesCustomTypes];
+            
         } else {
-            this.draftValuesCustomDatatypes = [...copyDraftValues, updateItem];
+            this.draftValuesCustomDatatypes = [...copyDraftValuesCustomTypes, updateItem];
+            this.draftValuesCustomDatatypes = [...this.draftValues, ...this.draftValuesCustomDatatypes].reduce((merged, current) => {
+                let found = merged.find(val => val.Id === current.Id);
+                if(found) {
+                    // merge the current object with the existing object
+                    Object.assign(found, current);
+                } else {
+                    // add the current object to the merged object
+                    merged.push(current);
+                }
+                return merged;
+            }, []);
         }
+        
     }
 
     fetchRecords() {
@@ -206,6 +220,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
                     'success'
                 );
                 this.draftValuesCustomDatatypes = [];
+                this.draftValues = [];
                 this.fetchRecords();
             })
             .catch((error) => {
