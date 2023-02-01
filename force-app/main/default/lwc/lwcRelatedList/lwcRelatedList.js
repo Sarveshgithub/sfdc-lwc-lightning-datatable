@@ -143,7 +143,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     }
 
     updateDraftValues(updateItem, fieldName) {
-        let draftValueChanged = false;
+        let hasNewDraftValueRecord = false;
         let copyDraftValuesCustomTypes = [...this.draftValuesCustomDatatypes];
         //store changed value to do operations
         //on save. This will enable inline editing &
@@ -152,28 +152,34 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
             if (item.Id === updateItem.Id) {
                 item[fieldName] = updateItem[fieldName];
 
-                draftValueChanged = true;
+                hasNewDraftValueRecord = true;
             }
         });
 
-        if (draftValueChanged) {
+        
+        if (hasNewDraftValueRecord) {
             this.draftValuesCustomDatatypes = [...copyDraftValuesCustomTypes];
+            this.draftValuesCustomDatatypes = this.mergeDraftValues([...this.draftValues, ...this.draftValuesCustomDatatypes]);
             
         } else {
             this.draftValuesCustomDatatypes = [...copyDraftValuesCustomTypes, updateItem];
-            this.draftValuesCustomDatatypes = [...this.draftValues, ...this.draftValuesCustomDatatypes].reduce((merged, current) => {
-                let found = merged.find(val => val.Id === current.Id);
-                if(found) {
-                    // merge the current object with the existing object
-                    Object.assign(found, current);
-                } else {
-                    // add the current object to the merged object
-                    merged.push(current);
-                }
-                return merged;
-            }, []);
         }
         
+       this.draftValues = this.mergeDraftValues([...this.template.querySelector('c-extended-datatable').draftValues, ...this.draftValuesCustomDatatypes] );
+    }
+
+    mergeDraftValues(arr) {
+        return arr.reduce((merged, current) => {
+            let found = merged.find(val => val.Id === current.Id);
+            if(found) {
+                // merge the current object with the existing object
+                Object.assign(found, current);
+            } else {
+                // add the current object to the merged object
+                merged.push(current);
+            }
+            return merged;
+        }, []);
     }
 
     fetchRecords() {
@@ -191,18 +197,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     }
 
     handleSave(event) {
-        const mergedValues = [...event.detail.draftValues, ...this.draftValuesCustomDatatypes].reduce((merged, current) => {
-            let found = merged.find(val => val.Id === current.Id);
-            if(found) {
-                // merge the current object with the existing object
-                Object.assign(found, current);
-            } else {
-                // add the current object to the merged object
-                merged.push(current);
-            }
-            return merged;
-        }, []);        
-        
+        const mergedValues = this.mergeDraftValues([...event.detail.draftValues, ...this.draftValuesCustomDatatypes] );
 
         const recordInputs = mergedValues.slice().map((draft) => {
             const fields = Object.assign({}, draft);
