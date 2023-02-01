@@ -123,7 +123,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     checkFormulaImageFields() {
         if (this.formulaImageFields) {
             this.columns.forEach((col) => {
-                if (this.formulaImageFields.indexOf(col.fieldName) != -1) {
+                if (this.formulaImageFields.indexOf(col.fieldName) !== -1) {
                     col.type = 'image';
                 }
             });
@@ -136,7 +136,9 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
         this.updateDraftValues(
             {
                 Id: dataReceived.context,
-                [dataReceived.fieldName]: (dataReceived.value) ? dataReceived.value : null
+                [dataReceived.fieldName]: dataReceived.value
+                    ? dataReceived.value
+                    : null
             },
             dataReceived.fieldName
         );
@@ -156,22 +158,29 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
             }
         });
 
-        
         if (hasNewDraftValueRecord) {
             this.draftValuesCustomDatatypes = [...copyDraftValuesCustomTypes];
-            this.draftValuesCustomDatatypes = this.mergeDraftValues([...this.draftValues, ...this.draftValuesCustomDatatypes]);
-            
+            this.draftValuesCustomDatatypes = this.mergeDraftValues([
+                ...this.draftValues,
+                ...this.draftValuesCustomDatatypes
+            ]);
         } else {
-            this.draftValuesCustomDatatypes = [...copyDraftValuesCustomTypes, updateItem];
+            this.draftValuesCustomDatatypes = [
+                ...copyDraftValuesCustomTypes,
+                updateItem
+            ];
         }
-        
-       this.draftValues = this.mergeDraftValues([...this.template.querySelector('c-extended-datatable').draftValues, ...this.draftValuesCustomDatatypes] );
+
+        this.draftValues = this.mergeDraftValues([
+            ...this.template.querySelector('c-extended-datatable').draftValues,
+            ...this.draftValuesCustomDatatypes
+        ]);
     }
 
     mergeDraftValues(arr) {
         return arr.reduce((merged, current) => {
-            let found = merged.find(val => val.Id === current.Id);
-            if(found) {
+            let found = merged.find((val) => val.Id === current.Id);
+            if (found) {
                 // merge the current object with the existing object
                 Object.assign(found, current);
             } else {
@@ -197,7 +206,10 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     }
 
     handleSave(event) {
-        const mergedValues = this.mergeDraftValues([...event.detail.draftValues, ...this.draftValuesCustomDatatypes] );
+        const mergedValues = this.mergeDraftValues([
+            ...event.detail.draftValues,
+            ...this.draftValuesCustomDatatypes
+        ]);
 
         const recordInputs = mergedValues.slice().map((draft) => {
             const fields = Object.assign({}, draft);
