@@ -1,0 +1,32 @@
+<!-- sldsValidatorIgnore -->
+<template>
+  <div class="lookupBlock" id="lookup">
+      <div if:true={showLookup} class="lookup-container" onmouseleave={onMouseLeaveLookup}>
+          <lightning-record-edit-form object-api-name={object}>
+              <lightning-input-field 
+                  class="slds-popover slds-popover_edit slds-popover__body"
+                  field-name={fieldName} 
+                  value={value} 
+                  variant={variant} 
+                  onchange={handleChange}>
+              </lightning-input-field>
+          </lightning-record-edit-form>
+      </div>
+      <div if:false={showLookup} class="slds-table_edit_container slds-is-relative">
+          <span class="slds-grid slds-grid_align-spread slds-cell-edit slds-align_absolute-center">
+              <span class="slds-truncate" title={lookupName}>
+                  <lightning-formatted-url value={lookupValue} label={lookupName} target={target}>
+                  </lightning-formatted-url>
+              </span>
+              <button data-id={context} class="slds-button slds-button_icon slds-cell-edit__button slds-m-left_x-small" tabindex="-1"
+                  title="Edit" onclick={handleClick}>
+                  <svg class="slds-button__icon slds-button__icon_hint slds-button__icon_lock slds-button__icon_small slds-button__icon_edit slds-icon slds-icon-text-default slds-icon_xx-small"
+                      aria-hidden="true">
+                      <use xlink:href="/_slds/icons/utility-sprite/svg/symbols.svg?cache=9.37.1#edit"></use>
+                  </svg>
+                  <span class="slds-assistive-text">Edit</span>
+              </button>
+          </span>
+      </div>
+  </div>
+</template>

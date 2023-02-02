@@ -34,6 +34,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     @api objectName;
     @api fields;
     @api relatedFieldAPI;
+    @api formulaImageFields;
     @api whereClause;
     @api limit;
     @api isCounterDisplayed;
@@ -59,7 +60,8 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     @track colsJson;
     @track searchTerm;
 
-    draftValues = [];
+    draftValues = []; // don't touch
+    draftValuesCustomDatatypes = [];
     labels = {
         recordUpdatedSuccessMessage,
         recordDeletedSuccessMessage
@@ -72,6 +74,9 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
         setPredefinedColumnJSON(this);
         if (this.actionButtons) {
             this.actionButtons = JSON.parse(this.actionButtons);
+        }
+        if (this.formulaImageFields) {
+            this.formulaImageFields = JSON.parse(this.formulaImageFields);
         }
         this.initialLimit = this.limit;
         this.buildSOQL();
@@ -102,6 +107,8 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
                     this.data = records;
                     this.iconName = this.iconName ? this.iconName : iconName;
                     this.totalRows = count;
+
+                    this.checkFormulaImageFields();
                 }
             })
             .catch((error) => {
@@ -111,37 +118,77 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
             });
     }
 
-    picklistChanged(event) {
+    // Formula fields with images (e.g. traffic lights) are of type 'string'
+    // Change the type to 'image' to use custom data type to correctly display actual images
+    checkFormulaImageFields() {
+        if (this.formulaImageFields) {
+            this.columns.forEach((col) => {
+                if (this.formulaImageFields.indexOf(col.fieldName) !== -1) {
+                    col.type = 'image';
+                }
+            });
+        }
+    }
+
+    customTypeChanged(event) {
         event.stopPropagation();
-        let dataRecieved = event.detail.data;
+        let dataReceived = event.detail.data;
         this.updateDraftValues(
             {
-                Id: dataRecieved.context,
-                [dataRecieved.fieldName]: dataRecieved.value
+                Id: dataReceived.context,
+                [dataReceived.fieldName]: dataReceived.value
+                    ? dataReceived.value
+                    : null
             },
-            dataRecieved.fieldName
+            dataReceived.fieldName
         );
     }
 
     updateDraftValues(updateItem, fieldName) {
-        let draftValueChanged = false;
-        let copyDraftValues = [...this.draftValues];
+        let hasNewDraftValueRecord = false;
+        let copyDraftValuesCustomTypes = [...this.draftValuesCustomDatatypes];
         //store changed value to do operations
         //on save. This will enable inline editing &
         //show standard cancel & save button
-        copyDraftValues.forEach((item) => {
+        copyDraftValuesCustomTypes.forEach((item) => {
             if (item.Id === updateItem.Id) {
                 item[fieldName] = updateItem[fieldName];
 
-                draftValueChanged = true;
+                hasNewDraftValueRecord = true;
             }
         });
 
-        if (draftValueChanged) {
-            this.draftValues = [...copyDraftValues];
+        if (hasNewDraftValueRecord) {
+            this.draftValuesCustomDatatypes = [...copyDraftValuesCustomTypes];
+            this.draftValuesCustomDatatypes = this.mergeDraftValues([
+                ...this.draftValues,
+                ...this.draftValuesCustomDatatypes
+            ]);
         } else {
-            this.draftValues = [...copyDraftValues, updateItem];
+            this.draftValuesCustomDatatypes = [
+                ...copyDraftValuesCustomTypes,
+                updateItem
+            ];
         }
+
+        this.draftValues = this.mergeDraftValues([
+            ...this.template.querySelector('c-extended-datatable').draftValues,
+            ...this.draftValuesCustomDatatypes
+        ]);
+    }
+
+    mergeDraftValues(arr) {
+        return arr.reduce((merged, current) => {
+            let found = merged.find((val) => val.Id === current.Id);
+            if (found) {
+                // merge the current object with the existing object
+                Object.assign(found, current);
+            } else {
+                // add the current object to the merged object
+                merged.push(current);
+            }
+            return merged;
+        }, []);
     }
 
     fetchRecords() {
@@ -159,10 +206,16 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     }
 
     handleSave(event) {
-        const recordInputs = event.detail.draftValues.slice().map((draft) => {
+        const mergedValues = this.mergeDraftValues([
+            ...event.detail.draftValues,
+            ...this.draftValuesCustomDatatypes
+        ]);
+
+        const recordInputs = mergedValues.slice().map((draft) => {
             const fields = Object.assign({}, draft);
             return { fields };
         });
+
         const promises = recordInputs.map((recordInput) =>
             updateRecord(recordInput)
         );
@@ -173,6 +226,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
                     this.labels.recordUpdatedSuccessMessage,
                     'success'
                 );
+                this.draftValuesCustomDatatypes = [];
                 this.draftValues = [];
                 this.fetchRecords();
             })

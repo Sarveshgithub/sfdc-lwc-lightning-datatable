@@ -64,7 +64,9 @@
                 sorted-direction={sortDirection}
                 onsort={handleSort}
                 sorted-by={sortBy}
-                onpicklistchanged={picklistChanged}
+                onpicklistchanged={customTypeChanged}
+                onlookupchanged={customTypeChanged}
+                ontextareachanged={customTypeChanged}
             >
             </c-extended-datatable>
         </template>

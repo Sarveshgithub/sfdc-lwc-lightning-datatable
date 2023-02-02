@@ -1,24 +1,24 @@
+<!-- sldsValidatorIgnore -->
 <template>
     <div>
-        <div if:true={showPicklist} onmouseleave={closePicklist}>
-            <lightning-combobox
-                name="picklist"
-                data-id="Picklist Combobox"
+        <div if:true={showTextarea}>
+            <lightning-textarea 
+                name="textarea" 
+                data-id="Textarea"
                 variant="label-hidden"
                 value={value}
-                options={options}
-                onchange={handleChange}
-            >
-            </lightning-combobox>
+                onblur={handleChange}
+                >
+            </lightning-textarea>
         </div>
 
         <div
-            if:false={showPicklist}
+            if:false={showTextarea}
             class="slds-table_edit_container slds-is-relative"
         >
             <span
                 class="slds-grid slds-grid_align-spread slds-cell-edit"
-                ondblclick={editPicklist}
+                ondblclick={editTextarea}
             >
                 <span class="slds-truncate" title={value}>{value}</span>
                 <button
@@ -27,7 +27,7 @@
                     tabindex="-1"
                     title="Edit"
                     name="tes"
-                    onclick={editPicklist}
+                    onclick={editTextarea}
                     data-name="myButtonName"
                 >
                     <svg
