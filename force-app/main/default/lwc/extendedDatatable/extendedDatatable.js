@@ -13,9 +13,20 @@ export default class ExtendedDatatable extends LightningDatatable {
         },
         //example JSON {"Account.Name":{"label":"Account Name","type":"lookup","typeAttributes":{"placeholder": "Choose Account","objectApiName": "Contact","fieldName": "AccountId","label": "Account","value": { "fieldName": "AccountId" },"context": { "fieldName": "Id" },"variant": "label-hidden","name": "Account","fields": ["Account.Name"],"target": "_self"} }}
         lookup: {
-          template: customLookup,
-          standardCellLayout: true,
-          typeAttributes: ['label', 'value', 'placeholder', 'fieldName', 'objectApiName', 'context', 'variant', 'name', 'fields', 'target']
+            template: customLookup,
+            standardCellLayout: true,
+            typeAttributes: [
+                'label',
+                'value',
+                'placeholder',
+                'fieldName',
+                'objectApiName',
+                'context',
+                'variant',
+                'name',
+                'fields',
+                'target'
+            ]
         },
         textarea: {
             template: textAreaTemplate,

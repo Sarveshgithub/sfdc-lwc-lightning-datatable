@@ -1,6 +1,6 @@
 /* eslint-disable @lwc/lwc/no-api-reassignments */
 import { LightningElement, api, wire } from 'lwc';
-import { getRecord } from "lightning/uiRecordApi";
+import { getRecord } from 'lightning/uiRecordApi';
 
 export default class DatatableLookup extends LightningElement {
     @api label;
@@ -25,25 +25,27 @@ export default class DatatableLookup extends LightningElement {
         this.value = event.detail.value[0];
         this.showLookup = this.value != null ? false : true;
         this.dispatchEvent(
-          new CustomEvent('lookupchanged', {
-              composed: true,
-              bubbles: true,
-              cancelable: true,
-              detail: {
-                  data: {
-                      context: this.context,
-                      fieldName: this.fieldName,
-                      value: this.value
-                  }
-              }
-          })
+            new CustomEvent('lookupchanged', {
+                composed: true,
+                bubbles: true,
+                cancelable: true,
+                detail: {
+                    data: {
+                        context: this.context,
+                        fieldName: this.fieldName,
+                        value: this.value
+                    }
+                }
+            })
         );
     }
 
     //loads the custom CSS for lookup custom type on lightning datatable
     renderedCallback() {
         if (!this.guid) {
-            this.guid = this.template.querySelector('.lookupBlock').getAttribute('id');
+            this.guid = this.template
+                .querySelector('.lookupBlock')
+                .getAttribute('id');
             /* Register the event with this component as event payload. 
             Used to identify the window click event and if click is outside the current context of lookup, 
             set the dom to show the text and not the combobox */
@@ -69,25 +71,38 @@ export default class DatatableLookup extends LightningElement {
         if (this.context !== context) {
             this.showLookup = false;
         }
-    }
+    };
 
     //Fire edit event on to allow to modify the lookup selection.
     handleClick(event) {
         event.preventDefault();
         event.stopPropagation();
         this.showLookup = true;
-        this.dispatchCustomEvent('edit', this.context, this.value, this.label, this.name);
+        this.dispatchCustomEvent(
+            'edit',
+            this.context,
+            this.value,
+            this.label,
+            this.name
+        );
     }
 
     dispatchCustomEvent(eventName, context, value, label, name) {
-        this.dispatchEvent(new CustomEvent(eventName, {
-            composed: true,
-            bubbles: true,
-            cancelable: true,
-            detail: {
-                data: { context: context, value: value, label: label, name: name }
-            }
-        }));
+        this.dispatchEvent(
+            new CustomEvent(eventName, {
+                composed: true,
+                bubbles: true,
+                cancelable: true,
+                detail: {
+                    data: {
+                        context: context,
+                        value: value,
+                        label: label,
+                        name: name
+                    }
+                }
+            })
+        );
     }
 
     onMouseLeaveLookup() {
@@ -99,19 +114,27 @@ export default class DatatableLookup extends LightningElement {
     autonumber, pass the informative field reference eg. CustomObject__c.CustomField__c*/
     getFieldName() {
         let fieldName = this.fields[0];
-        fieldName = fieldName.substring(fieldName.lastIndexOf('.') + 1, fieldName.length);
+        fieldName = fieldName.substring(
+            fieldName.lastIndexOf('.') + 1,
+            fieldName.length
+        );
         return fieldName;
     }
 
     //label of formatted url
     get lookupName() {
-        return (this.record.data != null) ?  this.record.data.fields[this.getFieldName()].value : '';
+        return this.record.data != null
+            ? this.record.data.fields[this.getFieldName()].value
+            : '';
     }
 
     //value of formatted url
     get lookupValue() {
-        if(!this.value) return '';
+        if (!this.value) return '';
 
-        return (this.record.data != null && this.record.data.fields[this.getFieldName()].value) ? '/' + this.value : '';
+        return this.record.data != null &&
+            this.record.data.fields[this.getFieldName()].value
+            ? '/' + this.value
+            : '';
     }
 }

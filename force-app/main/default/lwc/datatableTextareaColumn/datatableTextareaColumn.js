@@ -8,6 +8,7 @@ export default class DatatableTextarea extends LightningElement {
 
     handleChange(event) {
         //show the selected value on UI
+        // eslint-disable-next-line @lwc/lwc/no-api-reassignments
         this.value = event.target.value;
         //fire event to send context and selected value to the data table
         this.dispatchEvent(
