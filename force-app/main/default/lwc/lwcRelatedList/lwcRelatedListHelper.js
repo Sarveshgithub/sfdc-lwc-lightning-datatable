@@ -73,7 +73,6 @@ const setPredefinedColumnJSON = (cmp) => {
 
 //Helper function for formatData()
 const _formatData = (cols, records) => {
-    console.log('recs::', records, cols);
     records.forEach((e) => {
         // eslint-disable-next-line guard-for-in
         for (let key in e) {
