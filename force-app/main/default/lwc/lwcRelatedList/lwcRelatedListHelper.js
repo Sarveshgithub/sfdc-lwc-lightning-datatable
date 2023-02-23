@@ -78,11 +78,24 @@ const _formatData = (cols, records) => {
         for (let key in e) {
             if (typeof e[key] === 'object') {
                 for (let onLevel in e[key]) {
+                    const tempKey = key + '.' + onLevel;
+
                     if (Object.prototype.hasOwnProperty.call(e[key], onLevel)) {
-                        e[key + '.' + onLevel] = e[key][onLevel];
-                        key = key + '.' + onLevel;
-                    }
+                        e[tempKey] = e[key][onLevel];
+                        
+                        if (
+                            Object.prototype.hasOwnProperty.call(cols, tempKey) &&
+                            cols[tempKey].type === 'url' &&
+                            Object.prototype.hasOwnProperty.call(
+                                cols[tempKey],
+                                'typeAttributes'
+                            )
+                        ) {
+                            e[tempKey + '_url'] = '/' + e[cols[tempKey].typeAttributes.label.recId];
+                        }
+                    } 
                 }
+                continue;
             }
             if (
                 Object.prototype.hasOwnProperty.call(cols, key) &&
