@@ -345,6 +345,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
                     this.data = this.data
                         .slice(0, index)
                         .concat(this.data.slice(index + 1));
+                    this.totalRows = this.totalRows - 1;
                     this.showToast(
                         'Success',
                         this.labels.recordDeletedSuccessMessage,
