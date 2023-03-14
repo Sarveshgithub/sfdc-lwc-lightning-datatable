@@ -29,11 +29,18 @@
                     variant={actionButton.variant}
                     onclick={handleButtonAction}
                     data-name={actionButton.name}
-                    class="slds-m-left_x-small"
+                    class="slds-p-left_xx-small"
                     slot="actions"
                 >
                 </lightning-button>
             </template>
+            <lightning-button-icon
+                icon-name="utility:refresh"
+                alternative-text="Refresh"
+                onclick={init}
+                slot="actions"
+                class="slds-p-left_xx-small"
+            ></lightning-button-icon>
         </template>
 
         <!-- SEARCH BAR -->
