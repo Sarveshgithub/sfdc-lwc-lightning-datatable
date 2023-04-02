@@ -1,5 +1,6 @@
 public class IconUtils {
     public static String getIconName(String sObjectName) {
+        //test
         String iconName = '';
         List<Schema.DescribeTabSetResult> tabSetDesc = Schema.describeTabs();
         List<Schema.DescribeTabResult> tabDesc = new List<Schema.DescribeTabResult>();
