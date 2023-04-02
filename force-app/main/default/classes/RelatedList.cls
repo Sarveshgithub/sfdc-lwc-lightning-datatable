@@ -136,9 +136,10 @@ public with sharing class RelatedList {
                         }
                     }
 
+                    String type = mapPreCols.get(fieldName).type;
                     mapPreCols = checkOverride(mapPreCols, fieldName, mfields);
-                    //check if the field is of type picklist in config => if so allow edit
-                    if(mapPreCols.get(fieldName).type == 'picklist') {
+                    //picklist list are set to editable by default, non editable picklist field are defined in the readme
+                    if(String.isBlank(type) && mapPreCols.get(fieldName).type == 'picklist') {
                         RelatedList.initPicklistColumn(
                             mapPreCols,
                             objectName,
