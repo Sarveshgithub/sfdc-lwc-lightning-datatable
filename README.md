@@ -60,7 +60,7 @@ Custom Data types (the component extendedDatatable extends lightning:datatable) 
 `type` : This key is for the override column Type :
 - [supported_lwc_datatable_datatype](https://developer.salesforce.com/docs/component-library/bundle/lightning-datatable/documentation). ( Ex : `url` ). ( [Example : Related Field Customized](#related-field-customized) )
 - [lookup editable column](#lookup-editable-column)
-- [picklist editable column](#picklist-editable-column)
+- [picklist column](#picklist-column)
 
 `typeAttributes` : This key is used for custom columns :
 - a hyperlink to recordId (id of the current detail page) ( `recId` stored recordId Field ). ( [Example : Add Hyperlink for navigate to record](#example--add-hyperlink-for-navigate-to-record) )
@@ -93,21 +93,26 @@ Custom Data types (the component extendedDatatable extends lightning:datatable) 
 
 When overriding columns you can override different columns for the different uses cases :
 - [lookup editable column](#lookup-editable-column)
-- [picklist editable column](#picklist-editable-column)
+- [picklist column](#picklist-column)
 - [hyperlink to navigate to the record](#add-a-hyperlink-to-navigate-to-the-record)
 
 #### Related Field Customized
+
+Here the lookup will not be editable (to have editable lookup field see #lookup-editable-column)
 
 ```yml
 { "Account.Name": { "label": "Account Name", "type": "text" } }
 ```
 
-#### Picklist editable column
+#### Picklist column
 
+By default, you don't need to insert JSON for a picklist field, the field is editable by default. However, you might have the following use cases :
+
+**make the picklist field non-editable**
 ```yml
-    {"StageName" : {"type": "picklist"} }
+    {"StageName" : {"type": "text", "editable": false} }
 ```
-you can also override the label
+**you can also override the label**
 
 ```yml
     {"StageName" : {"label": "Step", "type": "picklist"} }
