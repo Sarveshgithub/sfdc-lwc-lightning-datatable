@@ -124,7 +124,7 @@ public with sharing class RelatedList {
                             mapPreCols.get(fieldName).typeAttributes = new TypeAttributeColumnLookup();
                         }
                         when 'picklist' {
-                            //set picklistValues for picklist type
+                            //check if the field is of type picklist in custom json => if so allow edit
                             RelatedList.initPicklistColumn(
                                 mapPreCols,
                                 objectName,
@@ -136,7 +136,16 @@ public with sharing class RelatedList {
                         }
                     }
 
+                    String type = mapPreCols.get(fieldName).type;
                     mapPreCols = checkOverride(mapPreCols, fieldName, mfields);
+                    //picklist list are set to editable by default, non editable picklist field are defined in the readme
+                    if(String.isBlank(type) && mapPreCols.get(fieldName).type == 'picklist') {
+                        RelatedList.initPicklistColumn(
+                            mapPreCols,
+                            objectName,
+                            fieldName
+                        );
+                    }
                 }
             }
             return new ListResults(
