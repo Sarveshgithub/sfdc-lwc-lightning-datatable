@@ -174,6 +174,20 @@ The example enables redirection to the account when we click on the account name
 }
 ```
 
+#### Column header with a salesforce object icon
+
+```yml
+{
+    "Account.Name": 
+        {
+            "label": "Account", 
+            "iconName": "standard:account"
+        } 
+}
+```
+
+![datatable](./datatable-with-icon-column-header.JPG)
+
 ## Buttons configuration
 
 To configure buttons(variant is the style of a button) see the documentation here :
