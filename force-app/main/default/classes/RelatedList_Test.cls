@@ -18,10 +18,10 @@ public with sharing class RelatedList_Test {
         RelatedList.ListResults results;
         System.runAs(testUser) {
             results = RelatedList.buildFieldJSON(
-                'SELECT ID,FirstName,Accountid From Contact',
+                'SELECT ID,FirstName,Accountid,Account.Name From Contact',
                 'Contact',
                 '',
-                '{ "AccountId":{"label":"Account Record Id"}} }'
+                '{ "AccountId":{"label":"Account Record Id"}, "Account.Name": { "label": "Account Name", "type": "text" }  }'
             );
         }
         System.assertEquals(results != null, true);
