@@ -18,6 +18,8 @@ public with sharing class RelatedList {
         @AuraEnabled
         public Boolean wrapText = false;
         @AuraEnabled
+        public String iconName;
+        @AuraEnabled
         public TypeAttributes typeAttributes = null;
     }
 
