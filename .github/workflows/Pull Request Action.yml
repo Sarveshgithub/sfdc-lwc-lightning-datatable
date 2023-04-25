@@ -17,7 +17,7 @@ jobs:
                           | length
                       ')
                   if ((prs > 0)); then
-                      echo "::set-output name=skip::true"
+                       echo "skip=true" >> "$GITHUB_OUTPUT"
                   fi
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
