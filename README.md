@@ -235,7 +235,7 @@ You can implement your logic for your new buttons based on button JSON (new, del
 
 Click Button to deploy source in Developer/Sandbox
 
-<a href="https://githubsfdeploy.herokuapp.com/app/githubdeploy/Sarveshgithub/sfdc-lwc-lightning-datatable">
+<a href="https://githubsfdeploy.herokuapp.com">
   <img alt="Deploy to Salesforce"
        src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
 </a>
