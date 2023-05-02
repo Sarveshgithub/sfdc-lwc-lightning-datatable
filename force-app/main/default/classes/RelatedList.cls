@@ -22,9 +22,10 @@ public with sharing class RelatedList {
                 //Check if values predefined in LWC
                 if (mapPreCols.containsKey(fieldName)) {
                     switch on mapPreCols.get(fieldName).type {
-                        when 'lookup' {
-                            mapPreCols.get(fieldName).typeAttributes = new TypeAttributes();
-                        }
+                        //Not Required - As typeAttributes already set in LWC
+                        // when 'lookup' {
+                        //     mapPreCols.get(fieldName).typeAttributes = new TypeAttributes();
+                        // }
                         when 'picklist' {
                             //check if the field is of type picklist in custom json => if so allow edit
                             RelatedList.initPicklistColumn(mapPreCols, objectName, fieldName);
