@@ -54,7 +54,7 @@
                 type="String"
                 default='["FormulaField__c"]'
                 label="Formula Image Field API Names"
-             />
+            />
       <property
                 name="showCheckboxes"
                 type="Boolean"
