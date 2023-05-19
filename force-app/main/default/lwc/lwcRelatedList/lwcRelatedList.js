@@ -102,7 +102,6 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
                         type: 'action',
                         typeAttributes: { rowActions: actions }
                     });
-
                     this.columns = colAc;
                     this.data = records;
                     this.iconName = this.iconName ? this.iconName : iconName;
