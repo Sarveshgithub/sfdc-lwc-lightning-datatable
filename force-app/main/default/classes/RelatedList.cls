@@ -192,7 +192,7 @@ public with sharing class RelatedList {
         @AuraEnabled
         public List<PicklistColumnUtils.PicklistValue> options;
         @AuraEnabled
-        public TypeAttributeContext context;
+        public TypeAttributeContext context = new TypeAttributeContext();
         @AuraEnabled
         public String fieldName;
 
