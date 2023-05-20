@@ -62,8 +62,7 @@ Custom Data types (the component extendedDatatable extends lightning:datatable) 
 - [lookup editable column](#lookup-editable-column)
 - [picklist column](#picklist-column)
 
-`typeAttributes` : This key is used for custom columns :
-- a hyperlink to recordId (id of the current detail page) ( `recId` stored recordId Field ). ( [Example : Add Hyperlink for navigate to record](#example--add-hyperlink-for-navigate-to-record) )
+`typeAttributes` : This key is used for customized columns and records :
 - [lookup editable column](#lookup-editable-column)
 
 ### Example : Override Column Label
