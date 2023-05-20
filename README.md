@@ -62,8 +62,7 @@ Custom Data types (the component extendedDatatable extends lightning:datatable) 
 - [lookup editable column](#lookup-editable-column)
 - [picklist column](#picklist-column)
 
-`typeAttributes` : This key is used for custom columns :
-- a hyperlink to recordId (id of the current detail page) ( `recId` stored recordId Field ). ( [Example : Add Hyperlink for navigate to record](#example--add-hyperlink-for-navigate-to-record) )
+`typeAttributes` : This key is used for customized columns and records :
 - [lookup editable column](#lookup-editable-column)
 
 ### Example : Override Column Label
@@ -94,7 +93,6 @@ Custom Data types (the component extendedDatatable extends lightning:datatable) 
 When overriding columns you can override different columns for the different uses cases :
 - [lookup editable column](#lookup-editable-column)
 - [picklist column](#picklist-column)
-- [hyperlink to navigate to the record](#add-a-hyperlink-to-navigate-to-the-record)
 
 #### Related Field Customized
 
@@ -147,32 +145,6 @@ By default, you don't need to insert JSON for a picklist field, the field is edi
 `fieldName` and `value.fieldName` : field API name that links the record to the parent record
 
 `fields` : what is displayed in the column (here the name of the account)
-
-#### Add a hyperlink to navigate to the record
-
-
-**Use cases :**
-- non-editable lookup redirection to the record page
-- redirection when a field is clicked (ex: a click on the firstname or lastname of a contact redirects to the record page)
-
-The example enables redirection to the account when we click on the account name of a contact (the field Account.Name is included in columns API name in the example).
-
-**When used for a lookup the field is not editable (to have an editable lookup field see the [section](#lookup-editable-column) above for editable lookup)**
-
-```yml
-{
-    "Account.Name":
-        {
-            "label": "Account Name",
-            "type": "url",
-            "typeAttributes":
-                {
-                    "label":
-                        { "fieldName": "Account.Name", "recId": "AccountId" }
-                }
-        }
-}
-```
 
 #### Column header with a salesforce object icon
 
