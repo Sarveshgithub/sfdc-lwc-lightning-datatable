@@ -9,8 +9,10 @@ public class IconUtils {
             tabDesc.addAll(tsr.getTabs());
         }
         for (Schema.DescribeTabResult tr : tabDesc) {
-            iconName = 'standard:' + sObjectName.toLowerCase();
-            break;
+            if (sObjectName == tr.getSobjectName() && !tr.isCustom()) {
+                iconName = 'standard:' + sObjectName.toLowerCase();
+                break;
+            }
         }
         return iconName;
     }
