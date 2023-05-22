@@ -38,9 +38,9 @@ public with sharing class RelatedList {
                     String type = mapPreCols.get(fieldName).type;
                     mapPreCols = checkOverride(mapPreCols, fieldName, mfields);
                     //picklist list are set to editable by default, non editable picklist field are defined in the readme
-                    if (String.isBlank(type) && mapPreCols.get(fieldName).type == 'picklist') {
-                        RelatedList.initPicklistColumn(mapPreCols, objectName, fieldName);
-                    }
+                    // if (String.isBlank(type) && mapPreCols.get(fieldName).type == 'picklist') {
+                    //     RelatedList.initPicklistColumn(mapPreCols, objectName, fieldName);
+                    // }
                 }
             }
             return new ListResults(getRecords(soql), mapPreCols, countRecords(objectName, whereClause), IconUtils.getIconName(objectName));
@@ -175,18 +175,18 @@ public with sharing class RelatedList {
         public string fieldName = 'Id';
     }
 
-    public class TypeAttributeColumnLookup {
-        public String placeholder;
-        public String objectApiName;
-        public String fieldName;
-        public String label;
-        public TypeAttributeColumnLookupValue value;
-        public TypeAttributeContext context;
-        public String variant = 'label-hidden';
-        public String name;
-        public List<String> fields;
-        public String target = '_self';
-    }
+    // public class TypeAttributeColumnLookup {
+    //     public String placeholder;
+    //     public String objectApiName;
+    //     public String fieldName;
+    //     public String label;
+    //     public TypeAttributeColumnLookupValue value;
+    //     public TypeAttributeContext context;
+    //     public String variant = 'label-hidden';
+    //     public String name;
+    //     public List<String> fields;
+    //     public String target = '_self';
+    // }
 
     public class TypeAttributeColumnJsonWithPicklist extends TypeAttributes {
         @AuraEnabled

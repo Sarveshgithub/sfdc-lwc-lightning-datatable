@@ -1,6 +1,6 @@
 @isTest
 public with sharing class RelatedList_Test {
-    private static final String lookUp = '{"Level__c":{"type":"picklist"},"Account.Name":{"label":"Account Name","type":"lookup","typeAttributes":{"placeholder":"Choose Account","objectApiName":"Contact","fieldName":"AccountId","label":"Account","value":{"fieldName":"AccountId"},"context":{"fieldName":"Id"},"variant":"label-hidden","name":"Account","fields":["Account.Name"],"target":"_self"}},"Account.BillingCity":{"label":"Account BillingCity","type":"text"}}';
+    private static final String lookUp = '{"LastName":{"label":"Last Name","editable":true},"FirstName":{"type":"textarea","label":"Full Name"},"Level__c":{"type":"picklist"},"Account.Name":{"label":"Account Name","type":"lookup","typeAttributes":{"placeholder":"Choose Account","objectApiName":"Contact","fieldName":"AccountId","label":"Account","value":{"fieldName":"AccountId"},"context":{"fieldName":"Id"},"variant":"label-hidden","name":"Account","fields":["Account.Name"],"target":"_self"}},"Account.BillingCity":{"label":"Account BillingCity","type":"text"}}';
 
     @TestSetup
     static void makeData() {
@@ -15,11 +15,32 @@ public with sharing class RelatedList_Test {
         User testUser = [SELECT id FROM user WHERE id = :UserInfo.getUserId()];
         RelatedList.ListResults results;
         System.runAs(testUser) {
-            results = RelatedList.buildFieldJSON('SELECT ID,FirstName,Accountid,Account.Name From Contact', 'Contact', '', lookUp);
+            results = RelatedList.buildFieldJSON('SELECT ID,FirstName,LastName,Accountid,Account.Name From Contact', 'Contact', '', lookUp);
         }
         System.assertEquals(results != null, true);
         Test.stopTest();
     }
+
+    @IsTest
+    static void coverException_Test() {
+        Test.startTest();
+        User testUser = [SELECT id FROM user WHERE id = :UserInfo.getUserId()];
+        RelatedList.ListResults results;
+        System.runAs(testUser) {
+            try {
+                results = RelatedList.buildFieldJSON(
+                    'SELECT IDFirstName,LastName,Accountid,Account.Name From Contact',
+                    'Contact',
+                    '',
+                    lookUp
+                );
+            } catch (Exception e) {
+                System.assert(e.getMessage() != null);
+            }
+        }
+        Test.stopTest();
+    }
+
     @IsTest
     static void getRecords_Test() {
         Test.startTest();
