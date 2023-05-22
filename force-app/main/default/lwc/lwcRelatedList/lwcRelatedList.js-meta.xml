@@ -13,14 +13,42 @@
   </targets>
   <!-- Configuring the design attributes -->
   <targetConfigs>
-    <targetConfigs>
-      <targetConfig targets="lightningCommunity__Default">
-        <property name="recordId" type="String" />
-      </targetConfig>
-    </targetConfigs>
-    <targetConfig
-            targets="lightning__RecordPage, lightning__HomePage, lightning__AppPage, lightningCommunity__Default, lightning__FlowScreen"
-        >
+    <targetConfig targets="lightning__RecordPage, lightning__HomePage, lightning__AppPage, lightning__FlowScreen">
+      <property name="iconName" type="String" label="Enter Icon Name" />
+      <property name="title" type="String" required="true" label="Enter Title" default="LWC Table" />
+      <property name="objectName" type="String" required="true" label="Enter Object API Name" default="Contact" />
+      <property
+                name="fields"
+                type="String"
+                required="true"
+                label="Enter Field API Name by comma seprated"
+                default="FirstName,LastName,AccountId,CreatedDate,Account.Name"
+            />
+      <property
+                name="predefinedCol"
+                type="String"
+                label="Enter Customized Field JSON ( This is Mandatory for Related Field )"
+                default='{"Account.Name":{"label":"Account Name","type":"lookup","typeAttributes":{"placeholder":"Choose Account","objectApiName":"Contact","fieldName":"AccountId","label":"Account","value":{"fieldName":"AccountId"},"context":{"fieldName":"Id"},"variant":"label-hidden","name":"Account","fields":["Account.Name"],"target":"_self"}}}'
+            />
+      <property name="relatedFieldAPI" type="String" label="Enter Related field API Name" />
+      <property name="formulaImageFields" type="String" default='["FormulaField__c"]' label="Formula Image Field API Names" />
+      <property name="showCheckboxes" type="Boolean" default="true" label="Hide/Unhide checkbox column" />
+      <property name="whereClause" type="String" label="Enter WHERE clause" />
+      <property name="orderBy" type="String" label="Order by" />
+      <property name="limit" type="Integer" label="Enter limit" default="10" />
+      <property name="isCounterDisplayed" type="Boolean" label="Show the number of record" />
+      <property name="showViewAll" type="Boolean" label="Show the view all / collapse buttons" />
+      <property name="hasPagination" type="Boolean" label="Enable/Disable pagination" default="false" />
+      <property
+                name="actionButtons"
+                type="String"
+                default='[{"name": "New","label": "New","variant": "neutral"}]'
+                label="Enter Action Buttons JSON"
+            />
+      <property name="hasSearchBar" type="Boolean" label="Enable/Disable search" default="true" />
+    </targetConfig>
+    <targetConfig targets="lightningCommunity__Default">
+      <property name="recordId" type="String" />
       <property name="iconName" type="String" label="Enter Icon Name" />
       <property name="title" type="String" required="true" label="Enter Title" default="LWC Table" />
       <property name="objectName" type="String" required="true" label="Enter Object API Name" default="Contact" />
