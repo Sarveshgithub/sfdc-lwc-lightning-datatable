@@ -174,20 +174,7 @@ public with sharing class RelatedList {
         @AuraEnabled
         public string fieldName = 'Id';
     }
-
-    // public class TypeAttributeColumnLookup {
-    //     public String placeholder;
-    //     public String objectApiName;
-    //     public String fieldName;
-    //     public String label;
-    //     public TypeAttributeColumnLookupValue value;
-    //     public TypeAttributeContext context;
-    //     public String variant = 'label-hidden';
-    //     public String name;
-    //     public List<String> fields;
-    //     public String target = '_self';
-    // }
-
+    
     public class TypeAttributeColumnJsonWithPicklist extends TypeAttributes {
         @AuraEnabled
         public List<PicklistColumnUtils.PicklistValue> options;
