@@ -1,27 +1,16 @@
 <template>
     <!-- Error block -->
     <template if:true={error}>
-        <div
-            class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error"
-            role="alert"
-        >
+        <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert">
             <span class="slds-assistive-text">error</span>
             <p>{error}</p>
         </div>
     </template>
     <!-- Main content -->
-    <lightning-card
-        variant="Narrow"
-        title={titleFormatted}
-        icon-name={iconName}
-    >
+    <lightning-card variant="Narrow" title={titleFormatted} icon-name={iconName}>
         <!-- custom action buttons for list, by default new is displayed -->
         <template if:true={actionButtons}>
-            <template
-                for:each={actionButtons}
-                for:item="actionButton"
-                for:index="index"
-            >
+            <template for:each={actionButtons} for:item="actionButton" for:index="index">
                 <lightning-button
                     key={actionButton.label}
                     label={actionButton.label}
@@ -44,17 +33,21 @@
         </template>
 
         <!-- SEARCH BAR -->
-        <div
-            class="slds-p-around_small"
-            if:true={hasSearchBar}
-            onkeyup={onSearchChange}
-        >
-            <lightning-input
-                name="enter-search"
-                label="Search"
-                type="search"
-            ></lightning-input>
-        </div>
+        <lightning-layout>
+            <lightning-layout-item flexibility="auto" padding="around-small">
+                <div if:true={hasSearchBar} onkeyup={onSearchChange}>
+                    <lightning-input name="enter-search" label="Search" type="search"></lightning-input>
+                </div>
+            </lightning-layout-item>
+            <lightning-layout-item flexibility="auto" padding="around-small">
+                <div if:true={islookupFilter}>
+                    <c-datatable-lookup-filter
+                        config={lookupFilterConfigJSON}
+                        onlookupfilter={handleLookupFilter}
+                    ></c-datatable-lookup-filter>
+                </div>
+            </lightning-layout-item>
+        </lightning-layout>
 
         <!-- Data table  -->
         <template if:true={data}>
@@ -74,6 +67,7 @@
                 onpicklistchanged={customTypeChanged}
                 onlookupchanged={customTypeChanged}
                 ontextareachanged={customTypeChanged}
+                is-loading={isloading}
             >
             </c-extended-datatable>
         </template>
@@ -115,22 +109,10 @@
         </div>
 
         <footer class="slds-card__footer" if:true={hasToShowViewAll}>
-            <lightning-button
-                variant="base"
-                label="View all"
-                title="View all"
-                onclick={showAllRecords}
-            >
-            </lightning-button>
+            <lightning-button variant="base" label="View all" title="View all" onclick={showAllRecords}> </lightning-button>
         </footer>
         <footer class="slds-card__footer" if:true={showCollapse}>
-            <lightning-button
-                variant="base"
-                label="Collapse"
-                title="Collapse"
-                onclick={showInitialRecordsWithLimit}
-            >
-            </lightning-button>
+            <lightning-button variant="base" label="Collapse" title="Collapse" onclick={showInitialRecordsWithLimit}> </lightning-button>
         </footer>
     </lightning-card>
 </template>
