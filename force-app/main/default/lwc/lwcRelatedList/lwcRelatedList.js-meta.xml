@@ -38,7 +38,7 @@
                 name="predefinedCol"
                 type="String"
                 label="Enter Customized Field JSON ( This is Mandatory for Related Field )"
-                default='{"Account.Name":{"label":"Account Name","type":"lookup","typeAttributes":{"placeholder":"Choose Account","objectApiName":"Contact","fieldName":"AccountId","label":"Account","value":{"fieldName":"AccountId"},"context":{"fieldName":"Id"},"variant":"label-hidden","name":"Account","fields":["Account.Name"],"target":"_self"}}}'
+                default='{"Account.Name":{"label":"Account Name","type":"url","typeAttributes":{"label": { "fieldName": "Account.Name" ,"recId": "AccountId"}}},"AccountId":{"label":"Ac Id","type":"Id"}}'
             />
       <property name="relatedFieldAPI" type="String" label="Enter Related field API Name" />
       <property name="formulaImageFields" type="String" default='["FormulaField__c"]' label="Formula Image Field API Names" />
