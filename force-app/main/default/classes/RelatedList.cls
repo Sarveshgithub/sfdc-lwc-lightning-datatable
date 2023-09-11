@@ -115,8 +115,10 @@ public with sharing class RelatedList {
             Map<String, Schema.SObjectField> mfields = objType.getDescribe()
                 .fields.getMap();
             List<ColumnJson> lstOfColumns = new List<ColumnJson>();
+            Boolean hasAggregateFunctions = false;
+
             for (String fieldName : mapPreCols.keySet()) {
-                //continue;
+                System.debug('fieldName : '+fieldName);
                 if (fieldName.contains('.')) {
                     continue;
                 }
@@ -140,6 +142,14 @@ public with sharing class RelatedList {
                     }
 
                     String type = mapPreCols.get(fieldName).type;
+
+                    if(isFieldAggregateFunction(fieldName) ) {
+                        hasAggregateFunctions = true;
+                        handleAggregateFunctionsFields(mapPreCols, fieldName, mfields);
+
+                        continue;
+                    }
+
                     mapPreCols = checkOverride(mapPreCols, fieldName, mfields);
                     //picklist list are set to editable by default, non editable picklist field are defined in the readme
                     if(String.isBlank(type) && mapPreCols.get(fieldName).type == 'picklist') {
@@ -151,6 +161,14 @@ public with sharing class RelatedList {
                     }
                 }
             }
+
+           if(hasAggregateFunctions) {
+                soql = soql.replace('SELECT Id, ', 'SELECT ');
+                soql = soql.replace(' WITH SECURITY_ENFORCED ', ''); 
+                mapPreCols.remove('Id');
+           }
+            
+
             return new ListResults(
                 getRecords(soql),
                 mapPreCols,
@@ -160,6 +178,40 @@ public with sharing class RelatedList {
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
+    }
+
+    public static void handleAggregateFunctionsFields(
+        Map<String, ColumnJson> mapPreCols,
+        String fieldName,
+        Map<String, Schema.SObjectField> mfields
+    ) {
+        String fieldWithoutAggregate = fieldName;
+        //1. replace aggregate function by the field in beetween (ex : Count(Id) becomes Id )
+        fieldWithoutAggregate = fieldWithoutAggregate.replace('Count(', '');
+        fieldWithoutAggregate = fieldWithoutAggregate.replace(')', '');
+        Boolean hasFieldBeenAdded = false;
+
+        if(!mapPreCols.containsKey(fieldWithoutAggregate) ) {
+            mapPreCols.put(fieldWithoutAggregate, new ColumnJson());
+            hasFieldBeenAdded = true;
+        }
+
+        mapPreCols = checkOverride(mapPreCols, fieldWithoutAggregate, mfields);
+        mapPreCols.put(fieldName, mapPreCols.get(fieldWithoutAggregate) );
+        
+        //2. we remove the field without aggregates if it was added solely to construct the configuration for aggregate results
+        if(hasFieldBeenAdded) {
+            mapPreCols.remove(fieldWithoutAggregate);
+        }
+
+        //aggregate result are never editable
+        mapPreCols.get(fieldName).editable = false;
+    }
+
+    public static Boolean isFieldAggregateFunction(String input) {
+        // Define a regular expression pattern for the desired formats
+        String regex = '^(?i)(count\\(|count_distinct\\(|max\\(|avg\\(|min\\(|sum\\()\\w+(__c)?\\)$';
+        return Pattern.matches(regex, input);
     }
 
     public static void initPicklistColumn(
