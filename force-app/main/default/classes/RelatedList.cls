@@ -1,4 +1,6 @@
 public with sharing class RelatedList {
+    //used for aggregate results without aliases
+    private static Integer counterExpressionAggregate = 0;
     private static Map<String, String> mapFieldToLwcDataType = new Map<String, String>{
         'datetime' => 'date',
         'date' => 'date-local',
@@ -186,10 +188,8 @@ public with sharing class RelatedList {
         String fieldName,
         Map<String, Schema.SObjectField> mfields
     ) {
-        String alias = fieldName.split('\\)')?.get(1);
-        if(String.isNotEmpty(alias) ) {
-            alias = fieldName;
-        }
+        String[] fieldElements = fieldName.split('\\)');
+        String alias = (fieldElements.size() == 2) ? fieldElements.get(1) : ('expr'+counterExpressionAggregate++);
 
         if(!mapPreCols.containsKey(alias) ) {
             mapPreCols.put(alias, new ColumnJson());
@@ -202,12 +202,13 @@ public with sharing class RelatedList {
         mapPreCols.get(alias).editable = false;
         mapPreCols.get(alias).sortable = false;
 
-        //remove the key containing the aggregate function, we only keep the key with the alias
+        //remove the key containing the aggregate function, we only keep the key with the alias if there is one
         mapPreCols.remove(fieldName);
     }
 
     public static Boolean isFieldAggregateFunction(String input) {
          // Define a regular expression pattern for the desired formats
+        input = input?.toLowercase();
         String regex = '^(?i)(count\\(|count_distinct\\(|max\\(|avg\\(|min\\(|sum\\()\\w+(__c)?\\).*?$';
         
         Pattern pattern = Pattern.compile(regex);
