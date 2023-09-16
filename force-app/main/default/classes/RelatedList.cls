@@ -89,6 +89,7 @@ public with sharing class RelatedList {
             Integer count,
             String iconName
         ) {
+            System.debug('records '+records);
             this.records = records;
             this.cols = cols;
             this.count = count;
@@ -119,7 +120,7 @@ public with sharing class RelatedList {
 
             for (String fieldName : mapPreCols.keySet()) {
                 System.debug('fieldName : '+fieldName);
-                if (fieldName.contains('.')) {
+                if (fieldName.contains('.') || fieldName == 'Id') {
                     continue;
                 }
                 //Check if values predefined in LWC
@@ -141,8 +142,6 @@ public with sharing class RelatedList {
                         }
                     }
 
-                    String type = mapPreCols.get(fieldName).type;
-
                     if(isFieldAggregateFunction(fieldName) ) {
                         hasAggregateFunctions = true;
                         handleAggregateFunctionsFields(mapPreCols, fieldName, mfields);
@@ -151,6 +150,8 @@ public with sharing class RelatedList {
                     }
 
                     mapPreCols = checkOverride(mapPreCols, fieldName, mfields);
+
+                    String type = mapPreCols.get(fieldName).type;
                     //picklist list are set to editable by default, non editable picklist field are defined in the readme
                     if(String.isBlank(type) && mapPreCols.get(fieldName).type == 'picklist') {
                         RelatedList.initPicklistColumn(
@@ -185,33 +186,34 @@ public with sharing class RelatedList {
         String fieldName,
         Map<String, Schema.SObjectField> mfields
     ) {
-        String fieldWithoutAggregate = fieldName;
-        //1. replace aggregate function by the field in beetween (ex : Count(Id) becomes Id )
-        fieldWithoutAggregate = fieldWithoutAggregate.replace('Count(', '');
-        fieldWithoutAggregate = fieldWithoutAggregate.replace(')', '');
-        Boolean hasFieldBeenAdded = false;
-
-        if(!mapPreCols.containsKey(fieldWithoutAggregate) ) {
-            mapPreCols.put(fieldWithoutAggregate, new ColumnJson());
-            hasFieldBeenAdded = true;
+        String alias = fieldName.split('\\)')?.get(1);
+        if(String.isNotEmpty(alias) ) {
+            alias = fieldName;
         }
 
-        mapPreCols = checkOverride(mapPreCols, fieldWithoutAggregate, mfields);
-        mapPreCols.put(fieldName, mapPreCols.get(fieldWithoutAggregate) );
-        
-        //2. we remove the field without aggregates if it was added solely to construct the configuration for aggregate results
-        if(hasFieldBeenAdded) {
-            mapPreCols.remove(fieldWithoutAggregate);
+        if(!mapPreCols.containsKey(alias) ) {
+            mapPreCols.put(alias, new ColumnJson());
         }
 
         //aggregate result are never editable
-        mapPreCols.get(fieldName).editable = false;
+        mapPreCols.get(alias).type = 'text';
+        mapPreCols.get(alias).label = alias;
+        mapPreCols.get(alias).fieldName = alias;
+        mapPreCols.get(alias).editable = false;
+        mapPreCols.get(alias).sortable = false;
+
+        //remove the key containing the aggregate function, we only keep the key with the alias
+        mapPreCols.remove(fieldName);
     }
 
     public static Boolean isFieldAggregateFunction(String input) {
-        // Define a regular expression pattern for the desired formats
-        String regex = '^(?i)(count\\(|count_distinct\\(|max\\(|avg\\(|min\\(|sum\\()\\w+(__c)?\\)$';
-        return Pattern.matches(regex, input);
+         // Define a regular expression pattern for the desired formats
+        String regex = '^(?i)(count\\(|count_distinct\\(|max\\(|avg\\(|min\\(|sum\\()\\w+(__c)?\\).*?$';
+        
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
+        
+        return matcher.find();
     }
 
     public static void initPicklistColumn(
