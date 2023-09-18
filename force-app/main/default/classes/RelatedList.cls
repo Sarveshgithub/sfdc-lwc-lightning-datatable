@@ -122,7 +122,7 @@ public with sharing class RelatedList {
 
             for (String fieldName : mapPreCols.keySet()) {
                 System.debug('fieldName : '+fieldName);
-                if (fieldName.contains('.') || fieldName == 'Id') {
+                if (fieldName.contains('.')) {
                     continue;
                 }
                 //Check if values predefined in LWC

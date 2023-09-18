@@ -44,6 +44,7 @@
       <property name="formulaImageFields" type="String" default='["FormulaField__c"]' label="Formula Image Field API Names" />
       <property name="showCheckboxes" type="Boolean" default="true" label="Hide/Unhide checkbox column" />
       <property name="whereClause" type="String" label="Enter WHERE clause" />
+      <property name="groupBy" type="String" label="Enter GROUP BY clause" />
       <property name="orderBy" type="String" label="Order by" />
       <property name="limit" type="Integer" label="Enter limit" default="10" />
       <property name="isCounterDisplayed" type="Boolean" label="Show the number of record" />

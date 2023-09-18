@@ -12,7 +12,12 @@ import getRecords from '@salesforce/apex/RelatedList.getRecords';
 import onSearch from '@salesforce/apex/RelatedList.onSearch';
 import buildFieldJSON from '@salesforce/apex/RelatedList.buildFieldJSON';
 import { updateRecord } from 'lightning/uiRecordApi';
-import { configLocal, setPredefinedColumnJSON, formatData, _formatData } from './lwcRelatedListHelper';
+import {
+    configLocal,
+    setPredefinedColumnJSON,
+    formatData,
+    _formatData
+} from './lwcRelatedListHelper';
 import recordUpdatedSuccessMessage from '@salesforce/label/c.recordUpdatedSuccessMessage';
 import recordDeletedSuccessMessage from '@salesforce/label/c.recordDeletedSuccessMessage';
 const actions = [
@@ -31,6 +36,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     @api relatedFieldAPI;
     @api formulaImageFields;
     @api whereClause;
+    @api groupBy;
     @api limit;
     @api isCounterDisplayed;
     @api actionButtons; //buttons for the list
@@ -68,7 +74,8 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
 
     // Do init funtion
     connectedCallback() {
-        this.islookupFilter = this.lookupFilterConfigJSON && this.islookupFilter;
+        this.islookupFilter =
+            this.lookupFilterConfigJSON && this.islookupFilter;
         //This function can used for local development config, pass 'true' for config
         configLocal(this, false);
         setPredefinedColumnJSON(this);
@@ -92,7 +99,10 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
         })
             .then((data) => {
                 if (data) {
-                    const { records, cols, count, iconName } = formatData(this, data);
+                    const { records, cols, count, iconName } = formatData(
+                        this,
+                        data
+                    );
                     this.colsJson = cols;
                     const colAc = Object.values(cols);
                     colAc.push({
@@ -132,7 +142,9 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
         this.updateDraftValues(
             {
                 Id: dataReceived.context,
-                [dataReceived.fieldName]: dataReceived.value ? dataReceived.value : null
+                [dataReceived.fieldName]: dataReceived.value
+                    ? dataReceived.value
+                    : null
             },
             dataReceived.fieldName
         );
@@ -154,9 +166,15 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
 
         if (hasNewDraftValueRecord) {
             this.draftValuesCustomDatatypes = [...copyDraftValuesCustomTypes];
-            this.draftValuesCustomDatatypes = this.mergeDraftValues([...this.draftValues, ...this.draftValuesCustomDatatypes]);
+            this.draftValuesCustomDatatypes = this.mergeDraftValues([
+                ...this.draftValues,
+                ...this.draftValuesCustomDatatypes
+            ]);
         } else {
-            this.draftValuesCustomDatatypes = [...copyDraftValuesCustomTypes, updateItem];
+            this.draftValuesCustomDatatypes = [
+                ...copyDraftValuesCustomTypes,
+                updateItem
+            ];
         }
 
         this.draftValues = this.mergeDraftValues([
@@ -197,17 +215,26 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     }
 
     handleSave(event) {
-        const mergedValues = this.mergeDraftValues([...event.detail.draftValues, ...this.draftValuesCustomDatatypes]);
+        const mergedValues = this.mergeDraftValues([
+            ...event.detail.draftValues,
+            ...this.draftValuesCustomDatatypes
+        ]);
 
         const recordInputs = mergedValues.slice().map((draft) => {
             const fields = Object.assign({}, draft);
             return { fields };
         });
 
-        const promises = recordInputs.map((recordInput) => updateRecord(recordInput));
+        const promises = recordInputs.map((recordInput) =>
+            updateRecord(recordInput)
+        );
         Promise.all(promises)
             .then(() => {
-                this.showToast('Success', this.labels.recordUpdatedSuccessMessage, 'success');
+                this.showToast(
+                    'Success',
+                    this.labels.recordUpdatedSuccessMessage,
+                    'success'
+                );
                 this.draftValuesCustomDatatypes = [];
                 this.draftValues = [];
                 this.fetchRecords();
@@ -248,7 +275,9 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     }
 
     handleLookupFilter(event) {
-        this.lookupFilterCondition = event.detail.condition ? event.detail.condition : null;
+        this.lookupFilterCondition = event.detail.condition
+            ? event.detail.condition
+            : null;
         this.buildSOQL();
         this.fetchRecords();
     }
@@ -292,11 +321,16 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     }
 
     get isDisablePrev() {
-        return this.offSet === 0 || (this.totalRows === 0) | this.searchTerm ? true : false;
+        return this.offSet === 0 || (this.totalRows === 0) | this.searchTerm
+            ? true
+            : false;
     }
 
     get isDisableNext() {
-        return this.offSet + this.limit >= this.totalRows || this.totalRows === 0 || this.searchTerm || !this.limit
+        return this.offSet + this.limit >= this.totalRows ||
+            this.totalRows === 0 ||
+            this.searchTerm ||
+            !this.limit
             ? true
             : this.totalRows <= this.limit
             ? false
@@ -325,12 +359,22 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
         if (index !== -1) {
             deleteRecord(id)
                 .then(() => {
-                    this.data = this.data.slice(0, index).concat(this.data.slice(index + 1));
+                    this.data = this.data
+                        .slice(0, index)
+                        .concat(this.data.slice(index + 1));
                     this.totalRows = this.totalRows - 1;
-                    this.showToast('Success', this.labels.recordDeletedSuccessMessage, 'success');
+                    this.showToast(
+                        'Success',
+                        this.labels.recordDeletedSuccessMessage,
+                        'success'
+                    );
                 })
                 .catch((error) => {
-                    this.showToast('Error deleting record', error.body.message, 'error');
+                    this.showToast(
+                        'Error deleting record',
+                        error.body.message,
+                        'error'
+                    );
                 });
         }
     }
@@ -376,6 +420,10 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
         soql += this.appendWhere();
         soql += ' WITH SECURITY_ENFORCED ';
 
+        if (this.groupBy) {
+            soql += ` GROUP BY ${this.groupBy} `;
+        }
+
         //if we filter on a column then we ignore the ORDER BY defined in the configuration
         if (this.orderBy && !this.sortBy) {
             soql += ` ORDER BY ${this.orderBy}`;
@@ -398,7 +446,8 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
 
     appendWhere() {
         let where = [];
-        if (this.relatedFieldAPI) where.push(`${this.relatedFieldAPI} = '${this.recordId}'`);
+        if (this.relatedFieldAPI)
+            where.push(`${this.relatedFieldAPI} = '${this.recordId}'`);
         if (this.whereClause) where.push(this.whereClause);
         if (this.lookupFilterCondition) where.push(this.lookupFilterCondition);
         return where.length > 0 ? ` WHERE ${where.join(' AND ')} ` : '';
@@ -423,15 +472,21 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     }
 
     get titleFormatted() {
-        return this.isCounterDisplayed ? this.title + ` (${this.totalRows})` : this.title;
+        return this.isCounterDisplayed
+            ? this.title + ` (${this.totalRows})`
+            : this.title;
     }
 
     handleRowSelection(event) {
-        this.selectedRows = JSON.parse(JSON.stringify(event.detail.selectedRows));
+        this.selectedRows = JSON.parse(
+            JSON.stringify(event.detail.selectedRows)
+        );
     }
 
     get hasToShowViewAll() {
-        return this.limit < this.totalRows && this.limit > 0 && this.showViewAll;
+        return (
+            this.limit < this.totalRows && this.limit > 0 && this.showViewAll
+        );
     }
 
     showAllRecords() {
@@ -477,7 +532,11 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
                     this.data = _formatData(this.colsJson, data);
                 })
                 .catch((error) => {
-                    this.showToast('Error on search ', error.body.message, 'error');
+                    this.showToast(
+                        'Error on search ',
+                        error.body.message,
+                        'error'
+                    );
                 });
         }
     }
