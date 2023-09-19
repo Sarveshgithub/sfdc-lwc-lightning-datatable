@@ -1,4 +1,6 @@
 public with sharing class RelatedList {
+    //used for aggregate results without aliases
+    private static Integer counterExpressionAggregate = 0;
     private static Map<String, String> mapFieldToLwcDataType = new Map<String, String>{
         'datetime' => 'date',
         'date' => 'date-local',
@@ -89,6 +91,7 @@ public with sharing class RelatedList {
             Integer count,
             String iconName
         ) {
+            System.debug('records '+records);
             this.records = records;
             this.cols = cols;
             this.count = count;
@@ -115,8 +118,10 @@ public with sharing class RelatedList {
             Map<String, Schema.SObjectField> mfields = objType.getDescribe()
                 .fields.getMap();
             List<ColumnJson> lstOfColumns = new List<ColumnJson>();
+            Boolean hasAggregateFunctions = false;
+
             for (String fieldName : mapPreCols.keySet()) {
-                //continue;
+                System.debug('fieldName : '+fieldName);
                 if (fieldName.contains('.')) {
                     continue;
                 }
@@ -139,8 +144,16 @@ public with sharing class RelatedList {
                         }
                     }
 
-                    String type = mapPreCols.get(fieldName).type;
+                    if(isFieldAggregateFunction(fieldName) ) {
+                        hasAggregateFunctions = true;
+                        handleAggregateFunctionsFields(mapPreCols, fieldName, mfields);
+
+                        continue;
+                    }
+
                     mapPreCols = checkOverride(mapPreCols, fieldName, mfields);
+
+                    String type = mapPreCols.get(fieldName).type;
                     //picklist list are set to editable by default, non editable picklist field are defined in the readme
                     if(String.isBlank(type) && mapPreCols.get(fieldName).type == 'picklist') {
                         RelatedList.initPicklistColumn(
@@ -151,6 +164,14 @@ public with sharing class RelatedList {
                     }
                 }
             }
+
+           if(hasAggregateFunctions) {
+                soql = soql.replace('SELECT Id, ', 'SELECT ');
+                soql = soql.replace(' WITH SECURITY_ENFORCED ', ''); 
+                mapPreCols.remove('Id');
+           }
+            
+
             return new ListResults(
                 getRecords(soql),
                 mapPreCols,
@@ -160,6 +181,40 @@ public with sharing class RelatedList {
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
+    }
+
+    public static void handleAggregateFunctionsFields(
+        Map<String, ColumnJson> mapPreCols,
+        String fieldName,
+        Map<String, Schema.SObjectField> mfields
+    ) {
+        String[] fieldElements = fieldName.split('\\)');
+        String alias = (fieldElements.size() == 2) ? fieldElements.get(1) : ('expr'+counterExpressionAggregate++);
+
+        if(!mapPreCols.containsKey(alias) ) {
+            mapPreCols.put(alias, new ColumnJson());
+        }
+
+        //aggregate result are never editable
+        mapPreCols.get(alias).type = 'text';
+        mapPreCols.get(alias).label = alias;
+        mapPreCols.get(alias).fieldName = alias;
+        mapPreCols.get(alias).editable = false;
+        mapPreCols.get(alias).sortable = false;
+
+        //remove the key containing the aggregate function, we only keep the key with the alias if there is one
+        mapPreCols.remove(fieldName);
+    }
+
+    public static Boolean isFieldAggregateFunction(String input) {
+         // Define a regular expression pattern for the desired formats
+        input = input?.toLowercase();
+        String regex = '^(?i)(count\\(|count_distinct\\(|max\\(|avg\\(|min\\(|sum\\()\\w+(__c)?\\).*?$';
+        
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(input);
+        
+        return matcher.find();
     }
 
     public static void initPicklistColumn(

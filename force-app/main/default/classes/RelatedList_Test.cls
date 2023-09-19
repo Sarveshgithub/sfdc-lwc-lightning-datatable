@@ -1,6 +1,7 @@
 @isTest
 public with sharing class RelatedList_Test {
     private static final String lookUp = '{"LastName":{"label":"Last Name","editable":true},"FirstName":{"type":"textarea","label":"Full Name"},"Level__c":{"type":"picklist"},"Account.Name":{"label":"Account Name","type":"lookup","typeAttributes":{"placeholder":"Choose Account","objectApiName":"Contact","fieldName":"AccountId","label":"Account","value":{"fieldName":"AccountId"},"context":{"fieldName":"Id"},"variant":"label-hidden","name":"Account","fields":["Account.Name"],"target":"_self"}},"Account.BillingCity":{"label":"Account BillingCity","type":"text"}}';
+    private static final String groupBy = '{"LastName":{"label":"Last Name","editable":true},"count(Id)":{"type":"text","label":"Count Id"}}';
 
     @TestSetup
     static void makeData() {
@@ -16,6 +17,18 @@ public with sharing class RelatedList_Test {
         RelatedList.ListResults results;
         System.runAs(testUser) {
             results = RelatedList.buildFieldJSON('SELECT ID,FirstName,LastName,Accountid,Account.Name From Contact', 'Contact', '', lookUp);
+        }
+        System.assertEquals(results != null, true);
+        Test.stopTest();
+    }
+
+    @isTest
+    static void groupBy_Test() {
+        Test.startTest();
+        User testUser = [SELECT id FROM user WHERE id = :UserInfo.getUserId()];
+        RelatedList.ListResults results;
+        System.runAs(testUser) {
+            results = RelatedList.buildFieldJSON('SELECT AccountId, count(Id) FROM CONTACT GROUP BY AccountId', 'Contact', '', groupBy);
         }
         System.assertEquals(results != null, true);
         Test.stopTest();

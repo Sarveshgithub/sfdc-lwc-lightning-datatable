@@ -45,6 +45,7 @@ Custom Data types (the component extendedDatatable extends lightning:datatable) 
 | Formula Image Field API Names                                       | :x:                | String  | Enter formula field API names **Note** : This is mandatory for formula fields displaying images                                       | \["FormulaField__c"\]                 |
 | Hide/Unhide checkbox column                                         | :x:                | Boolean | true/false                                                                                                                            | Hide/Unhide Checkbox                                               |
 | Enter WHERE clause                                                  | :x:                | String  | provide aditional filters                                                                                                             | Example `LastName like '%s' AND Account.Name like '%t'`            |
+| Group by                                                            | :x:                | String  | set the group by clause                                                                                                               | Example `AccountId`                              |
 | Order by                                                            | :x:                | String  | set the order by clause                                                                                                               | Example `LastName, Account.Name DESC`                              |
 | Enter limit                                                         | :x:                | Integer | limit the displayed number of records for the list                                                                                    | an integer                                                         |
 | Show the number of record                                           | :x:                | Boolean | append the number of records in the title                                                                                             | checked(true) OR not checked(false)                                |
@@ -187,6 +188,10 @@ The example enables redirection to the account when we click on the account name
 ```
 
 ![datatable](./datatable-with-icon-column-header.JPG)
+
+#### Date formatting
+
+Please refer to the section 'Displaying Date and Time Using Type Attributes' of [the documentation of the standard component lightning:datable](https://developer.salesforce.com/docs/component-library/bundle/lightning-datatable/documentation) .
 
 ## Buttons configuration
 
