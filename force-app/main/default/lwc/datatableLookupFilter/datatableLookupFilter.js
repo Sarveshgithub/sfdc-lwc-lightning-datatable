@@ -28,7 +28,6 @@ export default class DatatableLookupFilter extends LightningElement {
         getRecords({ soql: this.soql })
             .then((data) => {
                 if (data) {
-                    console.log('asset data', data);
                     this.data = data;
                 }
             })
@@ -54,8 +53,10 @@ export default class DatatableLookupFilter extends LightningElement {
 
     handleChange(event) {
         this.value = event.detail.value;
-        let cond = this.value !== 'none' ? `${this.relatedField} = '${this.value}'` : null;
-        console.log(cond);
+        let cond =
+            this.value !== 'none'
+                ? `${this.relatedField} = '${this.value}'`
+                : null;
         this.dispatchEvent(
             new CustomEvent('lookupfilter', {
                 detail: {
