@@ -285,7 +285,7 @@ You can use the SOQL aggregate functions : min, max, sum, avg, count, count_dist
 Here you can see that **we have to specify the AccountId field(including in the group by clause) otherwise the link to the record won't work** in the fields but we can still
 hide the column AccountId and have a normal table with just the account name and their number of records :
 
-![datatable](./datatable-aggregate-result.JPG)
+![datatable](./datatable-aggregate-result.jpg)
 
 **Current limitations :**
 - You have to specify an alias for each field (in the example above acs is the alias for the field Account.Name).
