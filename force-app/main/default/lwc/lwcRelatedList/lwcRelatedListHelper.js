@@ -28,7 +28,7 @@ const setPredefinedColumnJSON = (cmp) => {
         throw new Error('error');
     }
     //remove id field if set
-    let tempFields = new Set(cmp.fields.replace(/\s/g, '').split(','));
+    let tempFields = new Set(cmp.fields.split(','));
     ['id', 'Id', 'iD', 'ID'].forEach((idFieldCase) => {
         if (tempFields.has(idFieldCase)) {
             tempFields.delete(idFieldCase);
@@ -69,10 +69,18 @@ const setPredefinedColumnJSON = (cmp) => {
         }
     });
     cmp.colsJson = setPredefinedCol;
+    cmp.oldPredefinedCol = predefinedCol;
 };
 
 //Helper function for formatData()
-const _formatData = (cols, records) => {
+const _formatData = (cmp, cols, records) => {
+    const fullFieldByAlias = {};
+    cmp.fields.split(',').forEach((fieldElement) => {
+        if (fieldElement.split(' ').length === 2) {
+            fullFieldByAlias[fieldElement.split(' ')[1]] = fieldElement;
+        }
+    });
+
     records.forEach((e) => {
         // eslint-disable-next-line guard-for-in
         for (let key in e) {
@@ -103,18 +111,46 @@ const _formatData = (cols, records) => {
                 }
                 continue;
             }
+
+            let keyField = Object.prototype.hasOwnProperty.call(
+                fullFieldByAlias,
+                key
+            )
+                ? fullFieldByAlias[key]
+                : key;
             if (
                 Object.prototype.hasOwnProperty.call(cols, key) &&
-                cols[key].type === 'url' &&
+                (cols[key].type === 'url' ||
+                    Object.prototype.hasOwnProperty.call(
+                        fullFieldByAlias,
+                        key
+                    )) &&
                 Object.prototype.hasOwnProperty.call(
                     cols[key],
                     'typeAttributes'
                 )
             ) {
-                e[key + '_url'] = '/' + e[cols[key].typeAttributes.label.recId];
+                if (
+                    Object.prototype.hasOwnProperty.call(fullFieldByAlias, key)
+                ) {
+                    if (cols[key].type === 'url') {
+                        cols[key].typeAttributes =
+                            cmp.oldPredefinedCol[keyField].typeAttributes;
+                        e[key + '_url'] =
+                            '/' +
+                            e[
+                                cmp.oldPredefinedCol[keyField].typeAttributes
+                                    .label.recId
+                            ];
+                    }
+                } else {
+                    e[key + '_url'] =
+                        '/' + e[cols[key].typeAttributes.label.recId];
+                }
             }
         }
     });
+
     return records;
 };
 
@@ -141,7 +177,7 @@ const formatData = (cmp, data) => {
             cols[e].typeAttributes = cmp.predefinedCol[e].typeAttributes;
         }
     });
-    records = _formatData(cols, records);
+    records = _formatData(cmp, cols, records);
     return { records, cols, ...data };
 };
 

@@ -91,7 +91,6 @@ public with sharing class RelatedList {
             Integer count,
             String iconName
         ) {
-            System.debug('records '+records);
             this.records = records;
             this.cols = cols;
             this.count = count;
@@ -118,15 +117,23 @@ public with sharing class RelatedList {
             Map<String, Schema.SObjectField> mfields = objType.getDescribe()
                 .fields.getMap();
             List<ColumnJson> lstOfColumns = new List<ColumnJson>();
-            Boolean hasAggregateFunctions = false;
+            Boolean soqlHasAggregateFunctions = hasFieldAggregateFunctions(soql);
 
             for (String fieldName : mapPreCols.keySet()) {
-                System.debug('fieldName : '+fieldName);
+                //remove alias if set
                 if (fieldName.contains('.')) {
                     continue;
                 }
                 //Check if values predefined in LWC
                 if (mapPreCols.containsKey(fieldName)) {
+                    if(soqlHasAggregateFunctions ) {
+                        if(hasFieldAggregateFunctions(fieldName)) {
+                            handleAggregateFunctionsFields(mapPreCols, fieldName, mfields);
+                        }
+
+                        continue;
+                    }
+
                     switch on mapPreCols.get(fieldName).type {
                         when 'lookup' {
                             mapPreCols.get(fieldName).typeAttributes = new TypeAttributeColumnLookup();
@@ -144,13 +151,6 @@ public with sharing class RelatedList {
                         }
                     }
 
-                    if(isFieldAggregateFunction(fieldName) ) {
-                        hasAggregateFunctions = true;
-                        handleAggregateFunctionsFields(mapPreCols, fieldName, mfields);
-
-                        continue;
-                    }
-
                     mapPreCols = checkOverride(mapPreCols, fieldName, mfields);
 
                     String type = mapPreCols.get(fieldName).type;
@@ -165,14 +165,15 @@ public with sharing class RelatedList {
                 }
             }
 
-           if(hasAggregateFunctions) {
+           if(soqlHasAggregateFunctions) {
                 soql = soql.replace('SELECT Id, ', 'SELECT ');
                 soql = soql.replace(' WITH SECURITY_ENFORCED ', ''); 
                 mapPreCols.remove('Id');
+                //rename fields that have an alias
+                mapPreCols = handleAliasesForAggregateResult(mapPreCols);
            }
-            
-
-            return new ListResults(
+           
+           return new ListResults(
                 getRecords(soql),
                 mapPreCols,
                 countRecords(objectName, whereClause),
@@ -181,6 +182,24 @@ public with sharing class RelatedList {
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
+    }
+
+    public static Map<String, ColumnJson> handleAliasesForAggregateResult(Map<String, ColumnJson> mapPreCols) {
+        Map<String, ColumnJson> tempMapPreCols = new Map<String, ColumnJson>(); 
+        for (String fieldName : mapPreCols.keySet()) {
+            
+            if (fieldName.split(' ')?.size() == 2) {
+                String alias = fieldName.split(' ')[1];
+
+                tempMapPreCols.put(alias, mapPreCols.get(fieldName));
+                tempMapPreCols.get(alias).label = mapPreCols.get(fieldName).label+'';
+                tempMapPreCols.get(alias).fieldName = alias + (mapPreCols.get(fieldName).fieldName.endsWith('_url') ? '_url' : '');
+            } else {
+                tempMapPreCols.put(fieldName, mapPreCols.get(fieldName));
+            }
+        }
+
+        return tempMapPreCols;
     }
 
     public static void handleAggregateFunctionsFields(
@@ -195,9 +214,13 @@ public with sharing class RelatedList {
             mapPreCols.put(alias, new ColumnJson());
         }
 
+        System.debug('mapPreCols.get(fieldName) '+mapPreCols.get(fieldName));
+
         //aggregate result are never editable
         mapPreCols.get(alias).type = 'text';
-        mapPreCols.get(alias).label = alias;
+        mapPreCols.get(alias).label = (String.isNotEmpty(mapPreCols.get(fieldName).label) ) ? 
+                                    mapPreCols.get(fieldName).label : 
+                                    alias;
         mapPreCols.get(alias).fieldName = alias;
         mapPreCols.get(alias).editable = false;
         mapPreCols.get(alias).sortable = false;
@@ -206,10 +229,10 @@ public with sharing class RelatedList {
         mapPreCols.remove(fieldName);
     }
 
-    public static Boolean isFieldAggregateFunction(String input) {
+    public static Boolean hasFieldAggregateFunctions(String input) {
          // Define a regular expression pattern for the desired formats
         input = input?.toLowercase();
-        String regex = '^(?i)(count\\(|count_distinct\\(|max\\(|avg\\(|min\\(|sum\\()\\w+(__c)?\\).*?$';
+        String regex = '(?i)\\b(count\\(|count_distinct\\(|max\\(|avg\\(|min\\(|sum\\()\\w+(__c)?\\s*\\).*?$';
         
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(input);

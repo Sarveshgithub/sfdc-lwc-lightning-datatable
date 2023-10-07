@@ -31,8 +31,14 @@
                 name="fields"
                 type="String"
                 required="true"
-                label="Enter Field API Name by comma seprated"
+                label="Enter Field API Name by comma seperated"
                 default="FirstName,LastName,AccountId,CreatedDate,Account.Name"
+            />
+      <property
+                name="fieldsToHide"
+                type="String"
+                label="Enter fields to hide"
+                default="fieldApiNameToHide"
             />
       <property
                 name="predefinedCol"

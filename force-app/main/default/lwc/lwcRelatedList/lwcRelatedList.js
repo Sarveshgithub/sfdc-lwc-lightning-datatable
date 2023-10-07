@@ -33,6 +33,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     @api title;
     @api objectName;
     @api fields;
+    @api fieldsToHide;
     @api relatedFieldAPI;
     @api formulaImageFields;
     @api whereClause;
@@ -49,6 +50,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     @api islookupFilter;
     @api lookupFilterConfigJSON;
     // Private Property
+    @api oldPredefinedCol = '';
     @track data;
     @track soql;
     @track offSet = 0;
@@ -103,12 +105,22 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
                         this,
                         data
                     );
+
                     this.colsJson = cols;
-                    const colAc = Object.values(cols);
+                    let colAc = Object.values(cols);
                     colAc.push({
                         type: 'action',
                         typeAttributes: { rowActions: actions }
                     });
+
+                    //rem
+                    if (this.fieldsToHide?.split(',').length > 0) {
+                        const fieldsToRemove = this.fieldsToHide?.split(',');
+                        colAc = colAc.filter(function (item) {
+                            return !fieldsToRemove.includes(item.fieldName);
+                        });
+                    }
+
                     this.columns = colAc;
                     this.data = records;
                     this.iconName = this.iconName ? this.iconName : iconName;
@@ -202,7 +214,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
         getRecords({ soql: this.soql })
             .then((data) => {
                 if (data) {
-                    this.data = _formatData(this.colsJson, data);
+                    this.data = _formatData(this, this.colsJson, data);
                     this.isloading = false;
                 }
             })
@@ -529,7 +541,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
                 whereClause: this.whereClause
             })
                 .then((data) => {
-                    this.data = _formatData(this.colsJson, data);
+                    this.data = _formatData(this, this.colsJson, data);
                 })
                 .catch((error) => {
                     this.showToast(
