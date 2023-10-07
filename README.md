@@ -40,6 +40,7 @@ Custom Data types (the component extendedDatatable extends lightning:datatable) 
 | Enter Title                                                         | :heavy_check_mark: | String  | provide table title                                                                                                                   | LWC Table                                                          |
 | Enter Object API Name                                               | :heavy_check_mark: | String  | provide object custom or standard API name                                                                                            | Contact                                                            |
 | Enter Columns API Name by comma seprated                            | :heavy_check_mark: | String  | **Note** : for related field it should be concat with . i.e : Account.Name for contact, Inline Edit not support cross reference Field | FirstName,LastName,Email,Phone                                     |
+| Enter fields to hide                           | :x: | String  | Columns to hide | AccountId,OpportuntityId                                     |
 | Enter Customized Field JSON ( This is Mandatory for Related Field ) | :x:                | String  | customized Column Label, Record Redirect, Data Type. **Note** : This is Mandatory for Related Fields i.e : Account.Name for contact   | See below [**Customized Field JSON**](#customized-field-json)      |
 | Enter Related field API Name                                        | :x:                | String  | Enter related field API name                                                                                                          | Example AccountId for contact when component is on account layout. |
 | Formula Image Field API Names                                       | :x:                | String  | Enter formula field API names **Note** : This is mandatory for formula fields displaying images                                       | \["FormulaField__c"\]                 |
@@ -71,6 +72,8 @@ Custom Data types (the component extendedDatatable extends lightning:datatable) 
 
 #### Single override
 
+***The following example is for the field 'Enter Customized Field JSON ( This is Mandatory for Related Field )'***
+
 ```yml
 { "AccountId": { "label": "Account Record Id", "type": "Id" } }
 ```
@@ -79,11 +82,15 @@ Custom Data types (the component extendedDatatable extends lightning:datatable) 
 
 #### Label Override using Custom Label
 
+***The following example is for the field 'Enter Customized Field JSON ( This is Mandatory for Related Field )'***
+
 ```yml
 { "FirstName": { "label": "{!Label.MyLabelName}", "type": "text" } }
 ```
 
 #### Multiple overrides
+
+***The following example is for the field 'Enter Customized Field JSON ( This is Mandatory for Related Field )'***
 
 ```yml
 {
@@ -100,6 +107,7 @@ When overriding columns you can override different columns for the different use
 #### Related Field Customized
 
 Here the lookup will not be editable (to have editable lookup field see #lookup-editable-column)
+***The following example is for the field 'Enter Customized Field JSON ( This is Mandatory for Related Field )'***
 
 ```yml
 { "Account.Name": { "label": "Account Name", "type": "text" } }
@@ -110,17 +118,21 @@ Here the lookup will not be editable (to have editable lookup field see #lookup-
 By default, you don't need to insert JSON for a picklist field, the field is editable by default. However, you might have the following use cases :
 
 **make the picklist field non-editable**
+
+***The following example is for the field 'Enter Customized Field JSON ( This is Mandatory for Related Field )'***
 ```yml
     {"StageName" : {"type": "text", "editable": false} }
 ```
 **you can also override the label**
 
+***The following example is for the field 'Enter Customized Field JSON ( This is Mandatory for Related Field )'***
 ```yml
     {"StageName" : {"label": "Step", "type": "picklist"} }
 ```
 
 #### Lookup editable column
 
+***The following example is for the field 'Enter Customized Field JSON ( This is Mandatory for Related Field )'***
 ```yml
 {
     "Account.Name":
@@ -160,6 +172,8 @@ The example enables redirection to the account when we click on the account name
 
 **When used for a lookup the field is not editable (to have an editable lookup field see the [section](#lookup-editable-column) above for editable lookup)**
 
+***The following example is for the field 'Enter Customized Field JSON ( This is Mandatory for Related Field )'***
+
 ```yml
 {
     "Account.Name":
@@ -177,6 +191,7 @@ The example enables redirection to the account when we click on the account name
 
 #### Column header with a salesforce object icon
 
+***The following example is for the field 'Enter Customized Field JSON ( This is Mandatory for Related Field )'***
 ```yml
 {
     "Account.Name": 
@@ -200,12 +215,14 @@ To configure buttons(variant is the style of a button) see the documentation her
 
 #### Single button
 
+***The following example is for the field 'Enter Action Buttons JSON'***
 ```yml
 [{ "name": "New", "label": "New", "variant": "neutral" }]
 ```
 
 #### Multiple buttons
 
+***The following example is for the field 'Enter Action Buttons JSON'***
 ```yml
 [
     { "name": "New", "label": "New", "variant": "neutral" },
@@ -235,6 +252,45 @@ You can implement your logic for your new buttons based on button JSON (new, del
   }
 
 ```
+
+### Aggregate results
+
+You can use the SOQL aggregate functions : min, max, sum, avg, count, count_distinct
+
+**Use case :** display rollup summary field values without having to create a new rollup summary field.
+
+
+<ins>Example 1 without redirection to a record:</ins>
+
+- Enter Field API Name by comma seperated : ```Account.Name acs,Count(Id) c```
+- Enter ObjectApiName : ```Contact```
+- Enter Customized Field JSON ( This is Mandatory for Related Field ) :
+```yml
+{"Count(Id) c":{"label":"Number of contacts"}, "Account.Name acs":{"label":"Account Name","type":"text"} }
+```
+- Enter Group by clause : ```Account.Name```
+
+<ins>Example 2 : with redirection to a record:</ins>
+
+- Enter Field API Name by comma seperated : ```AccountId,Account.Name acs,count(Id) nbContacts```
+- Enter fields to hide : ```AccountId```
+- Enter ObjectApiName : ```Contact```
+- Enter Customized Field JSON ( This is Mandatory for Related Field ) :
+```yml
+{"Account.Name acs":{"label":"Account Name","type":"url","typeAttributes":{"label": { "fieldName": "acs" ,"recId": "AccountId"}}}}
+```
+- Enter Group by clause : ```Account.Name,AccountId```
+
+
+Here you can see that **we have to specify the AccountId field(including in the group by clause) otherwise the link to the record won't work** in the fields but we can still
+hide the column AccountId and have a normal table with just the account name and their number of records :
+
+![datatable](./datatable-aggregate-result.jpg)
+
+**Current limitations :**
+- You have to specify an alias for each field (in the example above acs is the alias for the field Account.Name).
+- We cannot use count() just like the following query : SELECT count() FROM Contact
+- We cannot use the search bar.
 
 ## Deploy
 
