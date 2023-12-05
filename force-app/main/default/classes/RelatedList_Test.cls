@@ -1,6 +1,6 @@
 @isTest
 public with sharing class RelatedList_Test {
-    private static final String lookUp = '{"LastName":{"label":"Last Name","editable":true},"FirstName":{"type":"textarea","label":"Full Name"},"Level__c":{"type":"picklist"},"Account.Name":{"label":"Account Name","type":"lookup","typeAttributes":{"placeholder":"Choose Account","objectApiName":"Contact","fieldName":"AccountId","label":"Account","value":{"fieldName":"AccountId"},"context":{"fieldName":"Id"},"variant":"label-hidden","name":"Account","fields":["Account.Name"],"target":"_self"}},"Account.BillingCity":{"label":"Account BillingCity","type":"text"}}';
+    private static final String lookUp = '{"LastName":{"label":"Last Name","editable":true},"FirstName":{"type":"textarea","label":"Full Name"},"LeadSource":{"type":"picklist"},"Account.Name":{"label":"Account Name","type":"lookup","typeAttributes":{"placeholder":"Choose Account","objectApiName":"Contact","fieldName":"AccountId","label":"Account","value":{"fieldName":"AccountId"},"context":{"fieldName":"Id"},"variant":"label-hidden","name":"Account","fields":["Account.Name"],"target":"_self"}},"Account.BillingCity":{"label":"Account BillingCity","type":"text"}}';
     private static final String groupBy = '{"LastName":{"label":"Last Name","editable":true},"count(Id)":{"type":"text","label":"Count Id"}}';
 
     @TestSetup
