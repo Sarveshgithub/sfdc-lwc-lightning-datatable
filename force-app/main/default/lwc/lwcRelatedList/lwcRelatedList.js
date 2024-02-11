@@ -20,6 +20,7 @@ import {
 } from './lwcRelatedListHelper';
 import recordUpdatedSuccessMessage from '@salesforce/label/c.recordUpdatedSuccessMessage';
 import recordDeletedSuccessMessage from '@salesforce/label/c.recordDeletedSuccessMessage';
+import Id from "@salesforce/user/Id";
 const actions = [
     { label: 'Show details', name: 'show_details' },
     { label: 'Edit', name: 'edit' },
@@ -51,6 +52,7 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
     @api lookupFilterConfigJSON;
     // Private Property
     @api oldPredefinedCol = '';
+    connectedUserId = Id
     @track data;
     @track soql;
     @track offSet = 0;
@@ -460,7 +462,15 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
         let where = [];
         if (this.relatedFieldAPI)
             where.push(`${this.relatedFieldAPI} = '${this.recordId}'`);
-        if (this.whereClause) where.push(this.whereClause);
+        if (this.whereClause) {
+            where.push(this.whereClause);
+            if(this.whereClause.includes('recordId')){
+                this.whereClause.replace('recordId', this.recordId)
+            }
+            if(this.whereClause.includes('connectedUserId')){
+                this.whereClause.replace('connectedUserId', this.connectedUserId)
+            }
+        }
         if (this.lookupFilterCondition) where.push(this.lookupFilterCondition);
         return where.length > 0 ? ` WHERE ${where.join(' AND ')} ` : '';
     }
