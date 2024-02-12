@@ -465,10 +465,10 @@ export default class LwcDatatable extends NavigationMixin(LightningElement) {
         if (this.whereClause) {
             where.push(this.whereClause);
             if(this.whereClause.includes('recordId')){
-                this.whereClause.replace('recordId', this.recordId)
+                this.whereClause.replaceAll('recordId', this.recordId)
             }
             if(this.whereClause.includes('connectedUserId')){
-                this.whereClause.replace('connectedUserId', this.connectedUserId)
+                this.whereClause.replaceAll('connectedUserId', this.connectedUserId)
             }
         }
         if (this.lookupFilterCondition) where.push(this.lookupFilterCondition);
